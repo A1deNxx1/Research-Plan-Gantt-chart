@@ -1557,7 +1557,7 @@ export default function Home() {
 
       <section className="intro" aria-labelledby="page-title">
         <div className="intro-copy">
-          <a className="overline intro-plan-link" href="#timeline">RESEARCH PLAN · INTERACTIVE — CLICK TO EXPLORE</a>
+          <a className="overline intro-plan-link" href="#timeline">Interactive Gantt Chart</a>
           <h1 id="page-title">
             Social roles of object-based urban AI robots:
             <span>A designerly and citizen-centred inquiry</span>

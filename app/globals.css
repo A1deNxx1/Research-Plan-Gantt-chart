@@ -281,6 +281,9 @@ main {
   text-decoration: none;
   border-bottom: 1px solid #8ebbb7;
   padding-bottom: 5px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
 }
 
 .intro-plan-link:hover {
@@ -361,7 +364,7 @@ main {
 
 .timeline-section {
   background: var(--white);
-  padding: 54px 0 88px;
+  padding: 54px 0 56px;
   overflow-x: clip;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
