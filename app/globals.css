@@ -402,6 +402,12 @@ main {
   color: #17676d;
 }
 
+.week-rule {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.015em;
+}
+
 .editor-open-button {
   margin-left: auto;
   min-height: 31px;
@@ -1357,6 +1363,15 @@ footer p {
   color: #b43b36;
   font-size: 11px;
   font-weight: 700;
+}
+
+.week-choice {
+  margin-top: -2px;
+  color: #17676d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 .editor-save-row {

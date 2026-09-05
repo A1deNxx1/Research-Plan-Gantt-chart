@@ -679,13 +679,46 @@ function asTime(value: string) {
   return Date.parse(`${value}T00:00:00Z`);
 }
 
+function planningWeekIndex(value: string) {
+  const point = new Date(`${value}T00:00:00Z`);
+  const monthStart = new Date(Date.UTC(point.getUTCFullYear(), point.getUTCMonth(), 1));
+  const mondayBasedStartDay = (monthStart.getUTCDay() + 6) % 7;
+  const firstWeekEnd = 7 - mondayBasedStartDay;
+  const day = point.getUTCDate();
+
+  if (day <= firstWeekEnd) return 0;
+  return Math.min(3, 1 + Math.floor((day - firstWeekEnd - 1) / 7));
+}
+
+function planningWeekBounds(value: string, forcedIndex?: number) {
+  const point = new Date(`${value}T00:00:00Z`);
+  const year = point.getUTCFullYear();
+  const month = point.getUTCMonth();
+  const monthStart = new Date(Date.UTC(year, month, 1));
+  const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  const firstWeekEnd = 7 - ((monthStart.getUTCDay() + 6) % 7);
+  const index = forcedIndex ?? planningWeekIndex(value);
+  const startDay = index === 0 ? 1 : firstWeekEnd + 1 + (index - 1) * 7;
+  const endDay = index === 3 ? daysInMonth : Math.min(daysInMonth, index === 0 ? firstWeekEnd : startDay + 6);
+
+  return { index, startDay, endDay, monthStart };
+}
+
+function planningWeekRange(value: string, forcedIndex?: number) {
+  const { index, startDay, endDay, monthStart } = planningWeekBounds(value, forcedIndex);
+  const monthName = new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(monthStart);
+  return `W${index + 1} · ${startDay}–${endDay} ${monthName}`;
+}
+
 function position(value: string, start: string, end: string) {
   const point = new Date(`${value}T00:00:00Z`);
   const first = new Date(`${start}T00:00:00Z`);
   const last = new Date(`${end}T00:00:00Z`);
   const monthIndex = (point.getUTCFullYear() - first.getUTCFullYear()) * 12 + point.getUTCMonth() - first.getUTCMonth();
   const monthCount = (last.getUTCFullYear() - first.getUTCFullYear()) * 12 + last.getUTCMonth() - first.getUTCMonth();
-  const weekProgress = Math.min(3.98, (point.getUTCDate() - 1) / 7);
+  const { index, startDay, endDay } = planningWeekBounds(value);
+  const fraction = (point.getUTCDate() - startDay) / Math.max(1, endDay - startDay + 1);
+  const weekProgress = index + Math.min(0.98, Math.max(0, fraction));
   return ((monthIndex * 4 + weekProgress) / (monthCount * 4)) * 100;
 }
 
@@ -693,7 +726,7 @@ function weekSlot(value: string, start: string) {
   const point = new Date(`${value}T00:00:00Z`);
   const first = new Date(`${start}T00:00:00Z`);
   const monthIndex = (point.getUTCFullYear() - first.getUTCFullYear()) * 12 + point.getUTCMonth() - first.getUTCMonth();
-  return monthIndex * 4 + Math.min(3, Math.floor((point.getUTCDate() - 1) / 7));
+  return monthIndex * 4 + planningWeekIndex(value);
 }
 
 function taskPosition(task: Task, year: YearPlan) {
@@ -719,7 +752,7 @@ function formatDate(value: string) {
 }
 
 function monthSegments(year: YearPlan) {
-  const result: { label: string; left: number; width: number; year: string }[] = [];
+  const result: { label: string; left: number; width: number; year: string; monthStart: string }[] = [];
   const end = new Date(`${year.end}T00:00:00Z`);
   const cursor = new Date(`${year.start}T00:00:00Z`);
   const totalMonths = (end.getUTCFullYear() - cursor.getUTCFullYear()) * 12 + end.getUTCMonth() - cursor.getUTCMonth();
@@ -728,6 +761,7 @@ function monthSegments(year: YearPlan) {
     result.push({
       label: new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(cursor),
       year: String(cursor.getUTCFullYear()),
+      monthStart: `${cursor.getUTCFullYear()}-${String(cursor.getUTCMonth() + 1).padStart(2, "0")}-01`,
       left: (index / totalMonths) * 100,
       width: (1 / totalMonths) * 100,
     });
@@ -834,10 +868,11 @@ function YearGantt({
                   <small>{month.label === "Jan" || month.left === 0 ? month.year : ""}</small>
                 </div>
                 <div className="week-labels" aria-label={`${month.label} ${month.year}, four planning weeks`}>
-                  <span>W1</span>
-                  <span>W2</span>
-                  <span>W3</span>
-                  <span>W4</span>
+                  {[0, 1, 2, 3].map((weekIndex) => (
+                    <span key={weekIndex} title={planningWeekRange(month.monthStart, weekIndex)}>
+                      W{weekIndex + 1}
+                    </span>
+                  ))}
                 </div>
               </div>
             ))}
@@ -987,10 +1022,12 @@ function TaskDrawer({
               <label>
                 Start date
                 <input type="date" value={start} onChange={(event) => setStart(event.target.value)} required />
+                <small className="week-choice">{planningWeekRange(start)}</small>
               </label>
               <label>
                 End date
                 <input type="date" value={end} min={start} onChange={(event) => setEnd(event.target.value)} required />
+                <small className="week-choice">{planningWeekRange(end)}</small>
               </label>
             </div>
             <label>
@@ -1170,10 +1207,12 @@ function PlanEditor({
             <label>
               Start date
               <input type="date" value={start} onChange={(event) => setStart(event.target.value)} required />
+              <small className="week-choice">{planningWeekRange(start)}</small>
             </label>
             <label>
               End date
               <input type="date" value={end} onChange={(event) => setEnd(event.target.value)} required />
+              <small className="week-choice">{planningWeekRange(end)}</small>
             </label>
           </div>
           {invalid && <p className="form-error" role="alert">End date must be the same as or later than the start date.</p>}
@@ -1391,6 +1430,7 @@ export default function Home() {
           <span><i className="key-diamond hard" /> Fixed deadline</span>
           <span><i className="key-diamond target" /> Target window · date TBC</span>
           <span><i className="key-dash" /> Provisional activity</span>
+          <strong className="week-rule">Calendar weeks run Mon–Sun · remaining month-end days stay in W4</strong>
           {editing && (
             <button className="editor-open-button" onClick={() => setEditorOpen(true)}>
               Open timeline editor
