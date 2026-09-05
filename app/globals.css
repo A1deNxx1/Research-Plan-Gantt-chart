@@ -9,6 +9,9 @@
   --line-soft: #e8e5de;
   --white: #fffefb;
   --red: #c9433d;
+  --page-max-width: 1500px;
+  --page-total-gutter: 96px;
+  --scroll-end-space: 96px;
   --label-width: 420px;
   --timeline-width: 1680px;
 }
@@ -56,7 +59,7 @@ main {
 }
 
 .site-header {
-  width: min(1600px, calc(100% - 64px));
+  width: min(var(--page-max-width), calc(100% - var(--page-total-gutter)));
   min-height: 78px;
   margin: 0 auto;
   border-bottom: 1px solid var(--line);
@@ -245,7 +248,7 @@ main {
 }
 
 .intro {
-  width: min(1500px, calc(100% - 96px));
+  width: min(var(--page-max-width), calc(100% - var(--page-total-gutter)));
   margin: 76px auto 92px;
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.7fr);
@@ -352,17 +355,18 @@ main {
 
 .timeline-section {
   background: var(--white);
-  padding: 54px max(32px, calc((100vw - 1600px) / 2)) 88px;
+  padding: 54px 0 88px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
 .timeline-toolbar {
+  width: min(var(--page-max-width), calc(100% - var(--page-total-gutter)));
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 40px;
-  margin-bottom: 24px;
+  margin: 0 auto 24px;
 }
 
 .timeline-toolbar .overline {
@@ -421,6 +425,8 @@ main {
 }
 
 .chart-key {
+  width: min(var(--page-max-width), calc(100% - var(--page-total-gutter)));
+  margin-inline: auto;
   min-height: 45px;
   border-top: 1px solid var(--line-soft);
   border-bottom: 1px solid var(--line-soft);
@@ -488,13 +494,14 @@ main {
 }
 
 .years-stack {
+  width: min(var(--page-max-width), calc(100% - var(--page-total-gutter)));
   display: grid;
   gap: 32px;
-  margin-top: 26px;
+  margin: 26px auto 0;
 }
 
 .year-card {
-  width: min(1500px, 100%);
+  width: 100%;
   border: 1px solid var(--line);
   background: var(--white);
   box-shadow: 0 12px 40px rgba(40, 37, 31, 0.06);
@@ -686,7 +693,8 @@ main {
 }
 
 .gantt-canvas {
-  width: calc(var(--label-width) + var(--timeline-width));
+  width: calc(var(--label-width) + var(--timeline-width) + var(--scroll-end-space));
+  padding-right: var(--scroll-end-space);
   display: grid;
   grid-template-columns: var(--label-width) var(--timeline-width);
   align-items: stretch;
@@ -1126,7 +1134,7 @@ main {
 }
 
 footer {
-  width: min(1600px, calc(100% - 64px));
+  width: min(var(--page-max-width), calc(100% - var(--page-total-gutter)));
   min-height: 82px;
   margin: 0 auto;
   border-top: 1px solid var(--line);
@@ -1656,6 +1664,8 @@ footer p {
 
 @media (max-width: 900px) {
   :root {
+    --page-total-gutter: 40px;
+    --scroll-end-space: 56px;
     --label-width: 310px;
     --timeline-width: 1520px;
   }
@@ -1691,7 +1701,7 @@ footer p {
   }
 
   .timeline-section {
-    padding-inline: 16px;
+    padding-inline: 0;
   }
 
   .timeline-toolbar {
@@ -1834,6 +1844,8 @@ footer p {
   }
 
   :root {
+    --page-total-gutter: 0px;
+    --scroll-end-space: 0px;
     --label-width: 245px;
     --timeline-width: calc(100vw - 270px);
   }
@@ -1908,6 +1920,7 @@ footer p {
 
   .gantt-canvas {
     width: 100%;
+    padding-right: 0;
     grid-template-columns: var(--label-width) var(--timeline-width);
   }
 
