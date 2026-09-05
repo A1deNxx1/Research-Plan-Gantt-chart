@@ -108,6 +108,32 @@ main {
   gap: 8px;
 }
 
+.sync-pill {
+  min-height: 28px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #b9d4cb;
+  border-radius: 999px;
+  background: #edf6f2;
+  color: #2d695d;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.sync-pill.saving {
+  border-color: #dcc99e;
+  background: #faf3e3;
+  color: #7b5d1e;
+}
+
+.sync-pill.error {
+  border-color: #dfb5b0;
+  background: #faecea;
+  color: #99443b;
+}
+
 .text-button,
 .export-button,
 .reset-button {
@@ -1246,6 +1272,11 @@ footer p {
   font-weight: 800;
 }
 
+.primary-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 .local-note {
   margin: -6px 0 0;
   color: var(--muted);
@@ -1591,6 +1622,10 @@ footer p {
 
 @media (max-width: 560px) {
   .project-mark div {
+    display: none;
+  }
+
+  .sync-pill {
     display: none;
   }
 

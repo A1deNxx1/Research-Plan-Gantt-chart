@@ -56,6 +56,7 @@ type YearPlan = {
 
 type TaskEdit = Partial<Pick<Task, "title" | "start" | "end" | "detail" | "category">>;
 type Edits = Record<string, TaskEdit>;
+type SaveTaskEdit = (taskId: string, edit: TaskEdit) => Promise<boolean>;
 
 const CATEGORY_LABELS: Record<Category, string> = {
   ethics: "Ethics approval",
@@ -976,7 +977,7 @@ function TaskDrawer({
   selected: Selected;
   editing: boolean;
   onClose: () => void;
-  onSave: (taskId: string, edit: TaskEdit) => void;
+  onSave: SaveTaskEdit;
 }) {
   const { task, group, year } = selected;
   const [title, setTitle] = useState(task.title);
@@ -984,6 +985,8 @@ function TaskDrawer({
   const [end, setEnd] = useState(task.end);
   const [detail, setDetail] = useState(task.detail);
   const [category, setCategory] = useState<Category>(task.category);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const weeks = timelineWeekSpan({ ...task, start, end }, year);
 
   useEffect(() => {
@@ -994,11 +997,15 @@ function TaskDrawer({
     setCategory(task.category);
   }, [task]);
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     if (asTime(end) < asTime(start)) return;
-    onSave(task.id, { title, start, end, detail, category });
-    onClose();
+    setSaving(true);
+    setSaveError(false);
+    const didSave = await onSave(task.id, { title, start, end, detail, category });
+    setSaving(false);
+    if (didSave) onClose();
+    else setSaveError(true);
   }
 
   return (
@@ -1042,8 +1049,9 @@ function TaskDrawer({
               Detail
               <textarea value={detail} onChange={(event) => setDetail(event.target.value)} rows={7} required />
             </label>
-            <button className="primary-button" type="submit">Save on this device</button>
-            <p className="local-note">Edits are private to this browser until the site data is updated and republished.</p>
+            {saveError && <p className="form-error" role="alert">The online save failed. Please try again.</p>}
+            <button className="primary-button" type="submit" disabled={saving}>{saving ? "Saving online…" : "Save online"}</button>
+            <p className="local-note">Saved changes are shared across your browsers. Only the site owner is authorised to edit.</p>
           </form>
         ) : (
           <>
@@ -1109,8 +1117,8 @@ function PlanEditor({
   initialView: "all" | YearPlan["id"];
   edits: Edits;
   onClose: () => void;
-  onSave: (taskId: string, edit: TaskEdit) => void;
-  onResetTask: (taskId: string) => void;
+  onSave: SaveTaskEdit;
+  onResetTask: (taskId: string) => Promise<boolean>;
 }) {
   const [yearId, setYearId] = useState<YearPlan["id"]>(initialView === "all" ? "y1" : initialView);
   const year = YEARS.find((item) => item.id === yearId) ?? YEARS[0];
@@ -1125,6 +1133,8 @@ function PlanEditor({
   const [category, setCategory] = useState<Category>(task.category);
   const [saved, setSaved] = useState(false);
   const [invalid, setInvalid] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     const nextYearId = initialView === "all" ? "y1" : initialView;
@@ -1147,15 +1157,19 @@ function PlanEditor({
     setInvalid(false);
   }, [taskId, yearId]);
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     if (asTime(end) < asTime(start)) {
       setInvalid(true);
       return;
     }
-    onSave(task.id, { title, start, end, detail, category });
+    setSaving(true);
+    setSaveError(false);
+    const didSave = await onSave(task.id, { title, start, end, detail, category });
+    setSaving(false);
     setInvalid(false);
-    setSaved(true);
+    setSaved(didSave);
+    setSaveError(!didSave);
   }
 
   return (
@@ -1228,28 +1242,32 @@ function PlanEditor({
             Detail shown when the bar is clicked
             <textarea value={detail} onChange={(event) => setDetail(event.target.value)} rows={6} required />
           </label>
+          {saveError && <p className="form-error" role="alert">The online save failed. Your published timeline was not changed.</p>}
           <div className="editor-save-row">
-            <button className="primary-button" type="submit">Save changes</button>
+            <button className="primary-button" type="submit" disabled={saving}>{saving ? "Saving online…" : "Save online"}</button>
             <button
               className="secondary-button"
               type="button"
-              onClick={() => {
-                onResetTask(task.id);
-                setTitle(selectedEntry.task.title);
-                setStart(selectedEntry.task.start);
-                setEnd(selectedEntry.task.end);
-                setDetail(selectedEntry.task.detail);
-                setCategory(selectedEntry.task.category);
-                setSaved(false);
-                setInvalid(false);
+              onClick={async () => {
+                const didReset = await onResetTask(task.id);
+                if (didReset) {
+                  setTitle(selectedEntry.task.title);
+                  setStart(selectedEntry.task.start);
+                  setEnd(selectedEntry.task.end);
+                  setDetail(selectedEntry.task.detail);
+                  setCategory(selectedEntry.task.category);
+                  setSaved(false);
+                  setInvalid(false);
+                  setSaveError(false);
+                }
               }}
               disabled={!edits[task.id]}
             >
               Reset this phase
             </button>
-            {saved && <span className="saved-message" role="status">Saved — timeline updated</span>}
+            {saved && <span className="saved-message" role="status">Saved online — timeline updated</span>}
           </div>
-          <p className="local-note">These edits are stored on this device. Tell Codex when you want them made permanent in the published version.</p>
+          <p className="local-note">Changes are stored online and appear on every device. Editing is restricted to the site owner.</p>
         </form>
       </aside>
     </div>
@@ -1303,14 +1321,58 @@ export default function Home() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [edits, setEdits] = useState<Edits>({});
+  const [canEdit, setCanEdit] = useState(false);
+  const [syncState, setSyncState] = useState<"loading" | "ready" | "saving" | "error">("loading");
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) setEdits(JSON.parse(stored) as Edits);
-    } catch {
-      // The timeline remains fully usable if browser storage is unavailable.
+    let active = true;
+
+    async function loadOnlinePlan() {
+      let localEdits: Edits = {};
+      try {
+        const stored = window.localStorage.getItem(STORAGE_KEY);
+        if (stored) localEdits = JSON.parse(stored) as Edits;
+      } catch {
+        // Old local edits are optional migration data only.
+      }
+
+      try {
+        const response = await fetch("/api/plan", { cache: "no-store" });
+        const data = await response.json() as { edits?: Edits; canEdit?: boolean; error?: string };
+        if (!response.ok) throw new Error(data.error ?? "Unable to load timeline.");
+        if (!active) return;
+
+        const onlineEdits = data.edits ?? {};
+        const owner = Boolean(data.canEdit);
+        setCanEdit(owner);
+
+        if (owner && Object.keys(onlineEdits).length === 0 && Object.keys(localEdits).length > 0) {
+          for (const [taskId, edit] of Object.entries(localEdits)) {
+            const migration = await fetch("/api/plan", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ taskId, edit }),
+            });
+            if (!migration.ok) throw new Error("Unable to move local edits online.");
+          }
+          if (!active) return;
+          setEdits(localEdits);
+          window.localStorage.removeItem(STORAGE_KEY);
+        } else {
+          setEdits(onlineEdits);
+          if (owner) window.localStorage.removeItem(STORAGE_KEY);
+        }
+
+        setSyncState("ready");
+      } catch {
+        if (!active) return;
+        setCanEdit(false);
+        setSyncState("error");
+      }
     }
+
+    void loadOnlinePlan();
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
@@ -1330,25 +1392,65 @@ export default function Home() {
     [view],
   );
 
-  function saveEdit(taskId: string, edit: TaskEdit) {
-    const next = { ...edits, [taskId]: edit };
+  async function saveEdit(taskId: string, edit: TaskEdit) {
+    if (!canEdit) return false;
+    const previous = edits;
+    const next = { ...previous, [taskId]: edit };
     setEdits(next);
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     setSelected((current) => current ? { ...current, task: { ...current.task, ...edit } } : current);
+    setSyncState("saving");
+
+    try {
+      const response = await fetch("/api/plan", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId, edit }),
+      });
+      if (!response.ok) throw new Error("Unable to save timeline.");
+      setSyncState("ready");
+      return true;
+    } catch {
+      setEdits(previous);
+      setSyncState("error");
+      return false;
+    }
   }
 
-  function resetTask(taskId: string) {
-    const next = { ...edits };
+  async function resetTask(taskId: string) {
+    if (!canEdit) return false;
+    const previous = edits;
+    const next = { ...previous };
     delete next[taskId];
     setEdits(next);
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setSyncState("saving");
+
+    try {
+      const response = await fetch(`/api/plan?taskId=${encodeURIComponent(taskId)}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Unable to reset phase.");
+      setSyncState("ready");
+      return true;
+    } catch {
+      setEdits(previous);
+      setSyncState("error");
+      return false;
+    }
   }
 
-  function resetEdits() {
-    if (!window.confirm("Reset every local timeline edit on this device?")) return;
+  async function resetEdits() {
+    if (!canEdit || !window.confirm("Reset every online timeline edit and restore the original plan?")) return;
+    const previous = edits;
     setEdits({});
-    window.localStorage.removeItem(STORAGE_KEY);
     setSelected(null);
+    setSyncState("saving");
+
+    try {
+      const response = await fetch("/api/plan", { method: "DELETE" });
+      if (!response.ok) throw new Error("Unable to reset timeline.");
+      setSyncState("ready");
+    } catch {
+      setEdits(previous);
+      setSyncState("error");
+    }
   }
 
   return (
@@ -1365,20 +1467,27 @@ export default function Home() {
           <button className="text-button confirm-button" onClick={() => setNotesOpen(true)}>
             <span>3</span> details to confirm
           </button>
-          <button
-            className={`text-button ${editing ? "active" : ""}`}
-            onClick={() => {
-              if (editing) {
-                setEditing(false);
-                setEditorOpen(false);
-              } else {
-                setEditing(true);
-                setEditorOpen(true);
-              }
-            }}
-          >
-            <MarkIcon type="edit" /> {editing ? "Editing on" : "Edit plan"}
-          </button>
+          {canEdit && (
+            <>
+              <span className={`sync-pill ${syncState}`} role="status">
+                {syncState === "saving" ? "Saving…" : syncState === "error" ? "Sync issue" : "Owner · online"}
+              </span>
+              <button
+                className={`text-button ${editing ? "active" : ""}`}
+                onClick={() => {
+                  if (editing) {
+                    setEditing(false);
+                    setEditorOpen(false);
+                  } else {
+                    setEditing(true);
+                    setEditorOpen(true);
+                  }
+                }}
+              >
+                <MarkIcon type="edit" /> {editing ? "Editing on" : "Edit plan"}
+              </button>
+            </>
+          )}
           <button className="export-button" onClick={() => window.print()}>
             <MarkIcon type="print" /> Export PDF
           </button>
@@ -1420,8 +1529,8 @@ export default function Home() {
                 <option value="all">All years</option>
               </select>
             </label>
-            {Object.keys(edits).length > 0 && (
-              <button className="reset-button" onClick={resetEdits}>Reset {Object.keys(edits).length} local edit{Object.keys(edits).length === 1 ? "" : "s"}</button>
+            {canEdit && Object.keys(edits).length > 0 && (
+              <button className="reset-button" onClick={() => void resetEdits()}>Reset {Object.keys(edits).length} online edit{Object.keys(edits).length === 1 ? "" : "s"}</button>
             )}
           </div>
         </div>
@@ -1431,7 +1540,7 @@ export default function Home() {
           <span><i className="key-diamond target" /> Target window · date TBC</span>
           <span><i className="key-dash" /> Provisional activity</span>
           <strong className="week-rule">Calendar weeks run Mon–Sun · remaining month-end days stay in W4</strong>
-          {editing && (
+          {canEdit && editing && (
             <button className="editor-open-button" onClick={() => setEditorOpen(true)}>
               Open timeline editor
             </button>
