@@ -583,6 +583,64 @@ main {
   scrollbar-color: var(--year-accent) var(--paper-deep);
 }
 
+.gantt-scroll-control {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 44px;
+  padding-top: 5px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--year-soft) 72%, white);
+  box-shadow: 0 5px 14px rgba(37, 43, 40, 0.07);
+}
+
+.gantt-scroll-control > span {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  z-index: 1;
+  color: var(--year-ink);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+}
+
+.gantt-top-scroll {
+  width: 100%;
+  height: 39px;
+  overflow-y: hidden;
+}
+
+.gantt-scroll-track {
+  width: calc(var(--label-width) + var(--timeline-width));
+  height: 1px;
+}
+
+.gantt-top-scroll::-webkit-scrollbar,
+.gantt-body-scroll::-webkit-scrollbar {
+  height: 14px;
+}
+
+.gantt-top-scroll::-webkit-scrollbar-track,
+.gantt-body-scroll::-webkit-scrollbar-track {
+  background: #dedbd3;
+  border-radius: 999px;
+}
+
+.gantt-top-scroll::-webkit-scrollbar-thumb,
+.gantt-body-scroll::-webkit-scrollbar-thumb {
+  min-width: 80px;
+  border: 3px solid #dedbd3;
+  border-radius: 999px;
+  background: var(--year-accent);
+}
+
+.gantt-top-scroll::-webkit-scrollbar-thumb:hover,
+.gantt-body-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--year-ink);
+}
+
 .gantt-canvas {
   width: calc(var(--label-width) + var(--timeline-width));
   display: grid;
@@ -1729,6 +1787,7 @@ footer p {
   .chart-key,
   .stage-legend,
   .scroll-note,
+  .gantt-scroll-control,
   .journey-summary,
   footer,
   .drawer-shell {

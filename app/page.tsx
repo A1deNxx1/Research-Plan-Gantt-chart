@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Category =
   | "ethics"
@@ -880,6 +880,8 @@ function YearGantt({
 }) {
   const segments = monthSegments(year);
   const weeks = segments.length * 4;
+  const topScrollRef = useRef<HTMLDivElement>(null);
+  const chartScrollRef = useRef<HTMLDivElement>(null);
   const chartStyle = {
     "--year-accent": year.accent,
     "--year-soft": year.soft,
@@ -907,7 +909,33 @@ function YearGantt({
       </div>
 
       <div className="scroll-note">Scroll horizontally to inspect weeks →</div>
-      <div className="gantt-scroll">
+      <div className="gantt-scroll-control">
+        <span>DRAG TO BROWSE THE FULL TIMELINE</span>
+        <div
+          className="gantt-scroll gantt-top-scroll"
+          ref={topScrollRef}
+          tabIndex={0}
+          aria-label={`Horizontal timeline scrollbar for ${year.yearName}`}
+          onScroll={(event) => {
+            const chart = chartScrollRef.current;
+            if (chart && chart.scrollLeft !== event.currentTarget.scrollLeft) {
+              chart.scrollLeft = event.currentTarget.scrollLeft;
+            }
+          }}
+        >
+          <div className="gantt-scroll-track" aria-hidden="true" />
+        </div>
+      </div>
+      <div
+        className="gantt-scroll gantt-body-scroll"
+        ref={chartScrollRef}
+        onScroll={(event) => {
+          const topScroll = topScrollRef.current;
+          if (topScroll && topScroll.scrollLeft !== event.currentTarget.scrollLeft) {
+            topScroll.scrollLeft = event.currentTarget.scrollLeft;
+          }
+        }}
+      >
         <div className="gantt-canvas">
           <div className="axis-label sticky-cell">
             <span>OUTPUTS & PHASES</span>
