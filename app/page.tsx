@@ -180,7 +180,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "wip-feedback",
-            title: "Await supervisor feedback",
+            title: "Supervisor feedback",
             short: "Feedback",
             start: "2027-01-15",
             end: "2027-01-31",
@@ -198,8 +198,8 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "wip-finalise",
-            title: "Revise & finalise both submissions",
-            short: "Finalise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
             start: "2027-02-01",
             end: "2027-02-07",
             category: "revision",
@@ -254,12 +254,22 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "hri-paper-iterate",
-            title: "Supervisor iteration & HRI manuscript finalisation",
-            short: "HRI finalisation",
+            title: "Supervisor feedback",
+            short: "Feedback",
             start: "2027-04-01",
+            end: "2027-04-30",
+            category: "feedback",
+            detail: "Receive structured supervisor feedback on the complete Study 1 manuscript while Prototype 1 is being built and deployed.",
+            meta: ["Parallel workstream", "Target: HRI 2028"],
+          },
+          {
+            id: "hri-paper-finalise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
+            start: "2027-05-01",
             end: "2027-05-31",
             category: "revision",
-            detail: "Iterate the complete Study 1 paper with supervisors while the first two prototypes are being built and deployed.",
+            detail: "Apply supervisor feedback, refine the complete Study 1 argument and finalise the HRI 2028 submission.",
             meta: ["Parallel workstream", "Target: HRI 2028"],
           },
         ],
@@ -346,13 +356,22 @@ const YEARS: YearPlan[] = [
             meta: ["Cross-prototype comparison", "Behaviour + interview evidence"],
           },
           {
-            id: "s2-chi-finalise",
-            title: "Supervisor revision & CHI finalisation",
-            short: "CHI finalisation",
+            id: "s2-chi-feedback",
+            title: "Supervisor feedback",
+            short: "Feedback",
             start: "2027-08-01",
+            end: "2027-08-14",
+            category: "feedback",
+            detail: "Reserve the first two August planning weeks for supervisors to review the complete comparative Study 2 manuscript.",
+          },
+          {
+            id: "s2-chi-finalise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
+            start: "2027-08-15",
             end: "2027-08-31",
             category: "revision",
-            detail: "Revise the empirical paper with supervisors and prepare the full-paper submission package.",
+            detail: "Apply supervisor feedback and prepare the final CHI full-paper submission package during the final two August planning weeks.",
           },
           {
             id: "s3-ethics",
@@ -429,7 +448,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "design-paper-feedback",
-            title: "Await supervisor feedback",
+            title: "Supervisor feedback",
             short: "Feedback",
             start: "2027-12-01",
             end: "2027-12-14",
@@ -438,8 +457,8 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "design-paper-revise",
-            title: "Revise & prepare submission",
-            short: "Revise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
             start: "2027-12-15",
             end: "2028-01-07",
             category: "revision",
@@ -450,7 +469,7 @@ const YEARS: YearPlan[] = [
       {
         id: "study3-empirical",
         eyebrow: "Study 3 · Comparative field deployment",
-        title: "Robot roles across citizens & worker groups",
+        title: "Robot roles across different citizen groups",
         venue: "CHI / HRI 2029",
         tasks: [
           {
@@ -485,8 +504,8 @@ const YEARS: YearPlan[] = [
             id: "industry-placement",
             title: "Candidate 3-month industry placement",
             short: "Industry placement",
-            start: "2028-03-01",
-            end: "2028-05-31",
+            start: "2028-04-01",
+            end: "2028-06-30",
             category: "internship",
             detail: "Provisional collaboration window with Microsoft Research Cambridge or Nokia Bell Labs Cambridge to co-develop and deploy the AI-enabled prototype; a visiting-PhD arrangement is an alternative.",
             meta: ["Timing to confirm", "Partner to confirm", "Runs alongside build + deployment"],
@@ -494,10 +513,10 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "s3-ai-build",
-            title: "Develop full AI-enabled prototype",
-            short: "AI prototype",
+            title: "AI development",
+            short: "AI development",
             start: "2028-02-15",
-            end: "2028-04-30",
+            end: "2028-05-14",
             category: "making",
             detail: "Develop one Study 2 case into a more functional AI-enabled robot for comparative deployment across citizens and workers.",
             meta: ["Candidate case: BinBot", "Functional AI version"],
@@ -506,8 +525,8 @@ const YEARS: YearPlan[] = [
             id: "s3-experiment",
             title: "Field experiment & data collection",
             short: "Field study",
-            start: "2028-05-01",
-            end: "2028-05-31",
+            start: "2028-05-15",
+            end: "2028-06-14",
             category: "fieldwork",
             detail: "Observe naturally occurring encounters, run short post-encounter interviews and convene a mixed-group focus group using selected video clips.",
             meta: ["Citizens + workers", "Video interaction analysis", "Mixed focus group"],
@@ -516,20 +535,30 @@ const YEARS: YearPlan[] = [
             id: "s3-analysis",
             title: "Analysis & first manuscript draft",
             short: "Analysis + draft",
-            start: "2028-06-01",
-            end: "2028-06-30",
+            start: "2028-06-15",
+            end: "2028-07-14",
             category: "writing",
             detail: "Combine video interaction analysis, reflexive thematic analysis and cross-group comparison into the first empirical paper draft.",
           },
           {
-            id: "s3-finalise",
-            title: "Revise with industry host & supervisors",
-            short: "Co-revision",
-            start: "2028-07-01",
+            id: "s3-feedback",
+            title: "Supervisor feedback",
+            short: "Feedback",
+            start: "2028-07-15",
             end: "2028-07-31",
+            category: "feedback",
+            detail: "Receive consolidated feedback from the supervisory team and industry host on the complete Study 3 manuscript.",
+            meta: ["Industry host + supervisors", "Two planning weeks"],
+          },
+          {
+            id: "s3-finalise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
+            start: "2028-08-01",
+            end: "2028-08-14",
             category: "revision",
-            detail: "Revise and finalise the paper with the internship host and supervisory team. The proposal chronology supports a CHI/HRI 2029 target.",
-            meta: ["Joint revision", "Chronology-aligned venue year"],
+            detail: "Apply the consolidated feedback and finalise the empirical paper during the first two August planning weeks.",
+            meta: ["Target: CHI / HRI 2029", "Two planning weeks"],
           },
           {
             id: "september-leave-2",
@@ -561,7 +590,7 @@ const YEARS: YearPlan[] = [
     groups: [
       {
         id: "robot-citizens-journal",
-        eyebrow: "Study 3 · Synthesis / framework",
+        eyebrow: "Study 4 · Synthesis / framework",
         title: "Defining “robot citizens” across three studies",
         venue: "PACMHCI CSCW",
         tasks: [
@@ -576,13 +605,22 @@ const YEARS: YearPlan[] = [
             meta: ["Empirical + theoretical synthesis", "Robot citizens framework"],
           },
           {
-            id: "framework-finalise",
-            title: "Revise & submit journal paper",
-            short: "Revise + submit",
+            id: "framework-feedback",
+            title: "Supervisor feedback",
+            short: "Feedback",
             start: "2029-01-01",
+            end: "2029-01-14",
+            category: "feedback",
+            detail: "Reserve the first two January planning weeks for supervisor review of the complete cross-study synthesis and framework.",
+          },
+          {
+            id: "framework-finalise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
+            start: "2029-01-15",
             end: "2029-01-31",
             category: "revision",
-            detail: "Complete supervisor revisions and prepare the PACMHCI CSCW submission. The exact track deadline remains to be confirmed.",
+            detail: "Apply supervisor feedback and prepare the PACMHCI CSCW submission. The exact track deadline remains to be confirmed.",
           },
           {
             id: "china-leave-3",
@@ -622,6 +660,24 @@ const YEARS: YearPlan[] = [
             detail: "Create a critical public installation that makes the sensing, image-capture and data-collection risks of urban AI robots tangible to citizens.",
             meta: ["Privacy & surveillance", "Critical counterpoint to the PhD"],
           },
+          {
+            id: "side-feedback",
+            title: "Supervisor feedback",
+            short: "Feedback",
+            start: "2029-04-08",
+            end: "2029-04-21",
+            category: "feedback",
+            detail: "Review the side-study framing, evidence and venue fit with supervisors after the eight-week development window.",
+          },
+          {
+            id: "side-finalise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
+            start: "2029-04-22",
+            end: "2029-05-07",
+            category: "revision",
+            detail: "Apply feedback and prepare the short paper, art paper or demo submission package.",
+          },
         ],
       },
       {
@@ -652,12 +708,21 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "thesis-feedback",
-            title: "Supervisor revision & thesis finalisation",
-            short: "Final revisions",
+            title: "Supervisor feedback",
+            short: "Feedback",
             start: "2029-08-01",
+            end: "2029-08-31",
+            category: "feedback",
+            detail: "Reserve August for structured supervisor feedback on the complete thesis draft and its contribution claims.",
+          },
+          {
+            id: "thesis-finalise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
+            start: "2029-09-01",
             end: "2029-09-27",
             category: "revision",
-            detail: "Revise the complete thesis with supervisors, complete quality checks and prepare the final submission files.",
+            detail: "Apply supervisor feedback, complete quality checks and prepare the final submission files before the 28 September deadline.",
           },
           {
             id: "viva-practice",
@@ -767,7 +832,7 @@ function mergeTask(task: Task, edits: Edits): Task {
   return { ...task, ...(edits[task.id] ?? {}) };
 }
 
-function MarkIcon({ type }: { type: "deadline" | "target" | "edit" | "print" }) {
+function MarkIcon({ type }: { type: "edit" | "print" }) {
   return <span className={`mark-icon mark-${type}`} aria-hidden="true" />;
 }
 
@@ -876,9 +941,9 @@ function YearGantt({
           </div>
           <div className="deadline-rail">
             <MonthGrid year={year} />
-            {year.deadlines.map((deadline) => (
+            {year.deadlines.map((deadline, deadlineIndex) => (
               <div
-                className={`deadline-pin ${deadline.kind}`}
+                className={`deadline-pin ${deadline.kind} lane-${deadlineIndex % 2}`}
                 key={`${deadline.date}-${deadline.label}`}
                 style={{ left: `${position(deadline.date, year.start, year.end)}%` }}
               >
@@ -1265,52 +1330,11 @@ function PlanEditor({
   );
 }
 
-function PlanningNotes({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="drawer-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-      <aside className="task-drawer notes-drawer" role="dialog" aria-modal="true" aria-labelledby="notes-title">
-        <button className="drawer-close" onClick={onClose} aria-label="Close planning notes">×</button>
-        <span className="notes-count">03</span>
-        <p className="drawer-kicker">PLANNING NOTES</p>
-        <h2 id="notes-title">Details to confirm before final sign-off</h2>
-        <ol className="confirmation-list">
-          <li>
-            <span>01</span>
-            <div>
-              <strong>DIS WIP year</strong>
-              <p>The detailed schedule and proposal say DIS 2027; the overview request once says DIS 2028 WIP. This chart uses DIS 2027.</p>
-            </div>
-          </li>
-          <li>
-            <span>02</span>
-            <div>
-              <strong>Study 3 empirical paper</strong>
-              <p>The proposal and overall output list support CHI/HRI 2029. The Year 2 paragraph says CHI 2028, which is not compatible with a July 2028 finalisation. This chart uses CHI/HRI 2029.</p>
-            </div>
-          </li>
-          <li>
-            <span>03</span>
-            <div>
-              <strong>Side-study venue year</strong>
-              <p>The proposal and overall output list support CHI/HRI 2030; the Year 3 paragraph says 2029. This chart uses 2030 and keeps the format open: short paper, art paper or demo.</p>
-            </div>
-          </li>
-        </ol>
-        <div className="deadline-explainer">
-          <MarkIcon type="deadline" />
-          <p><strong>Fixed dates</strong> are only used where an exact date was provided: Annual Progression 1 and 2, and thesis submission. Conference markers are labelled as target windows until the relevant CFP confirms an exact date.</p>
-        </div>
-      </aside>
-    </div>
-  );
-}
-
 export default function Home() {
   const [view, setView] = useState<"all" | YearPlan["id"]>("y1");
   const [selected, setSelected] = useState<Selected | null>(null);
   const [editing, setEditing] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
-  const [notesOpen, setNotesOpen] = useState(false);
   const [edits, setEdits] = useState<Edits>({});
   const [canEdit, setCanEdit] = useState(false);
   const [syncState, setSyncState] = useState<"loading" | "ready" | "saving" | "error">("loading");
@@ -1346,7 +1370,6 @@ export default function Home() {
       if (event.key === "Escape") {
         setSelected(null);
         setEditorOpen(false);
-        setNotesOpen(false);
       }
     }
     window.addEventListener("keydown", closeOnEscape);
@@ -1430,9 +1453,6 @@ export default function Home() {
           </div>
         </a>
         <div className="header-actions">
-          <button className="text-button confirm-button" onClick={() => setNotesOpen(true)}>
-            <span>3</span> details to confirm
-          </button>
           {canEdit && (
             <>
               <span className={`sync-pill ${syncState}`} role="status">
@@ -1462,7 +1482,7 @@ export default function Home() {
 
       <section className="intro" aria-labelledby="page-title">
         <div className="intro-copy">
-          <p className="overline">YEAR 1 PROJECT APPROVAL · WORKING PLAN</p>
+          <a className="overline intro-plan-link" href="#timeline">RESEARCH PLAN · INTERACTIVE — CLICK TO EXPLORE</a>
           <h1 id="page-title">
             Social roles of object-based urban AI robots:
             <span>A designerly and citizen-centred inquiry</span>
@@ -1470,10 +1490,10 @@ export default function Home() {
         </div>
         <div className="research-question">
           <span>OVERALL RESEARCH QUESTION</span>
-          <p>How do human citizens imagine, interpret and negotiate the social roles of object-based urban AI robots in public spaces?</p>
+          <p>How do human citizens imagine, interpret, and negotiate the social roles of object-based urban AI robots that inhabit public spaces, and how might they regard them as “robot citizens”?</p>
         </div>
         <div className="project-facts">
-          <div><strong>03</strong><span>formal studies</span></div>
+          <div><strong>04</strong><span>formal studies</span></div>
           <div><strong>08</strong><span>planned outputs</span></div>
           <div><strong>03</strong><span>academic years</span></div>
         </div>
@@ -1526,32 +1546,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="journey-summary" aria-label="Research contribution pathway">
-        <div>
-          <span>01</span>
-          <p>IMAGINE</p>
-          <strong>What else could urban robots be?</strong>
-        </div>
-        <i>→</i>
-        <div>
-          <span>02</span>
-          <p>ENCOUNTER</p>
-          <strong>How are social roles negotiated in public?</strong>
-        </div>
-        <i>→</i>
-        <div>
-          <span>03</span>
-          <p>RELATE</p>
-          <strong>How do roles shift across citizen groups?</strong>
-        </div>
-        <i>→</i>
-        <div>
-          <span>04</span>
-          <p>SYNTHESISE</p>
-          <strong>When might a robot become a citizen?</strong>
-        </div>
-      </section>
-
       <footer>
         <p>Source · <strong>Year 1 Project Approval</strong>, 01 Sep 2026</p>
         <p>Working timeline · conference dates marked TBC until confirmed</p>
@@ -1574,7 +1568,6 @@ export default function Home() {
           onResetTask={resetTask}
         />
       )}
-      {notesOpen && <PlanningNotes onClose={() => setNotesOpen(false)} />}
     </main>
   );
 }

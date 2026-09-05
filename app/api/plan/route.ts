@@ -11,7 +11,7 @@ const CATEGORIES = new Set([
   "internship",
   "leave",
 ]);
-const PLAN_VERSION = 2;
+const PLAN_VERSION = 3;
 
 type RuntimeEnv = {
   DB?: D1Database;
