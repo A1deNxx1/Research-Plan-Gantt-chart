@@ -11,6 +11,7 @@ const CATEGORIES = new Set([
   "internship",
   "leave",
 ]);
+const PLAN_VERSION = 2;
 
 type RuntimeEnv = {
   DB?: D1Database;
@@ -74,7 +75,8 @@ function validateEdit(value: unknown): TaskEdit | null {
 export async function GET(request: Request) {
   try {
     const result = await getDatabase()
-      .prepare("SELECT task_id, payload FROM plan_edits ORDER BY task_id")
+      .prepare("SELECT task_id, payload FROM plan_edits WHERE plan_version = ? ORDER BY task_id")
+      .bind(PLAN_VERSION)
       .all<{ task_id: string; payload: string }>();
     const edits: Record<string, TaskEdit> = {};
 
@@ -107,14 +109,15 @@ export async function PUT(request: Request) {
 
     await getDatabase()
       .prepare(`
-        INSERT INTO plan_edits (task_id, payload, updated_at, updated_by)
-        VALUES (?, ?, CURRENT_TIMESTAMP, ?)
+        INSERT INTO plan_edits (task_id, payload, updated_at, updated_by, plan_version)
+        VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)
         ON CONFLICT(task_id) DO UPDATE SET
           payload = excluded.payload,
           updated_at = CURRENT_TIMESTAMP,
-          updated_by = excluded.updated_by
+          updated_by = excluded.updated_by,
+          plan_version = excluded.plan_version
       `)
-      .bind(taskId, JSON.stringify(edit), getEmail(request))
+      .bind(taskId, JSON.stringify(edit), getEmail(request), PLAN_VERSION)
       .run();
 
     return json({ ok: true, taskId, edit });

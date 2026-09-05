@@ -1,0 +1,1 @@
+ALTER TABLE `plan_edits` ADD `plan_version` integer DEFAULT 1 NOT NULL;

@@ -8,6 +8,13 @@
       "when": 1788621308619,
       "tag": "0000_fancy_dracula",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788622993058,
+      "tag": "0001_shiny_stranger",
+      "breakpoints": true
     }
   ]
 }

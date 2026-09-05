@@ -133,8 +133,8 @@ const YEARS: YearPlan[] = [
             id: "s1-ethics",
             title: "Study 1 ethics review",
             short: "Ethics",
-            start: "2026-09-14",
-            end: "2026-10-11",
+            start: "2026-09-15",
+            end: "2026-10-14",
             category: "ethics",
             detail: "Submit in the third week of September and reserve a full four-week review window before fieldwork.",
             meta: ["4-week review window", "Precondition for workshops"],
@@ -143,7 +143,7 @@ const YEARS: YearPlan[] = [
             id: "s1-recruit",
             title: "Participant recruitment",
             short: "Recruitment",
-            start: "2026-10-19",
+            start: "2026-10-15",
             end: "2027-02-28",
             category: "recruitment",
             detail: "Recruit 24 Newcastle participants aged 15+, aiming for three groups of eight with varied ages, genders and occupations.",
@@ -153,8 +153,8 @@ const YEARS: YearPlan[] = [
             id: "s1-workshops-12",
             title: "Workshops 1 & 2",
             short: "2 workshops",
-            start: "2026-11-16",
-            end: "2026-12-13",
+            start: "2026-11-15",
+            end: "2026-12-14",
             category: "fieldwork",
             detail: "Two co-speculative workshops using BinBot, BenchBot and PlanterBot scenarios, concept cards, paper models, GenAI visualisation and role-play.",
             meta: ["Audio + video", "Storyboards & role cards", "Bodystorming / enactment"],
@@ -163,8 +163,8 @@ const YEARS: YearPlan[] = [
             id: "dis-wip-draft",
             title: "DIS WIP paper write-up",
             short: "WIP write-up",
-            start: "2026-12-14",
-            end: "2027-01-10",
+            start: "2026-12-15",
+            end: "2027-01-14",
             category: "writing",
             detail: "Write the work-in-progress paper from the first two workshops. The fourth week of December is protected as Christmas leave.",
             meta: ["Includes Workshops 1 & 2", "Christmas week excluded"],
@@ -173,8 +173,8 @@ const YEARS: YearPlan[] = [
             id: "christmas-2026",
             title: "Christmas break",
             short: "Christmas",
-            start: "2026-12-21",
-            end: "2026-12-27",
+            start: "2026-12-22",
+            end: "2026-12-31",
             category: "leave",
             detail: "Protected Christmas week. No planned research activity or supervisor turnaround is assumed.",
           },
@@ -182,7 +182,7 @@ const YEARS: YearPlan[] = [
             id: "wip-feedback",
             title: "Await supervisor feedback",
             short: "Feedback",
-            start: "2027-01-11",
+            start: "2027-01-15",
             end: "2027-01-31",
             category: "feedback",
             detail: "Supervisor reading and response window for the WIP draft, shown separately so waiting time is visible in the plan.",
@@ -191,8 +191,8 @@ const YEARS: YearPlan[] = [
             id: "dc-draft",
             title: "Doctoral Consortium write-up",
             short: "DC write-up",
-            start: "2027-01-11",
-            end: "2027-02-07",
+            start: "2027-01-15",
+            end: "2027-01-31",
             category: "writing",
             detail: "Prepare the DIS Doctoral Consortium submission in parallel with the WIP feedback period.",
           },
@@ -358,8 +358,8 @@ const YEARS: YearPlan[] = [
             id: "s3-ethics",
             title: "Study 3 ethics review",
             short: "Study 3 ethics",
-            start: "2027-09-06",
-            end: "2027-10-03",
+            start: "2027-09-08",
+            end: "2027-10-07",
             category: "ethics",
             detail: "Submit in the second week of September and reserve a four-week review window for the comparative field study.",
             meta: ["4-week review window", "Continues into Year 2"],
@@ -368,8 +368,8 @@ const YEARS: YearPlan[] = [
             id: "september-leave-1",
             title: "Annual leave",
             short: "Leave",
-            start: "2027-09-13",
-            end: "2027-10-03",
+            start: "2027-09-08",
+            end: "2027-09-30",
             category: "leave",
             detail: "Three weeks of annual leave after the target CHI submission week. Ethics review continues in parallel.",
           },
@@ -535,7 +535,7 @@ const YEARS: YearPlan[] = [
             id: "september-leave-2",
             title: "Annual leave",
             short: "Leave",
-            start: "2028-09-10",
+            start: "2028-09-08",
             end: "2028-09-30",
             category: "leave",
             detail: "Three protected weeks of annual leave after Annual Progression 2 and the provisional submission window.",
@@ -617,7 +617,7 @@ const YEARS: YearPlan[] = [
             title: "Develop & make the public artwork",
             short: "Art provocation",
             start: "2029-02-08",
-            end: "2029-04-14",
+            end: "2029-04-07",
             category: "making",
             detail: "Create a critical public installation that makes the sensing, image-capture and data-collection risks of urban AI robots tangible to citizens.",
             meta: ["Privacy & surveillance", "Critical counterpoint to the PhD"],
@@ -673,8 +673,6 @@ const YEARS: YearPlan[] = [
     ],
   },
 ];
-
-const STORAGE_KEY = "robot-citizens-gantt-edits-v1";
 
 function asTime(value: string) {
   return Date.parse(`${value}T00:00:00Z`);
@@ -1321,14 +1319,6 @@ export default function Home() {
     let active = true;
 
     async function loadOnlinePlan() {
-      let localEdits: Edits = {};
-      try {
-        const stored = window.localStorage.getItem(STORAGE_KEY);
-        if (stored) localEdits = JSON.parse(stored) as Edits;
-      } catch {
-        // Old local edits are optional migration data only.
-      }
-
       try {
         const response = await fetch("/api/plan", { cache: "no-store" });
         const data = await response.json() as { edits?: Edits; canEdit?: boolean; error?: string };
@@ -1338,24 +1328,7 @@ export default function Home() {
         const onlineEdits = data.edits ?? {};
         const owner = Boolean(data.canEdit);
         setCanEdit(owner);
-
-        if (owner && Object.keys(onlineEdits).length === 0 && Object.keys(localEdits).length > 0) {
-          for (const [taskId, edit] of Object.entries(localEdits)) {
-            const migration = await fetch("/api/plan", {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ taskId, edit }),
-            });
-            if (!migration.ok) throw new Error("Unable to move local edits online.");
-          }
-          if (!active) return;
-          setEdits(localEdits);
-          window.localStorage.removeItem(STORAGE_KEY);
-        } else {
-          setEdits(onlineEdits);
-          if (owner) window.localStorage.removeItem(STORAGE_KEY);
-        }
-
+        setEdits(onlineEdits);
         setSyncState("ready");
       } catch {
         if (!active) return;
