@@ -67,7 +67,7 @@ const CATEGORY_LABELS: Record<Category, string> = {
   feedback: "Supervisor feedback",
   revision: "Revision & finalisation",
   internship: "Industry collaboration",
-  leave: "Leave / protected break",
+  leave: "Annual leave",
 };
 
 const PALETTES: Record<YearPlan["id"], Record<Category, string>> = {
@@ -1046,7 +1046,6 @@ function YearGantt({
 
               {group.tasks.map((originalTask) => {
                 const task = mergeTask(originalTask, edits);
-                const width = parseFloat(taskPosition(task, year).width);
                 const span = timelineWeekSpan(task, year);
                 return (
                   <div className="task-pair" key={task.id}>
@@ -1081,10 +1080,7 @@ function YearGantt({
                         onClick={() => onTask(task, group, year)}
                         aria-label={`${task.title}, ${formatDate(task.start)} to ${formatDate(task.end)}. Open details.`}
                         title={`${task.title} · ${formatDate(task.start)} — ${formatDate(task.end)}`}
-                      >
-                        <span>{width > 5 ? `${task.short ?? task.title} · ${span}w` : `${span}w`}</span>
-                        <b aria-hidden="true">↗</b>
-                      </button>
+                      />
                     </div>
                   </div>
                 );

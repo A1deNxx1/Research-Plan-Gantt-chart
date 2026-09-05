@@ -1059,15 +1059,11 @@ main {
   top: 10px;
   height: 34px;
   min-width: 8px;
-  padding: 0 8px;
+  padding: 0;
   border: 0;
   border-radius: 4px;
   color: white;
   box-shadow: 0 3px 8px rgba(38, 38, 33, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
   overflow: hidden;
   transition: filter 150ms ease, transform 150ms ease, box-shadow 150ms ease;
 }
@@ -1088,21 +1084,6 @@ main {
 .task-bar.edit-ready {
   outline: 2px solid rgba(23, 103, 109, 0.34);
   outline-offset: 2px;
-}
-
-.task-bar span {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.task-bar b {
-  font-size: 10px;
-  font-weight: 400;
-  opacity: 0.72;
 }
 
 .journey-summary {
@@ -1978,7 +1959,4 @@ footer p {
     height: 17px;
   }
 
-  .task-bar span {
-    font-size: 5.5pt;
-  }
 }
