@@ -915,8 +915,10 @@ function YearGantt({
   function moveTimeline(nextPosition: number, smooth = false) {
     const chart = chartScrollRef.current;
     if (!chart) return;
+    const boundedPosition = Math.max(0, Math.min(scrollMax, nextPosition));
+    setScrollLeft(boundedPosition);
     chart.scrollTo({
-      left: Math.max(0, Math.min(scrollMax, nextPosition)),
+      left: boundedPosition,
       behavior: smooth ? "smooth" : "auto",
     });
   }
@@ -962,6 +964,7 @@ function YearGantt({
             value={Math.min(scrollLeft, scrollMax)}
             disabled={scrollMax <= 0}
             aria-label={`Drag to browse the full ${year.yearName} timeline`}
+            onInput={(event) => moveTimeline(Number(event.currentTarget.value))}
             onChange={(event) => moveTimeline(Number(event.currentTarget.value))}
           />
           <button

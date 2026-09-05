@@ -22,10 +22,14 @@
 
 html {
   scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
+  max-width: 100%;
+  overflow-x: hidden;
   background: var(--paper);
   color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
@@ -56,6 +60,8 @@ a:focus-visible {
 
 main {
   min-height: 100vh;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .site-header {
@@ -356,6 +362,7 @@ main {
 .timeline-section {
   background: var(--white);
   padding: 54px 0 88px;
+  overflow-x: clip;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -502,6 +509,8 @@ main {
 
 .year-card {
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
   border: 1px solid var(--line);
   background: var(--white);
   box-shadow: 0 12px 40px rgba(40, 37, 31, 0.06);
@@ -585,9 +594,13 @@ main {
 }
 
 .gantt-scroll {
+  width: 100%;
+  min-width: 0;
   max-width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
   scrollbar-color: var(--year-accent) var(--paper-deep);
 }
 
@@ -614,6 +627,7 @@ main {
 }
 
 .timeline-scroll-tools {
+  min-width: 0;
   display: grid;
   grid-template-columns: 38px minmax(160px, 1fr) 38px;
   align-items: center;
@@ -644,6 +658,7 @@ main {
 
 .timeline-scroll-range {
   width: 100%;
+  min-width: 0;
   height: 30px;
   margin: 0;
   appearance: none;
