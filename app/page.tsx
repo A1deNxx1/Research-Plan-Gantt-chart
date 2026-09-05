@@ -1,0 +1,1228 @@
+"use client";
+
+import type { CSSProperties, FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+type Category =
+  | "ethics"
+  | "recruitment"
+  | "making"
+  | "fieldwork"
+  | "writing"
+  | "feedback"
+  | "revision"
+  | "internship"
+  | "leave";
+
+type Task = {
+  id: string;
+  title: string;
+  short?: string;
+  start: string;
+  end: string;
+  category: Category;
+  detail: string;
+  meta?: string[];
+  provisional?: boolean;
+};
+
+type OutputGroup = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  venue: string;
+  tasks: Task[];
+};
+
+type Deadline = {
+  date: string;
+  label: string;
+  kind: "hard" | "target";
+};
+
+type YearPlan = {
+  id: "y1" | "y2" | "y3";
+  label: string;
+  yearName: string;
+  dates: string;
+  start: string;
+  end: string;
+  accent: string;
+  soft: string;
+  ink: string;
+  groups: OutputGroup[];
+  deadlines: Deadline[];
+};
+
+type TaskEdit = Partial<Pick<Task, "title" | "start" | "end" | "detail">>;
+type Edits = Record<string, TaskEdit>;
+
+const CATEGORY_LABELS: Record<Category, string> = {
+  ethics: "Ethics approval",
+  recruitment: "Recruitment",
+  making: "Design, making & development",
+  fieldwork: "Experiment & data collection",
+  writing: "Analysis & writing",
+  feedback: "Supervisor feedback",
+  revision: "Revision & finalisation",
+  internship: "Industry collaboration",
+  leave: "Leave / protected break",
+};
+
+const PALETTES: Record<YearPlan["id"], Record<Category, string>> = {
+  y1: {
+    ethics: "#b96f45",
+    recruitment: "#d08d5f",
+    making: "#d39b45",
+    fieldwork: "#7f9871",
+    writing: "#477e78",
+    feedback: "#667c9e",
+    revision: "#785b7d",
+    internship: "#a86259",
+    leave: "#aaa39a",
+  },
+  y2: {
+    ethics: "#388184",
+    recruitment: "#4b9691",
+    making: "#3d8da2",
+    fieldwork: "#55a4a6",
+    writing: "#3e75a2",
+    feedback: "#5f70aa",
+    revision: "#555697",
+    internship: "#2f6a73",
+    leave: "#92a0a1",
+  },
+  y3: {
+    ethics: "#82658f",
+    recruitment: "#997196",
+    making: "#9669a0",
+    fieldwork: "#ad6c8b",
+    writing: "#725b8a",
+    feedback: "#8770a0",
+    revision: "#624b78",
+    internship: "#775d83",
+    leave: "#a499a5",
+  },
+};
+
+const YEARS: YearPlan[] = [
+  {
+    id: "y1",
+    label: "2026/27",
+    yearName: "Year 1",
+    dates: "Sep 2026 — Sep 2027",
+    start: "2026-09-01",
+    end: "2027-10-01",
+    accent: "#a75532",
+    soft: "#f8ede6",
+    ink: "#5f2f1f",
+    deadlines: [
+      { date: "2027-02-12", label: "DIS WIP + DC target week", kind: "target" },
+      { date: "2027-09-01", label: "Annual Progression 1", kind: "hard" },
+      { date: "2027-09-08", label: "CHI full paper target week", kind: "target" },
+    ],
+    groups: [
+      {
+        id: "dis-wip",
+        eyebrow: "Study 1 · Early output",
+        title: "DIS 2027 Work in Progress + Doctoral Consortium",
+        venue: "DIS 2027",
+        tasks: [
+          {
+            id: "s1-ethics",
+            title: "Study 1 ethics review",
+            short: "Ethics",
+            start: "2026-09-14",
+            end: "2026-10-11",
+            category: "ethics",
+            detail: "Submit in the third week of September and reserve a full four-week review window before fieldwork.",
+            meta: ["4-week review window", "Precondition for workshops"],
+          },
+          {
+            id: "s1-recruit",
+            title: "Participant recruitment",
+            short: "Recruitment",
+            start: "2026-10-19",
+            end: "2027-02-28",
+            category: "recruitment",
+            detail: "Recruit 24 Newcastle participants aged 15+, aiming for three groups of eight with varied ages, genders and occupations.",
+            meta: ["24 participants", "3 workshops × 8 people", "No prior AI knowledge required"],
+          },
+          {
+            id: "s1-workshops-12",
+            title: "Workshops 1 & 2",
+            short: "2 workshops",
+            start: "2026-11-16",
+            end: "2026-12-13",
+            category: "fieldwork",
+            detail: "Two co-speculative workshops using BinBot, BenchBot and PlanterBot scenarios, concept cards, paper models, GenAI visualisation and role-play.",
+            meta: ["Audio + video", "Storyboards & role cards", "Bodystorming / enactment"],
+          },
+          {
+            id: "dis-wip-draft",
+            title: "DIS WIP paper write-up",
+            short: "WIP write-up",
+            start: "2026-12-14",
+            end: "2027-01-10",
+            category: "writing",
+            detail: "Write the work-in-progress paper from the first two workshops. The fourth week of December is protected as Christmas leave.",
+            meta: ["Includes Workshops 1 & 2", "Christmas week excluded"],
+          },
+          {
+            id: "christmas-2026",
+            title: "Christmas break",
+            short: "Christmas",
+            start: "2026-12-21",
+            end: "2026-12-27",
+            category: "leave",
+            detail: "Protected Christmas week. No planned research activity or supervisor turnaround is assumed.",
+          },
+          {
+            id: "wip-feedback",
+            title: "Await supervisor feedback",
+            short: "Feedback",
+            start: "2027-01-11",
+            end: "2027-01-31",
+            category: "feedback",
+            detail: "Supervisor reading and response window for the WIP draft, shown separately so waiting time is visible in the plan.",
+          },
+          {
+            id: "dc-draft",
+            title: "Doctoral Consortium write-up",
+            short: "DC write-up",
+            start: "2027-01-11",
+            end: "2027-02-07",
+            category: "writing",
+            detail: "Prepare the DIS Doctoral Consortium submission in parallel with the WIP feedback period.",
+          },
+          {
+            id: "wip-finalise",
+            title: "Revise & finalise both submissions",
+            short: "Finalise",
+            start: "2027-02-01",
+            end: "2027-02-07",
+            category: "revision",
+            detail: "Apply supervisor feedback, tighten claims and evidence, and prepare the WIP and Doctoral Consortium files for submission.",
+          },
+          {
+            id: "china-leave-1",
+            title: "Annual leave · China",
+            short: "Leave",
+            start: "2027-02-15",
+            end: "2027-02-28",
+            category: "leave",
+            detail: "Two weeks of annual leave in China. Study 2 ethics review continues in parallel, but no active fieldwork is planned.",
+          },
+        ],
+      },
+      {
+        id: "hri-full-study",
+        eyebrow: "Study 1 · Complete research",
+        title: "Imagined design spaces of urban robot roles",
+        venue: "HRI 2028 · alternative DIS 2028",
+        tasks: [
+          {
+            id: "s1-workshop-3",
+            title: "Workshop 3",
+            short: "Workshop 3",
+            start: "2027-03-01",
+            end: "2027-03-07",
+            category: "fieldwork",
+            detail: "Run the third comparative workshop with the same core scenarios and a rotated presentation order.",
+            meta: ["Final Study 1 workshop", "Comparable structure across sessions"],
+          },
+          {
+            id: "s1-synthesis-draft",
+            title: "Analyse all workshops + full-study draft",
+            short: "Synthesis + draft",
+            start: "2027-03-01",
+            end: "2027-03-21",
+            category: "writing",
+            detail: "Analyse new data alongside Workshops 1–2 and the DIS WIP, using reflexive thematic analysis to produce the first full-study manuscript.",
+            meta: ["Reflexive thematic analysis", "Audio, video, artefacts & notes"],
+          },
+          {
+            id: "s1-to-prototype-ideas",
+            title: "Translate findings into 3 prototype concepts",
+            short: "3 concepts",
+            start: "2027-03-22",
+            end: "2027-03-31",
+            category: "making",
+            detail: "Use Study 1 findings to choose three promising social-role concepts and define a build and deployment approach for each.",
+            meta: ["Decision gate", "Feeds Study 2"],
+          },
+          {
+            id: "hri-paper-iterate",
+            title: "Supervisor iteration & HRI manuscript finalisation",
+            short: "HRI finalisation",
+            start: "2027-04-01",
+            end: "2027-05-31",
+            category: "revision",
+            detail: "Iterate the complete Study 1 paper with supervisors while the first two prototypes are being built and deployed.",
+            meta: ["Parallel workstream", "Target: HRI 2028"],
+          },
+        ],
+      },
+      {
+        id: "study2-empirical",
+        eyebrow: "Study 2 · Comparative public deployments",
+        title: "Three object-based urban robot prototypes",
+        venue: "CHI 2028",
+        tasks: [
+          {
+            id: "s2-ethics",
+            title: "Study 2 ethics review",
+            short: "Ethics",
+            start: "2027-02-15",
+            end: "2027-03-14",
+            category: "ethics",
+            detail: "Submit before leave and reserve four weeks for review. Public deployment must not begin until approval is in place.",
+            meta: ["4-week review window", "Public-space deployment"],
+          },
+          {
+            id: "prototype-1-build",
+            title: "Prototype 1 · design & build",
+            short: "Build 1",
+            start: "2027-04-01",
+            end: "2027-04-21",
+            category: "making",
+            detail: "Build the first lightweight research prototype or urban probe, using Wizard-of-Oz control where appropriate.",
+          },
+          {
+            id: "prototype-1-field",
+            title: "Prototype 1 · public deployment",
+            short: "Deploy 1",
+            start: "2027-04-22",
+            end: "2027-04-30",
+            category: "fieldwork",
+            detail: "One-week signposted public deployment with observation, two-camera video, short voluntary interviews and researcher field notes.",
+            meta: ["Approx. 20–30 interactants", "5–10 min interviews", "2 hours each afternoon"],
+          },
+          {
+            id: "prototype-2-build",
+            title: "Prototype 2 · design & build",
+            short: "Build 2",
+            start: "2027-05-01",
+            end: "2027-05-21",
+            category: "making",
+            detail: "Build the second lightweight prototype, documenting design decisions and the making process for the later design-research output.",
+          },
+          {
+            id: "prototype-2-field",
+            title: "Prototype 2 · public deployment",
+            short: "Deploy 2",
+            start: "2027-05-22",
+            end: "2027-05-31",
+            category: "fieldwork",
+            detail: "Deploy the second prototype and collect comparable behavioural, interview and observational data.",
+          },
+          {
+            id: "prototype-3-build",
+            title: "Prototype 3 · design & build",
+            short: "Build 3",
+            start: "2027-06-01",
+            end: "2027-06-21",
+            category: "making",
+            detail: "Build the third prototype, completing the comparative set derived from Study 1.",
+          },
+          {
+            id: "prototype-3-field",
+            title: "Prototype 3 · public deployment",
+            short: "Deploy 3",
+            start: "2027-06-22",
+            end: "2027-06-30",
+            category: "fieldwork",
+            detail: "Deploy the third prototype and complete the comparative public-space dataset.",
+          },
+          {
+            id: "s2-analysis-draft",
+            title: "Comparative analysis & first draft",
+            short: "Analysis + draft",
+            start: "2027-07-01",
+            end: "2027-07-31",
+            category: "writing",
+            detail: "Combine bottom-up video interaction analysis, field notes and interview thematic analysis across all three robots.",
+            meta: ["Cross-prototype comparison", "Behaviour + interview evidence"],
+          },
+          {
+            id: "s2-chi-finalise",
+            title: "Supervisor revision & CHI finalisation",
+            short: "CHI finalisation",
+            start: "2027-08-01",
+            end: "2027-08-31",
+            category: "revision",
+            detail: "Revise the empirical paper with supervisors and prepare the full-paper submission package.",
+          },
+          {
+            id: "s3-ethics",
+            title: "Study 3 ethics review",
+            short: "Study 3 ethics",
+            start: "2027-09-06",
+            end: "2027-10-03",
+            category: "ethics",
+            detail: "Submit in the second week of September and reserve a four-week review window for the comparative field study.",
+            meta: ["4-week review window", "Continues into Year 2"],
+          },
+          {
+            id: "september-leave-1",
+            title: "Annual leave",
+            short: "Leave",
+            start: "2027-09-13",
+            end: "2027-10-03",
+            category: "leave",
+            detail: "Three weeks of annual leave after the target CHI submission week. Ethics review continues in parallel.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "y2",
+    label: "2027/28",
+    yearName: "Year 2",
+    dates: "Oct 2027 — Sep 2028",
+    start: "2027-10-01",
+    end: "2028-10-01",
+    accent: "#21777c",
+    soft: "#e8f4f3",
+    ink: "#164d51",
+    deadlines: [
+      { date: "2028-01-12", label: "DIS paper target week", kind: "target" },
+      { date: "2028-09-01", label: "Annual Progression 2", kind: "hard" },
+      { date: "2028-09-07", label: "CHI/HRI target window", kind: "target" },
+    ],
+    groups: [
+      {
+        id: "hri-demo",
+        eyebrow: "Study 1 findings → Study 2 prototype",
+        title: "Selected object-based robot demo",
+        venue: "HRI 2028 Demo",
+        tasks: [
+          {
+            id: "hri-demo-write",
+            title: "HRI demo write-up",
+            short: "Demo write-up",
+            start: "2027-10-01",
+            end: "2027-10-14",
+            category: "writing",
+            detail: "Select the most compelling of the three lightweight prototypes and prepare the HRI 2028 demo submission.",
+            meta: ["Prototype selection", "Demo narrative + evidence"],
+          },
+        ],
+      },
+      {
+        id: "study2-design",
+        eyebrow: "Study 2 · Design research",
+        title: "Making insights, recommendations & guidelines",
+        venue: "DIS / C&C 2028",
+        tasks: [
+          {
+            id: "design-process-synthesis",
+            title: "Organise making process & synthesise findings",
+            short: "Design synthesis",
+            start: "2027-10-01",
+            end: "2027-11-30",
+            category: "writing",
+            detail: "Curate the three prototypes’ design and making evidence, connect it to Study 1 findings, and draft design recommendations or guidelines.",
+            meta: ["Text paper or pictorial", "Alternative: C&C 2028"],
+          },
+          {
+            id: "design-paper-feedback",
+            title: "Await supervisor feedback",
+            short: "Feedback",
+            start: "2027-12-01",
+            end: "2027-12-14",
+            category: "feedback",
+            detail: "Two-week supervisor review window for the DIS/C&C design-research manuscript.",
+          },
+          {
+            id: "design-paper-revise",
+            title: "Revise & prepare submission",
+            short: "Revise",
+            start: "2027-12-15",
+            end: "2028-01-07",
+            category: "revision",
+            detail: "Revise the paper or pictorial, finalise images and evidence, and prepare the submission package.",
+          },
+        ],
+      },
+      {
+        id: "study3-empirical",
+        eyebrow: "Study 3 · Comparative field deployment",
+        title: "Robot roles across citizens & worker groups",
+        venue: "CHI / HRI 2029",
+        tasks: [
+          {
+            id: "s3-recruitment",
+            title: "Recruit Study 3 participants",
+            short: "Recruitment",
+            start: "2027-10-01",
+            end: "2028-02-29",
+            category: "recruitment",
+            detail: "Recruit citizens and workers for naturally occurring encounters, short interviews and a later mixed focus group.",
+            meta: ["6–10 citizens", "6–10 workers", "3–5 per group for mixed focus group"],
+          },
+          {
+            id: "s3-rethink",
+            title: "Reframe Study 3 after feedback",
+            short: "Reframe",
+            start: "2028-01-15",
+            end: "2028-01-21",
+            category: "writing",
+            detail: "A focused decision week to revisit the research design, deployment groups and the selected robot case.",
+          },
+          {
+            id: "china-leave-2",
+            title: "Annual leave · China",
+            short: "Leave",
+            start: "2028-01-22",
+            end: "2028-02-14",
+            category: "leave",
+            detail: "Protected annual leave covering the fourth week of January and the first two weeks of February.",
+          },
+          {
+            id: "industry-placement",
+            title: "Candidate 3-month industry placement",
+            short: "Industry placement",
+            start: "2028-03-01",
+            end: "2028-05-31",
+            category: "internship",
+            detail: "Provisional collaboration window with Microsoft Research Cambridge or Nokia Bell Labs Cambridge to co-develop and deploy the AI-enabled prototype; a visiting-PhD arrangement is an alternative.",
+            meta: ["Timing to confirm", "Partner to confirm", "Runs alongside build + deployment"],
+            provisional: true,
+          },
+          {
+            id: "s3-ai-build",
+            title: "Develop full AI-enabled prototype",
+            short: "AI prototype",
+            start: "2028-02-15",
+            end: "2028-04-30",
+            category: "making",
+            detail: "Develop one Study 2 case into a more functional AI-enabled robot for comparative deployment across citizens and workers.",
+            meta: ["Candidate case: BinBot", "Functional AI version"],
+          },
+          {
+            id: "s3-experiment",
+            title: "Field experiment & data collection",
+            short: "Field study",
+            start: "2028-05-01",
+            end: "2028-05-31",
+            category: "fieldwork",
+            detail: "Observe naturally occurring encounters, run short post-encounter interviews and convene a mixed-group focus group using selected video clips.",
+            meta: ["Citizens + workers", "Video interaction analysis", "Mixed focus group"],
+          },
+          {
+            id: "s3-analysis",
+            title: "Analysis & first manuscript draft",
+            short: "Analysis + draft",
+            start: "2028-06-01",
+            end: "2028-06-30",
+            category: "writing",
+            detail: "Combine video interaction analysis, reflexive thematic analysis and cross-group comparison into the first empirical paper draft.",
+          },
+          {
+            id: "s3-finalise",
+            title: "Revise with industry host & supervisors",
+            short: "Co-revision",
+            start: "2028-07-01",
+            end: "2028-07-31",
+            category: "revision",
+            detail: "Revise and finalise the paper with the internship host and supervisory team. The proposal chronology supports a CHI/HRI 2029 target.",
+            meta: ["Joint revision", "Chronology-aligned venue year"],
+          },
+          {
+            id: "september-leave-2",
+            title: "Annual leave",
+            short: "Leave",
+            start: "2028-09-10",
+            end: "2028-09-30",
+            category: "leave",
+            detail: "Three protected weeks of annual leave after Annual Progression 2 and the provisional submission window.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "y3",
+    label: "2028/29",
+    yearName: "Year 3",
+    dates: "Oct 2028 — Sep 2029",
+    start: "2028-10-01",
+    end: "2029-10-01",
+    accent: "#73507e",
+    soft: "#f2ecf5",
+    ink: "#4b3453",
+    deadlines: [
+      { date: "2029-01-31", label: "PACMHCI target submission", kind: "target" },
+      { date: "2029-09-28", label: "PhD thesis submission", kind: "hard" },
+    ],
+    groups: [
+      {
+        id: "robot-citizens-journal",
+        eyebrow: "Study 3 · Synthesis / framework",
+        title: "Defining “robot citizens” across three studies",
+        venue: "PACMHCI CSCW",
+        tasks: [
+          {
+            id: "framework-write",
+            title: "Cross-study synthesis & journal draft",
+            short: "Journal draft",
+            start: "2028-10-01",
+            end: "2028-12-31",
+            category: "writing",
+            detail: "Synthesise all three studies into an empirically grounded account of how urban robotic objects can become more than functional tools and enter shared urban life.",
+            meta: ["Empirical + theoretical synthesis", "Robot citizens framework"],
+          },
+          {
+            id: "framework-finalise",
+            title: "Revise & submit journal paper",
+            short: "Revise + submit",
+            start: "2029-01-01",
+            end: "2029-01-31",
+            category: "revision",
+            detail: "Complete supervisor revisions and prepare the PACMHCI CSCW submission. The exact track deadline remains to be confirmed.",
+          },
+          {
+            id: "china-leave-3",
+            title: "Annual leave · China",
+            short: "Leave",
+            start: "2029-01-15",
+            end: "2029-02-07",
+            category: "leave",
+            detail: "Protected annual leave from mid-January through the first week of February.",
+          },
+        ],
+      },
+      {
+        id: "side-study",
+        eyebrow: "Potential side study · Critical counterpoint",
+        title: "A public art provocation on privacy & surveillance",
+        venue: "CHI / HRI 2030 · short paper / art paper / demo",
+        tasks: [
+          {
+            id: "side-ethics",
+            title: "Scope, site & ethics approval check",
+            short: "Approval check",
+            start: "2029-02-08",
+            end: "2029-03-07",
+            category: "ethics",
+            detail: "Provisional four-week window to confirm whether the public artwork requires a new ethics amendment, site permission and data-protection review.",
+            meta: ["Provisional", "Public-space permissions", "4-week allowance"],
+            provisional: true,
+          },
+          {
+            id: "side-build",
+            title: "Develop & make the public artwork",
+            short: "Art provocation",
+            start: "2029-02-08",
+            end: "2029-04-14",
+            category: "making",
+            detail: "Create a critical public installation that makes the sensing, image-capture and data-collection risks of urban AI robots tangible to citizens.",
+            meta: ["Privacy & surveillance", "Critical counterpoint to the PhD"],
+          },
+        ],
+      },
+      {
+        id: "thesis-impact",
+        eyebrow: "Doctoral completion · Synthesis & social impact",
+        title: "Final thesis, public exhibition & viva preparation",
+        venue: "PhD submission · 28 Sep 2029",
+        tasks: [
+          {
+            id: "thesis-write",
+            title: "Write final thesis",
+            short: "Thesis writing",
+            start: "2029-04-01",
+            end: "2029-07-31",
+            category: "writing",
+            detail: "Write the final thesis across Studies 1–3, integrating the empirical, design/artifact and theoretical contributions.",
+          },
+          {
+            id: "exhibition-plan",
+            title: "Find creative partner & plan exhibition",
+            short: "Exhibition",
+            start: "2029-04-01",
+            end: "2029-07-31",
+            category: "making",
+            detail: "Identify a creative organisation and shape a solo exhibition of research findings and prototypes to extend social impact.",
+            meta: ["Partner to confirm", "Research prototypes + public programme"],
+            provisional: true,
+          },
+          {
+            id: "thesis-feedback",
+            title: "Supervisor revision & thesis finalisation",
+            short: "Final revisions",
+            start: "2029-08-01",
+            end: "2029-09-27",
+            category: "revision",
+            detail: "Revise the complete thesis with supervisors, complete quality checks and prepare the final submission files.",
+          },
+          {
+            id: "viva-practice",
+            title: "Viva rehearsal",
+            short: "Viva practice",
+            start: "2029-08-01",
+            end: "2029-09-27",
+            category: "feedback",
+            detail: "Run repeated viva rehearsals alongside final thesis revisions, focusing on contribution, methodological choices and limitations.",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const STORAGE_KEY = "robot-citizens-gantt-edits-v1";
+const DAY = 86_400_000;
+
+function asTime(value: string) {
+  return Date.parse(`${value}T00:00:00Z`);
+}
+
+function position(value: string, start: string, end: string) {
+  return ((asTime(value) - asTime(start)) / (asTime(end) - asTime(start))) * 100;
+}
+
+function taskPosition(task: Task, year: YearPlan) {
+  const left = Math.max(0, position(task.start, year.start, year.end));
+  const rawEnd = position(task.end, year.start, year.end) + 0.25;
+  const right = Math.min(100, rawEnd);
+  return { left: `${left}%`, width: `${Math.max(0.65, right - left)}%` };
+}
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${value}T00:00:00Z`));
+}
+
+function weekCount(task: Task) {
+  return Math.max(1, Math.ceil((asTime(task.end) - asTime(task.start) + DAY) / (7 * DAY)));
+}
+
+function monthSegments(year: YearPlan) {
+  const result: { label: string; left: number; width: number; year: string }[] = [];
+  const end = new Date(`${year.end}T00:00:00Z`);
+  const cursor = new Date(`${year.start}T00:00:00Z`);
+  while (cursor < end) {
+    const segStart = cursor.toISOString().slice(0, 10);
+    const next = new Date(Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth() + 1, 1));
+    const segEnd = next.toISOString().slice(0, 10);
+    result.push({
+      label: new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(cursor),
+      year: String(cursor.getUTCFullYear()),
+      left: position(segStart, year.start, year.end),
+      width: position(segEnd, year.start, year.end) - position(segStart, year.start, year.end),
+    });
+    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+  }
+  return result;
+}
+
+function mergeTask(task: Task, edits: Edits): Task {
+  return { ...task, ...(edits[task.id] ?? {}) };
+}
+
+function MarkIcon({ type }: { type: "deadline" | "target" | "edit" | "print" }) {
+  return <span className={`mark-icon mark-${type}`} aria-hidden="true" />;
+}
+
+function DeadlineLines({ year }: { year: YearPlan }) {
+  return (
+    <>
+      {year.deadlines.map((deadline) => (
+        <span
+          aria-hidden="true"
+          className={`deadline-line ${deadline.kind}`}
+          key={`${deadline.date}-${deadline.label}`}
+          style={{ left: `${position(deadline.date, year.start, year.end)}%` }}
+        />
+      ))}
+    </>
+  );
+}
+
+function MonthGrid({ year }: { year: YearPlan }) {
+  const segments = monthSegments(year);
+  return (
+    <>
+      {segments.slice(1).map((month) => (
+        <span
+          aria-hidden="true"
+          className="month-line"
+          key={`${month.year}-${month.label}`}
+          style={{ left: `${month.left}%` }}
+        />
+      ))}
+    </>
+  );
+}
+
+function YearGantt({
+  year,
+  edits,
+  onTask,
+}: {
+  year: YearPlan;
+  edits: Edits;
+  onTask: (task: Task, group: OutputGroup, year: YearPlan) => void;
+}) {
+  const segments = monthSegments(year);
+  const weeks = Math.ceil((asTime(year.end) - asTime(year.start)) / (7 * DAY));
+  const chartStyle = {
+    "--year-accent": year.accent,
+    "--year-soft": year.soft,
+    "--year-ink": year.ink,
+    "--weeks": weeks,
+  } as CSSProperties;
+
+  return (
+    <section className="year-card" style={chartStyle} aria-labelledby={`${year.id}-heading`}>
+      <div className="year-card-topline">
+        <div>
+          <span className="year-index">{year.yearName}</span>
+          <h2 id={`${year.id}-heading`}>{year.label}</h2>
+        </div>
+        <p>{year.dates}</p>
+      </div>
+
+      <div className="stage-legend" aria-label={`${year.yearName} phase colour legend`}>
+        {(Object.keys(CATEGORY_LABELS) as Category[]).map((category) => (
+          <span key={category}>
+            <i style={{ background: PALETTES[year.id][category] }} />
+            {CATEGORY_LABELS[category]}
+          </span>
+        ))}
+      </div>
+
+      <div className="scroll-note">Scroll horizontally to inspect weeks →</div>
+      <div className="gantt-scroll">
+        <div className="gantt-canvas">
+          <div className="axis-label sticky-cell">
+            <span>OUTPUTS & PHASES</span>
+            <small>Click any coloured bar for detail</small>
+          </div>
+          <div className="month-axis">
+            {segments.map((month) => (
+              <div
+                className="month-cell"
+                key={`${month.year}-${month.label}`}
+                style={{ left: `${month.left}%`, width: `${month.width}%` }}
+              >
+                <strong>{month.label}</strong>
+                <small>{month.label === "Jan" || month.left === 0 ? month.year : ""}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="deadline-label sticky-cell">
+            <span>KEY DATES</span>
+            <small>◆ fixed · ◇ target</small>
+          </div>
+          <div className="deadline-rail">
+            <MonthGrid year={year} />
+            {year.deadlines.map((deadline) => (
+              <div
+                className={`deadline-pin ${deadline.kind}`}
+                key={`${deadline.date}-${deadline.label}`}
+                style={{ left: `${position(deadline.date, year.start, year.end)}%` }}
+              >
+                <i />
+                <span>{deadline.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {year.groups.map((group, groupIndex) => (
+            <div className="output-group" key={group.id}>
+              <div className="group-heading sticky-cell">
+                <span className="group-number">{String(groupIndex + 1).padStart(2, "0")}</span>
+                <div>
+                  <p>{group.eyebrow}</p>
+                  <h3>{group.title}</h3>
+                  <span className="venue-chip">{group.venue}</span>
+                </div>
+              </div>
+              <div className="group-heading-timeline">
+                <MonthGrid year={year} />
+                <DeadlineLines year={year} />
+                <span>{group.venue}</span>
+              </div>
+
+              {group.tasks.map((originalTask) => {
+                const task = mergeTask(originalTask, edits);
+                const width = parseFloat(taskPosition(task, year).width);
+                return (
+                  <div className="task-pair" key={task.id}>
+                    <div className="task-label sticky-cell">
+                      <i style={{ background: PALETTES[year.id][task.category] }} />
+                      <span>{task.title}</span>
+                      {task.provisional && <em>PROVISIONAL</em>}
+                    </div>
+                    <div className="task-timeline">
+                      <MonthGrid year={year} />
+                      <DeadlineLines year={year} />
+                      <button
+                        className={`task-bar ${task.provisional ? "provisional" : ""}`}
+                        style={{
+                          ...taskPosition(task, year),
+                          background: PALETTES[year.id][task.category],
+                        }}
+                        onClick={() => onTask(task, group, year)}
+                        aria-label={`${task.title}, ${formatDate(task.start)} to ${formatDate(task.end)}. Open details.`}
+                        title={`${task.title} · ${formatDate(task.start)} — ${formatDate(task.end)}`}
+                      >
+                        <span>{width > 5 ? task.short ?? task.title : ""}</span>
+                        <b aria-hidden="true">↗</b>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+type Selected = { task: Task; group: OutputGroup; year: YearPlan };
+
+function TaskDrawer({
+  selected,
+  editing,
+  onClose,
+  onSave,
+}: {
+  selected: Selected;
+  editing: boolean;
+  onClose: () => void;
+  onSave: (taskId: string, edit: TaskEdit) => void;
+}) {
+  const { task, group, year } = selected;
+  const [title, setTitle] = useState(task.title);
+  const [start, setStart] = useState(task.start);
+  const [end, setEnd] = useState(task.end);
+  const [detail, setDetail] = useState(task.detail);
+  const weeks = weekCount({ ...task, start, end });
+
+  useEffect(() => {
+    setTitle(task.title);
+    setStart(task.start);
+    setEnd(task.end);
+    setDetail(task.detail);
+  }, [task]);
+
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    if (asTime(end) < asTime(start)) return;
+    onSave(task.id, { title, start, end, detail });
+  }
+
+  return (
+    <div className="drawer-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <aside className="task-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+        <button className="drawer-close" onClick={onClose} aria-label="Close task details">×</button>
+        <div className="drawer-accent" style={{ background: PALETTES[year.id][task.category] }} />
+        <div className="drawer-kicker">
+          <span>{year.label}</span>
+          <i />
+          <span>{CATEGORY_LABELS[task.category]}</span>
+        </div>
+
+        {editing ? (
+          <form onSubmit={submit} className="edit-form">
+            <label>
+              Phase title
+              <input value={title} onChange={(event) => setTitle(event.target.value)} required />
+            </label>
+            <div className="form-grid">
+              <label>
+                Start date
+                <input type="date" value={start} onChange={(event) => setStart(event.target.value)} required />
+              </label>
+              <label>
+                End date
+                <input type="date" value={end} min={start} onChange={(event) => setEnd(event.target.value)} required />
+              </label>
+            </div>
+            <label>
+              Detail
+              <textarea value={detail} onChange={(event) => setDetail(event.target.value)} rows={7} required />
+            </label>
+            <button className="primary-button" type="submit">Save on this device</button>
+            <p className="local-note">Edits are private to this browser until the site data is updated and republished.</p>
+          </form>
+        ) : (
+          <>
+            <h2 id="drawer-title">{task.title}</h2>
+            <p className="drawer-output">{group.eyebrow} · {group.venue}</p>
+            <div className="date-card">
+              <div>
+                <span>START</span>
+                <strong>{formatDate(task.start)}</strong>
+              </div>
+              <div className="duration-orbit">
+                <span>{weeks}</span>
+                <small>{weeks === 1 ? "week" : "weeks"}</small>
+              </div>
+              <div>
+                <span>END</span>
+                <strong>{formatDate(task.end)}</strong>
+              </div>
+            </div>
+            <div className="zoom-strip" aria-label={`${weeks} week task duration`}>
+              {Array.from({ length: Math.min(weeks, 16) }, (_, index) => (
+                <i
+                  key={index}
+                  style={{
+                    background: PALETTES[year.id][task.category],
+                    opacity: 0.3 + (index / Math.max(1, Math.min(weeks, 16) - 1)) * 0.7,
+                  }}
+                />
+              ))}
+            </div>
+            <div className="drawer-section">
+              <h3>What happens here</h3>
+              <p>{task.detail}</p>
+            </div>
+            {task.meta && (
+              <div className="drawer-section">
+                <h3>Planning notes</h3>
+                <ul>
+                  {task.meta.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            )}
+            {task.provisional && (
+              <div className="provisional-note">
+                <strong>Provisional window</strong>
+                <span>This timing or partner still needs confirmation.</span>
+              </div>
+            )}
+          </>
+        )}
+      </aside>
+    </div>
+  );
+}
+
+function PlanningNotes({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="drawer-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <aside className="task-drawer notes-drawer" role="dialog" aria-modal="true" aria-labelledby="notes-title">
+        <button className="drawer-close" onClick={onClose} aria-label="Close planning notes">×</button>
+        <span className="notes-count">03</span>
+        <p className="drawer-kicker">PLANNING NOTES</p>
+        <h2 id="notes-title">Details to confirm before final sign-off</h2>
+        <ol className="confirmation-list">
+          <li>
+            <span>01</span>
+            <div>
+              <strong>DIS WIP year</strong>
+              <p>The detailed schedule and proposal say DIS 2027; the overview request once says DIS 2028 WIP. This chart uses DIS 2027.</p>
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <strong>Study 3 empirical paper</strong>
+              <p>The proposal and overall output list support CHI/HRI 2029. The Year 2 paragraph says CHI 2028, which is not compatible with a July 2028 finalisation. This chart uses CHI/HRI 2029.</p>
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <strong>Side-study venue year</strong>
+              <p>The proposal and overall output list support CHI/HRI 2030; the Year 3 paragraph says 2029. This chart uses 2030 and keeps the format open: short paper, art paper or demo.</p>
+            </div>
+          </li>
+        </ol>
+        <div className="deadline-explainer">
+          <MarkIcon type="deadline" />
+          <p><strong>Fixed dates</strong> are only used where an exact date was provided: Annual Progression 1 and 2, and thesis submission. Conference markers are labelled as target windows until the relevant CFP confirms an exact date.</p>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+export default function Home() {
+  const [view, setView] = useState<"all" | YearPlan["id"]>("y1");
+  const [selected, setSelected] = useState<Selected | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [edits, setEdits] = useState<Edits>({});
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (stored) setEdits(JSON.parse(stored) as Edits);
+    } catch {
+      // The timeline remains fully usable if browser storage is unavailable.
+    }
+  }, []);
+
+  useEffect(() => {
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setSelected(null);
+        setNotesOpen(false);
+      }
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, []);
+
+  const visibleYears = useMemo(
+    () => (view === "all" ? YEARS : YEARS.filter((year) => year.id === view)),
+    [view],
+  );
+
+  function saveEdit(taskId: string, edit: TaskEdit) {
+    const next = { ...edits, [taskId]: edit };
+    setEdits(next);
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setSelected((current) => current ? { ...current, task: { ...current.task, ...edit } } : current);
+    setEditing(false);
+  }
+
+  function resetEdits() {
+    if (!window.confirm("Reset every local timeline edit on this device?")) return;
+    setEdits({});
+    window.localStorage.removeItem(STORAGE_KEY);
+    setSelected(null);
+  }
+
+  return (
+    <main>
+      <header className="site-header">
+        <a className="project-mark" href="#timeline" aria-label="Go to timeline">
+          <span>RC</span>
+          <div>
+            <strong>ROBOT CITIZENS</strong>
+            <small>DOCTORAL ROADMAP</small>
+          </div>
+        </a>
+        <div className="header-actions">
+          <button className="text-button confirm-button" onClick={() => setNotesOpen(true)}>
+            <span>3</span> details to confirm
+          </button>
+          <button
+            className={`text-button ${editing ? "active" : ""}`}
+            onClick={() => setEditing((current) => !current)}
+          >
+            <MarkIcon type="edit" /> {editing ? "Editing on" : "Edit plan"}
+          </button>
+          <button className="export-button" onClick={() => window.print()}>
+            <MarkIcon type="print" /> Export PDF
+          </button>
+        </div>
+      </header>
+
+      <section className="intro" aria-labelledby="page-title">
+        <div className="intro-copy">
+          <p className="overline">YEAR 1 PROJECT APPROVAL · WORKING PLAN</p>
+          <h1 id="page-title">Social roles of object-based urban AI robots</h1>
+          <p className="lead">A designerly, citizen-centred inquiry — from speculative workshops to public prototypes and an empirically grounded account of “robot citizens”.</p>
+        </div>
+        <div className="research-question">
+          <span>OVERALL RESEARCH QUESTION</span>
+          <p>How do human citizens imagine, interpret and negotiate the social roles of object-based urban AI robots in public spaces?</p>
+        </div>
+        <div className="project-facts">
+          <div><strong>03</strong><span>formal studies</span></div>
+          <div><strong>08</strong><span>planned outputs</span></div>
+          <div><strong>03</strong><span>academic years</span></div>
+        </div>
+      </section>
+
+      <section className="timeline-section" id="timeline" aria-labelledby="timeline-title">
+        <div className="timeline-toolbar">
+          <div>
+            <p className="overline">INTERACTIVE GANTT CHART</p>
+            <h2 id="timeline-title">Research journey, week by week</h2>
+          </div>
+          <div className="toolbar-controls">
+            <label className="year-picker">
+              <span>ACADEMIC YEAR</span>
+              <select value={view} onChange={(event) => setView(event.target.value as typeof view)}>
+                <option value="y1">2026/27 · Year 1</option>
+                <option value="y2">2027/28 · Year 2</option>
+                <option value="y3">2028/29 · Year 3</option>
+                <option value="all">All years</option>
+              </select>
+            </label>
+            {Object.keys(edits).length > 0 && (
+              <button className="reset-button" onClick={resetEdits}>Reset {Object.keys(edits).length} local edit{Object.keys(edits).length === 1 ? "" : "s"}</button>
+            )}
+          </div>
+        </div>
+
+        <div className="chart-key">
+          <span><i className="key-diamond hard" /> Fixed deadline</span>
+          <span><i className="key-diamond target" /> Target window · date TBC</span>
+          <span><i className="key-dash" /> Provisional activity</span>
+          {editing && <strong>Editing mode: select a bar to change its title, dates or notes.</strong>}
+        </div>
+
+        <div className="years-stack">
+          {visibleYears.map((year) => (
+            <YearGantt
+              key={year.id}
+              year={year}
+              edits={edits}
+              onTask={(task, group, selectedYear) => setSelected({ task, group, year: selectedYear })}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="journey-summary" aria-label="Research contribution pathway">
+        <div>
+          <span>01</span>
+          <p>IMAGINE</p>
+          <strong>What else could urban robots be?</strong>
+        </div>
+        <i>→</i>
+        <div>
+          <span>02</span>
+          <p>ENCOUNTER</p>
+          <strong>How are social roles negotiated in public?</strong>
+        </div>
+        <i>→</i>
+        <div>
+          <span>03</span>
+          <p>RELATE</p>
+          <strong>How do roles shift across citizen groups?</strong>
+        </div>
+        <i>→</i>
+        <div>
+          <span>04</span>
+          <p>SYNTHESISE</p>
+          <strong>When might a robot become a citizen?</strong>
+        </div>
+      </section>
+
+      <footer>
+        <p>Source · <strong>Year 1 Project Approval</strong>, 01 Sep 2026</p>
+        <p>Working timeline · conference dates marked TBC until confirmed</p>
+      </footer>
+
+      {selected && (
+        <TaskDrawer
+          selected={selected}
+          editing={editing}
+          onClose={() => setSelected(null)}
+          onSave={saveEdit}
+        />
+      )}
+      {notesOpen && <PlanningNotes onClose={() => setNotesOpen(false)} />}
+    </main>
+  );
+}
