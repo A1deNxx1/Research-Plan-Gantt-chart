@@ -494,6 +494,7 @@ main {
 }
 
 .year-card {
+  width: min(1500px, 100%);
   border: 1px solid var(--line);
   background: var(--white);
   box-shadow: 0 12px 40px rgba(40, 37, 31, 0.06);
@@ -587,58 +588,101 @@ main {
   position: sticky;
   top: 0;
   z-index: 20;
-  height: 44px;
-  padding-top: 5px;
+  min-height: 66px;
+  padding: 11px 18px;
+  display: grid;
+  grid-template-columns: 225px minmax(260px, 1fr);
+  align-items: center;
+  gap: 20px;
   border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--year-soft) 72%, white);
   box-shadow: 0 5px 14px rgba(37, 43, 40, 0.07);
 }
 
 .gantt-scroll-control > span {
-  position: absolute;
-  top: 8px;
-  left: 16px;
-  z-index: 1;
   color: var(--year-ink);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.1em;
-  pointer-events: none;
 }
 
-.gantt-top-scroll {
-  width: 100%;
-  height: 39px;
-  overflow-y: hidden;
+.timeline-scroll-tools {
+  display: grid;
+  grid-template-columns: 38px minmax(160px, 1fr) 38px;
+  align-items: center;
+  gap: 12px;
 }
 
-.gantt-scroll-track {
-  width: calc(var(--label-width) + var(--timeline-width));
-  height: 1px;
+.timeline-scroll-button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid color-mix(in srgb, var(--year-accent) 32%, white);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--year-ink);
+  font-size: 20px;
+  line-height: 1;
+  box-shadow: 0 2px 7px rgba(37, 43, 40, 0.08);
 }
 
-.gantt-top-scroll::-webkit-scrollbar,
-.gantt-body-scroll::-webkit-scrollbar {
-  height: 14px;
-}
-
-.gantt-top-scroll::-webkit-scrollbar-track,
-.gantt-body-scroll::-webkit-scrollbar-track {
-  background: #dedbd3;
-  border-radius: 999px;
-}
-
-.gantt-top-scroll::-webkit-scrollbar-thumb,
-.gantt-body-scroll::-webkit-scrollbar-thumb {
-  min-width: 80px;
-  border: 3px solid #dedbd3;
-  border-radius: 999px;
+.timeline-scroll-button:hover:not(:disabled) {
+  color: white;
   background: var(--year-accent);
 }
 
-.gantt-top-scroll::-webkit-scrollbar-thumb:hover,
-.gantt-body-scroll::-webkit-scrollbar-thumb:hover {
-  background: var(--year-ink);
+.timeline-scroll-button:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.timeline-scroll-range {
+  width: 100%;
+  height: 30px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: grab;
+}
+
+.timeline-scroll-range:active {
+  cursor: grabbing;
+}
+
+.timeline-scroll-range::-webkit-slider-runnable-track {
+  height: 10px;
+  border: 1px solid #c8c4bb;
+  border-radius: 999px;
+  background: #dedbd3;
+  box-shadow: inset 0 1px 2px rgba(35, 40, 37, 0.13);
+}
+
+.timeline-scroll-range::-webkit-slider-thumb {
+  width: 86px;
+  height: 24px;
+  margin-top: -8px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 3px solid white;
+  border-radius: 999px;
+  background: var(--year-accent);
+  box-shadow: 0 2px 8px rgba(35, 40, 37, 0.25);
+}
+
+.timeline-scroll-range::-moz-range-track {
+  height: 10px;
+  border: 1px solid #c8c4bb;
+  border-radius: 999px;
+  background: #dedbd3;
+}
+
+.timeline-scroll-range::-moz-range-thumb {
+  width: 80px;
+  height: 20px;
+  border: 3px solid white;
+  border-radius: 999px;
+  background: var(--year-accent);
+  box-shadow: 0 2px 8px rgba(35, 40, 37, 0.25);
 }
 
 .gantt-canvas {
@@ -1705,6 +1749,26 @@ footer p {
 }
 
 @media (max-width: 560px) {
+  .gantt-scroll-control {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 9px 12px;
+  }
+
+  .gantt-scroll-control > span {
+    font-size: 8px;
+  }
+
+  .timeline-scroll-tools {
+    grid-template-columns: 34px minmax(120px, 1fr) 34px;
+    gap: 8px;
+  }
+
+  .timeline-scroll-button {
+    width: 34px;
+    height: 34px;
+  }
+
   .project-mark div {
     display: none;
   }

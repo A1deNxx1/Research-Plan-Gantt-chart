@@ -880,14 +880,46 @@ function YearGantt({
 }) {
   const segments = monthSegments(year);
   const weeks = segments.length * 4;
-  const topScrollRef = useRef<HTMLDivElement>(null);
   const chartScrollRef = useRef<HTMLDivElement>(null);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [scrollMax, setScrollMax] = useState(0);
   const chartStyle = {
     "--year-accent": year.accent,
     "--year-soft": year.soft,
     "--year-ink": year.ink,
     "--weeks": weeks,
   } as CSSProperties;
+
+  useEffect(() => {
+    const chart = chartScrollRef.current;
+    if (!chart) return;
+
+    function updateScrollRange() {
+      const max = Math.max(0, chart.scrollWidth - chart.clientWidth);
+      setScrollMax(max);
+      setScrollLeft(Math.min(chart.scrollLeft, max));
+    }
+
+    updateScrollRange();
+    const observer = new ResizeObserver(updateScrollRange);
+    observer.observe(chart);
+    if (chart.firstElementChild) observer.observe(chart.firstElementChild);
+    window.addEventListener("resize", updateScrollRange);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateScrollRange);
+    };
+  }, [year.id]);
+
+  function moveTimeline(nextPosition: number, smooth = false) {
+    const chart = chartScrollRef.current;
+    if (!chart) return;
+    chart.scrollTo({
+      left: Math.max(0, Math.min(scrollMax, nextPosition)),
+      behavior: smooth ? "smooth" : "auto",
+    });
+  }
 
   return (
     <section className="year-card" style={chartStyle} aria-labelledby={`${year.id}-heading`}>
@@ -910,31 +942,43 @@ function YearGantt({
 
       <div className="scroll-note">Scroll horizontally to inspect weeks →</div>
       <div className="gantt-scroll-control">
-        <span>DRAG TO BROWSE THE FULL TIMELINE</span>
-        <div
-          className="gantt-scroll gantt-top-scroll"
-          ref={topScrollRef}
-          tabIndex={0}
-          aria-label={`Horizontal timeline scrollbar for ${year.yearName}`}
-          onScroll={(event) => {
-            const chart = chartScrollRef.current;
-            if (chart && chart.scrollLeft !== event.currentTarget.scrollLeft) {
-              chart.scrollLeft = event.currentTarget.scrollLeft;
-            }
-          }}
-        >
-          <div className="gantt-scroll-track" aria-hidden="true" />
+        <span>BROWSE THE FULL TIMELINE</span>
+        <div className="timeline-scroll-tools">
+          <button
+            className="timeline-scroll-button"
+            type="button"
+            aria-label={`Scroll ${year.yearName} timeline left`}
+            disabled={scrollLeft <= 0}
+            onClick={() => moveTimeline(scrollLeft - 420, true)}
+          >
+            ←
+          </button>
+          <input
+            className="timeline-scroll-range"
+            type="range"
+            min="0"
+            max={Math.max(1, scrollMax)}
+            step="1"
+            value={Math.min(scrollLeft, scrollMax)}
+            disabled={scrollMax <= 0}
+            aria-label={`Drag to browse the full ${year.yearName} timeline`}
+            onChange={(event) => moveTimeline(Number(event.currentTarget.value))}
+          />
+          <button
+            className="timeline-scroll-button"
+            type="button"
+            aria-label={`Scroll ${year.yearName} timeline right`}
+            disabled={scrollLeft >= scrollMax}
+            onClick={() => moveTimeline(scrollLeft + 420, true)}
+          >
+            →
+          </button>
         </div>
       </div>
       <div
         className="gantt-scroll gantt-body-scroll"
         ref={chartScrollRef}
-        onScroll={(event) => {
-          const topScroll = topScrollRef.current;
-          if (topScroll && topScroll.scrollLeft !== event.currentTarget.scrollLeft) {
-            topScroll.scrollLeft = event.currentTarget.scrollLeft;
-          }
-        }}
+        onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
       >
         <div className="gantt-canvas">
           <div className="axis-label sticky-cell">
