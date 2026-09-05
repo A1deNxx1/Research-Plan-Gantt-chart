@@ -682,13 +682,7 @@ function asTime(value: string) {
 
 function planningWeekIndex(value: string) {
   const point = new Date(`${value}T00:00:00Z`);
-  const monthStart = new Date(Date.UTC(point.getUTCFullYear(), point.getUTCMonth(), 1));
-  const mondayBasedStartDay = (monthStart.getUTCDay() + 6) % 7;
-  const firstWeekEnd = 7 - mondayBasedStartDay;
-  const day = point.getUTCDate();
-
-  if (day <= firstWeekEnd) return 0;
-  return Math.min(3, 1 + Math.floor((day - firstWeekEnd - 1) / 7));
+  return Math.min(3, Math.floor((point.getUTCDate() - 1) / 7));
 }
 
 function planningWeekBounds(value: string, forcedIndex?: number) {
@@ -697,10 +691,9 @@ function planningWeekBounds(value: string, forcedIndex?: number) {
   const month = point.getUTCMonth();
   const monthStart = new Date(Date.UTC(year, month, 1));
   const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-  const firstWeekEnd = 7 - ((monthStart.getUTCDay() + 6) % 7);
   const index = forcedIndex ?? planningWeekIndex(value);
-  const startDay = index === 0 ? 1 : firstWeekEnd + 1 + (index - 1) * 7;
-  const endDay = index === 3 ? daysInMonth : Math.min(daysInMonth, index === 0 ? firstWeekEnd : startDay + 6);
+  const startDay = index * 7 + 1;
+  const endDay = index === 3 ? daysInMonth : Math.min(daysInMonth, startDay + 6);
 
   return { index, startDay, endDay, monthStart };
 }
@@ -1539,7 +1532,7 @@ export default function Home() {
           <span><i className="key-diamond hard" /> Fixed deadline</span>
           <span><i className="key-diamond target" /> Target window · date TBC</span>
           <span><i className="key-dash" /> Provisional activity</span>
-          <strong className="week-rule">Calendar weeks run Mon–Sun · remaining month-end days stay in W4</strong>
+          <strong className="week-rule">Every month: W1 1–7 · W2 8–14 · W3 15–21 · W4 22–month end</strong>
           {canEdit && editing && (
             <button className="editor-open-button" onClick={() => setEditorOpen(true)}>
               Open timeline editor
