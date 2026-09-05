@@ -54,7 +54,7 @@ type YearPlan = {
   deadlines: Deadline[];
 };
 
-type TaskEdit = Partial<Pick<Task, "title" | "start" | "end" | "detail">>;
+type TaskEdit = Partial<Pick<Task, "title" | "start" | "end" | "detail" | "category">>;
 type Edits = Record<string, TaskEdit>;
 
 const CATEGORY_LABELS: Record<Category, string> = {
@@ -110,9 +110,9 @@ const YEARS: YearPlan[] = [
     id: "y1",
     label: "2026/27",
     yearName: "Year 1",
-    dates: "Sep 2026 — Sep 2027",
+    dates: "Sep 2026 — Oct 2027 transition",
     start: "2026-09-01",
-    end: "2027-10-01",
+    end: "2027-11-01",
     accent: "#a75532",
     soft: "#f8ede6",
     ink: "#5f2f1f",
@@ -674,21 +674,39 @@ const YEARS: YearPlan[] = [
 ];
 
 const STORAGE_KEY = "robot-citizens-gantt-edits-v1";
-const DAY = 86_400_000;
 
 function asTime(value: string) {
   return Date.parse(`${value}T00:00:00Z`);
 }
 
 function position(value: string, start: string, end: string) {
-  return ((asTime(value) - asTime(start)) / (asTime(end) - asTime(start))) * 100;
+  const point = new Date(`${value}T00:00:00Z`);
+  const first = new Date(`${start}T00:00:00Z`);
+  const last = new Date(`${end}T00:00:00Z`);
+  const monthIndex = (point.getUTCFullYear() - first.getUTCFullYear()) * 12 + point.getUTCMonth() - first.getUTCMonth();
+  const monthCount = (last.getUTCFullYear() - first.getUTCFullYear()) * 12 + last.getUTCMonth() - first.getUTCMonth();
+  const weekProgress = Math.min(3.98, (point.getUTCDate() - 1) / 7);
+  return ((monthIndex * 4 + weekProgress) / (monthCount * 4)) * 100;
+}
+
+function weekSlot(value: string, start: string) {
+  const point = new Date(`${value}T00:00:00Z`);
+  const first = new Date(`${start}T00:00:00Z`);
+  const monthIndex = (point.getUTCFullYear() - first.getUTCFullYear()) * 12 + point.getUTCMonth() - first.getUTCMonth();
+  return monthIndex * 4 + Math.min(3, Math.floor((point.getUTCDate() - 1) / 7));
 }
 
 function taskPosition(task: Task, year: YearPlan) {
-  const left = Math.max(0, position(task.start, year.start, year.end));
-  const rawEnd = position(task.end, year.start, year.end) + 0.25;
-  const right = Math.min(100, rawEnd);
-  return { left: `${left}%`, width: `${Math.max(0.65, right - left)}%` };
+  const totalWeeks = monthSegments(year).length * 4;
+  const firstSlot = Math.max(0, weekSlot(task.start, year.start));
+  const lastSlot = Math.min(totalWeeks, weekSlot(task.end, year.start) + 1);
+  const left = (firstSlot / totalWeeks) * 100;
+  const width = (Math.max(1, lastSlot - firstSlot) / totalWeeks) * 100;
+  return { left: `${left}%`, width: `${width}%` };
+}
+
+function timelineWeekSpan(task: Task, year: YearPlan) {
+  return Math.max(1, weekSlot(task.end, year.start) - weekSlot(task.start, year.start) + 1);
 }
 
 function formatDate(value: string) {
@@ -700,25 +718,21 @@ function formatDate(value: string) {
   }).format(new Date(`${value}T00:00:00Z`));
 }
 
-function weekCount(task: Task) {
-  return Math.max(1, Math.ceil((asTime(task.end) - asTime(task.start) + DAY) / (7 * DAY)));
-}
-
 function monthSegments(year: YearPlan) {
   const result: { label: string; left: number; width: number; year: string }[] = [];
   const end = new Date(`${year.end}T00:00:00Z`);
   const cursor = new Date(`${year.start}T00:00:00Z`);
+  const totalMonths = (end.getUTCFullYear() - cursor.getUTCFullYear()) * 12 + end.getUTCMonth() - cursor.getUTCMonth();
+  let index = 0;
   while (cursor < end) {
-    const segStart = cursor.toISOString().slice(0, 10);
-    const next = new Date(Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth() + 1, 1));
-    const segEnd = next.toISOString().slice(0, 10);
     result.push({
       label: new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(cursor),
       year: String(cursor.getUTCFullYear()),
-      left: position(segStart, year.start, year.end),
-      width: position(segEnd, year.start, year.end) - position(segStart, year.start, year.end),
+      left: (index / totalMonths) * 100,
+      width: (1 / totalMonths) * 100,
     });
     cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+    index += 1;
   }
   return result;
 }
@@ -765,14 +779,16 @@ function MonthGrid({ year }: { year: YearPlan }) {
 function YearGantt({
   year,
   edits,
+  editing,
   onTask,
 }: {
   year: YearPlan;
   edits: Edits;
+  editing: boolean;
   onTask: (task: Task, group: OutputGroup, year: YearPlan) => void;
 }) {
   const segments = monthSegments(year);
-  const weeks = Math.ceil((asTime(year.end) - asTime(year.start)) / (7 * DAY));
+  const weeks = segments.length * 4;
   const chartStyle = {
     "--year-accent": year.accent,
     "--year-soft": year.soft,
@@ -813,8 +829,16 @@ function YearGantt({
                 key={`${month.year}-${month.label}`}
                 style={{ left: `${month.left}%`, width: `${month.width}%` }}
               >
-                <strong>{month.label}</strong>
-                <small>{month.label === "Jan" || month.left === 0 ? month.year : ""}</small>
+                <div className="month-name">
+                  <strong>{month.label}</strong>
+                  <small>{month.label === "Jan" || month.left === 0 ? month.year : ""}</small>
+                </div>
+                <div className="week-labels" aria-label={`${month.label} ${month.year}, four planning weeks`}>
+                  <span>W1</span>
+                  <span>W2</span>
+                  <span>W3</span>
+                  <span>W4</span>
+                </div>
               </div>
             ))}
           </div>
@@ -856,18 +880,33 @@ function YearGantt({
               {group.tasks.map((originalTask) => {
                 const task = mergeTask(originalTask, edits);
                 const width = parseFloat(taskPosition(task, year).width);
+                const span = timelineWeekSpan(task, year);
                 return (
                   <div className="task-pair" key={task.id}>
-                    <div className="task-label sticky-cell">
-                      <i style={{ background: PALETTES[year.id][task.category] }} />
-                      <span>{task.title}</span>
-                      {task.provisional && <em>PROVISIONAL</em>}
-                    </div>
+                    {editing ? (
+                      <button
+                        className="task-label sticky-cell edit-ready"
+                        onClick={() => onTask(task, group, year)}
+                        aria-label={`Edit ${task.title}`}
+                      >
+                        <i style={{ background: PALETTES[year.id][task.category] }} />
+                        <span>{task.title}</span>
+                        <small className="duration-badge">{span}w</small>
+                        <em>{task.provisional ? "PROVISIONAL · EDIT" : "EDIT"}</em>
+                      </button>
+                    ) : (
+                      <div className="task-label sticky-cell">
+                        <i style={{ background: PALETTES[year.id][task.category] }} />
+                        <span>{task.title}</span>
+                        <small className="duration-badge">{span}w</small>
+                        {task.provisional && <em>PROVISIONAL</em>}
+                      </div>
+                    )}
                     <div className="task-timeline">
                       <MonthGrid year={year} />
                       <DeadlineLines year={year} />
                       <button
-                        className={`task-bar ${task.provisional ? "provisional" : ""}`}
+                        className={`task-bar ${task.provisional ? "provisional" : ""} ${editing ? "edit-ready" : ""}`}
                         style={{
                           ...taskPosition(task, year),
                           background: PALETTES[year.id][task.category],
@@ -876,7 +915,7 @@ function YearGantt({
                         aria-label={`${task.title}, ${formatDate(task.start)} to ${formatDate(task.end)}. Open details.`}
                         title={`${task.title} · ${formatDate(task.start)} — ${formatDate(task.end)}`}
                       >
-                        <span>{width > 5 ? task.short ?? task.title : ""}</span>
+                        <span>{width > 5 ? `${task.short ?? task.title} · ${span}w` : `${span}w`}</span>
                         <b aria-hidden="true">↗</b>
                       </button>
                     </div>
@@ -909,19 +948,22 @@ function TaskDrawer({
   const [start, setStart] = useState(task.start);
   const [end, setEnd] = useState(task.end);
   const [detail, setDetail] = useState(task.detail);
-  const weeks = weekCount({ ...task, start, end });
+  const [category, setCategory] = useState<Category>(task.category);
+  const weeks = timelineWeekSpan({ ...task, start, end }, year);
 
   useEffect(() => {
     setTitle(task.title);
     setStart(task.start);
     setEnd(task.end);
     setDetail(task.detail);
+    setCategory(task.category);
   }, [task]);
 
   function submit(event: FormEvent) {
     event.preventDefault();
     if (asTime(end) < asTime(start)) return;
-    onSave(task.id, { title, start, end, detail });
+    onSave(task.id, { title, start, end, detail, category });
+    onClose();
   }
 
   return (
@@ -951,6 +993,14 @@ function TaskDrawer({
                 <input type="date" value={end} min={start} onChange={(event) => setEnd(event.target.value)} required />
               </label>
             </div>
+            <label>
+              Phase type & colour
+              <select value={category} onChange={(event) => setCategory(event.target.value as Category)}>
+                {(Object.keys(CATEGORY_LABELS) as Category[]).map((item) => (
+                  <option value={item} key={item}>{CATEGORY_LABELS[item]}</option>
+                ))}
+              </select>
+            </label>
             <label>
               Detail
               <textarea value={detail} onChange={(event) => setDetail(event.target.value)} rows={7} required />
@@ -1012,6 +1062,161 @@ function TaskDrawer({
   );
 }
 
+function PlanEditor({
+  initialView,
+  edits,
+  onClose,
+  onSave,
+  onResetTask,
+}: {
+  initialView: "all" | YearPlan["id"];
+  edits: Edits;
+  onClose: () => void;
+  onSave: (taskId: string, edit: TaskEdit) => void;
+  onResetTask: (taskId: string) => void;
+}) {
+  const [yearId, setYearId] = useState<YearPlan["id"]>(initialView === "all" ? "y1" : initialView);
+  const year = YEARS.find((item) => item.id === yearId) ?? YEARS[0];
+  const flatTasks = year.groups.flatMap((group) => group.tasks.map((task) => ({ task, group })));
+  const [taskId, setTaskId] = useState(flatTasks[0].task.id);
+  const selectedEntry = flatTasks.find((entry) => entry.task.id === taskId) ?? flatTasks[0];
+  const task = mergeTask(selectedEntry.task, edits);
+  const [title, setTitle] = useState(task.title);
+  const [start, setStart] = useState(task.start);
+  const [end, setEnd] = useState(task.end);
+  const [detail, setDetail] = useState(task.detail);
+  const [category, setCategory] = useState<Category>(task.category);
+  const [saved, setSaved] = useState(false);
+  const [invalid, setInvalid] = useState(false);
+
+  useEffect(() => {
+    const nextYearId = initialView === "all" ? "y1" : initialView;
+    setYearId(nextYearId);
+  }, [initialView]);
+
+  useEffect(() => {
+    const nextYear = YEARS.find((item) => item.id === yearId) ?? YEARS[0];
+    const containsCurrent = nextYear.groups.some((group) => group.tasks.some((item) => item.id === taskId));
+    if (!containsCurrent) setTaskId(nextYear.groups[0].tasks[0].id);
+  }, [yearId, taskId]);
+
+  useEffect(() => {
+    setTitle(task.title);
+    setStart(task.start);
+    setEnd(task.end);
+    setDetail(task.detail);
+    setCategory(task.category);
+    setSaved(false);
+    setInvalid(false);
+  }, [taskId, yearId]);
+
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    if (asTime(end) < asTime(start)) {
+      setInvalid(true);
+      return;
+    }
+    onSave(task.id, { title, start, end, detail, category });
+    setInvalid(false);
+    setSaved(true);
+  }
+
+  return (
+    <div className="drawer-shell editor-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <aside className="task-drawer plan-editor" role="dialog" aria-modal="true" aria-labelledby="plan-editor-title">
+        <button className="drawer-close" onClick={onClose} aria-label="Close timeline editor">×</button>
+        <div className="editor-heading">
+          <p className="drawer-kicker">DIRECT TIMELINE EDITOR</p>
+          <h2 id="plan-editor-title">Edit research plan</h2>
+          <p>Choose any phase below, change its dates or text, then save. The Gantt chart updates immediately.</p>
+        </div>
+
+        <div className="editor-picker-grid">
+          <label>
+            Academic year
+            <select value={yearId} onChange={(event) => setYearId(event.target.value as YearPlan["id"])}>
+              {YEARS.map((item) => <option value={item.id} key={item.id}>{item.label} · {item.yearName}</option>)}
+            </select>
+          </label>
+          <label>
+            Phase to edit
+            <select value={task.id} onChange={(event) => setTaskId(event.target.value)}>
+              {year.groups.map((group) => (
+                <optgroup label={`${group.eyebrow} — ${group.venue}`} key={group.id}>
+                  {group.tasks.map((item) => (
+                    <option value={item.id} key={item.id}>{mergeTask(item, edits).title}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div className="editor-context">
+          <i style={{ background: PALETTES[year.id][category] }} />
+          <div>
+            <span>{selectedEntry.group.eyebrow}</span>
+            <strong>{selectedEntry.group.venue}</strong>
+          </div>
+          <em>{timelineWeekSpan({ ...task, start, end }, year)} planning weeks</em>
+        </div>
+
+        <form onSubmit={submit} className="edit-form plan-editor-form">
+          <label>
+            Phase title
+            <input value={title} onChange={(event) => setTitle(event.target.value)} required />
+          </label>
+          <div className="form-grid">
+            <label>
+              Start date
+              <input type="date" value={start} onChange={(event) => setStart(event.target.value)} required />
+            </label>
+            <label>
+              End date
+              <input type="date" value={end} onChange={(event) => setEnd(event.target.value)} required />
+            </label>
+          </div>
+          {invalid && <p className="form-error" role="alert">End date must be the same as or later than the start date.</p>}
+          <label>
+            Phase type & colour
+            <select value={category} onChange={(event) => setCategory(event.target.value as Category)}>
+              {(Object.keys(CATEGORY_LABELS) as Category[]).map((item) => (
+                <option value={item} key={item}>{CATEGORY_LABELS[item]}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Detail shown when the bar is clicked
+            <textarea value={detail} onChange={(event) => setDetail(event.target.value)} rows={6} required />
+          </label>
+          <div className="editor-save-row">
+            <button className="primary-button" type="submit">Save changes</button>
+            <button
+              className="secondary-button"
+              type="button"
+              onClick={() => {
+                onResetTask(task.id);
+                setTitle(selectedEntry.task.title);
+                setStart(selectedEntry.task.start);
+                setEnd(selectedEntry.task.end);
+                setDetail(selectedEntry.task.detail);
+                setCategory(selectedEntry.task.category);
+                setSaved(false);
+                setInvalid(false);
+              }}
+              disabled={!edits[task.id]}
+            >
+              Reset this phase
+            </button>
+            {saved && <span className="saved-message" role="status">Saved — timeline updated</span>}
+          </div>
+          <p className="local-note">These edits are stored on this device. Tell Codex when you want them made permanent in the published version.</p>
+        </form>
+      </aside>
+    </div>
+  );
+}
+
 function PlanningNotes({ onClose }: { onClose: () => void }) {
   return (
     <div className="drawer-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
@@ -1056,6 +1261,7 @@ export default function Home() {
   const [view, setView] = useState<"all" | YearPlan["id"]>("y1");
   const [selected, setSelected] = useState<Selected | null>(null);
   const [editing, setEditing] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [edits, setEdits] = useState<Edits>({});
 
@@ -1072,6 +1278,7 @@ export default function Home() {
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setSelected(null);
+        setEditorOpen(false);
         setNotesOpen(false);
       }
     }
@@ -1089,7 +1296,13 @@ export default function Home() {
     setEdits(next);
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     setSelected((current) => current ? { ...current, task: { ...current.task, ...edit } } : current);
-    setEditing(false);
+  }
+
+  function resetTask(taskId: string) {
+    const next = { ...edits };
+    delete next[taskId];
+    setEdits(next);
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   }
 
   function resetEdits() {
@@ -1115,7 +1328,15 @@ export default function Home() {
           </button>
           <button
             className={`text-button ${editing ? "active" : ""}`}
-            onClick={() => setEditing((current) => !current)}
+            onClick={() => {
+              if (editing) {
+                setEditing(false);
+                setEditorOpen(false);
+              } else {
+                setEditing(true);
+                setEditorOpen(true);
+              }
+            }}
           >
             <MarkIcon type="edit" /> {editing ? "Editing on" : "Edit plan"}
           </button>
@@ -1128,8 +1349,10 @@ export default function Home() {
       <section className="intro" aria-labelledby="page-title">
         <div className="intro-copy">
           <p className="overline">YEAR 1 PROJECT APPROVAL · WORKING PLAN</p>
-          <h1 id="page-title">Social roles of object-based urban AI robots</h1>
-          <p className="lead">A designerly, citizen-centred inquiry — from speculative workshops to public prototypes and an empirically grounded account of “robot citizens”.</p>
+          <h1 id="page-title">
+            Social roles of object-based urban AI robots:
+            <span>A designerly and citizen-centred inquiry</span>
+          </h1>
         </div>
         <div className="research-question">
           <span>OVERALL RESEARCH QUESTION</span>
@@ -1168,7 +1391,11 @@ export default function Home() {
           <span><i className="key-diamond hard" /> Fixed deadline</span>
           <span><i className="key-diamond target" /> Target window · date TBC</span>
           <span><i className="key-dash" /> Provisional activity</span>
-          {editing && <strong>Editing mode: select a bar to change its title, dates or notes.</strong>}
+          {editing && (
+            <button className="editor-open-button" onClick={() => setEditorOpen(true)}>
+              Open timeline editor
+            </button>
+          )}
         </div>
 
         <div className="years-stack">
@@ -1177,6 +1404,7 @@ export default function Home() {
               key={year.id}
               year={year}
               edits={edits}
+              editing={editing}
               onTask={(task, group, selectedYear) => setSelected({ task, group, year: selectedYear })}
             />
           ))}
@@ -1220,6 +1448,15 @@ export default function Home() {
           editing={editing}
           onClose={() => setSelected(null)}
           onSave={saveEdit}
+        />
+      )}
+      {editorOpen && (
+        <PlanEditor
+          initialView={view}
+          edits={edits}
+          onClose={() => setEditorOpen(false)}
+          onSave={saveEdit}
+          onResetTask={resetTask}
         />
       )}
       {notesOpen && <PlanningNotes onClose={() => setNotesOpen(false)} />}
