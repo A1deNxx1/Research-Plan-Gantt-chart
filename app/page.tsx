@@ -1516,11 +1516,10 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="project-mark" href="#timeline" aria-label="Go to timeline">
-          <span>RC</span>
+        <a className="project-mark" href="#timeline" aria-label="Go to Interactive Gantt Chart">
+          <span aria-hidden="true">🔍</span>
           <div>
-            <strong>ROBOT CITIZENS</strong>
-            <small>DOCTORAL ROADMAP</small>
+            <strong>Interactive Gantt Chart</strong>
           </div>
         </a>
         <div className="header-actions">
@@ -1553,7 +1552,7 @@ export default function Home() {
 
       <section className="intro" aria-labelledby="page-title">
         <div className="intro-copy">
-          <a className="overline intro-plan-link" href="#timeline">Interactive Gantt Chart</a>
+          <a className="overline intro-plan-link" href="#timeline">Xixiang Nie PhD Research Plan</a>
           <h1 id="page-title">
             Social roles of object-based urban AI robots:
             <span>A designerly and citizen-centred inquiry</span>
@@ -1573,7 +1572,6 @@ export default function Home() {
       <section className="timeline-section" id="timeline" aria-labelledby="timeline-title">
         <div className="timeline-toolbar">
           <div>
-            <p className="overline">INTERACTIVE GANTT CHART</p>
             <h2 id="timeline-title">Research journey, week by week</h2>
           </div>
           <div className="toolbar-controls">

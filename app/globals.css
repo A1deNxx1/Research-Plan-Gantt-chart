@@ -84,16 +84,14 @@ main {
 }
 
 .project-mark > span {
-  width: 38px;
-  height: 38px;
+  width: 46px;
+  height: 46px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--ink);
-  color: white;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  background: transparent;
+  font-size: 32px;
+  line-height: 1;
 }
 
 .project-mark div {
@@ -105,6 +103,12 @@ main {
 .project-mark small {
   font-size: 11px;
   letter-spacing: 0.16em;
+}
+
+.project-mark strong {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
 }
 
 .project-mark small {
@@ -306,7 +310,7 @@ main {
   margin-top: 20px;
   max-width: 850px;
   color: #4f5651;
-  font-size: 0.46em;
+  font-size: 0.55em;
   line-height: 1.05;
   letter-spacing: -0.035em;
   font-weight: 600;
@@ -364,7 +368,7 @@ main {
 
 .timeline-section {
   background: var(--white);
-  padding: 54px 0 56px;
+  padding: 38px 0 56px;
   overflow-x: clip;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -376,11 +380,7 @@ main {
   align-items: end;
   justify-content: space-between;
   gap: 40px;
-  margin: 0 auto 24px;
-}
-
-.timeline-toolbar .overline {
-  margin-bottom: 8px;
+  margin: 0 auto 18px;
 }
 
 .timeline-toolbar h2 {
@@ -1884,7 +1884,7 @@ footer p {
   .intro h1 span {
     margin-top: 4mm;
     max-width: none;
-    font-size: 16pt;
+    font-size: 19pt;
   }
 
   .timeline-section {
