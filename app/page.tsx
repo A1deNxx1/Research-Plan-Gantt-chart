@@ -1193,7 +1193,7 @@ function YearGantt({
                             }}
                             onClick={() => onTask(task, group, year)}
                             aria-label={`${task.title}${segmentContext}, ${formatDate(segment.start)} to ${formatDate(segment.end)}. Open details.`}
-                            title={`${task.title} · ${formatDate(segment.start)} — ${formatDate(segment.end)}${activeSegments.length > 1 ? " · supervisor annual-leave gap excluded" : ""}`}
+                            title={`${task.title} · ${formatDate(segment.start)} — ${formatDate(segment.end)}`}
                           />
                         );
                       })}
@@ -1327,12 +1327,6 @@ function TaskDrawer({
                 />
               ))}
             </div>
-            {hasLeaveBreak && (
-              <div className="supervisor-leave-note">
-                <strong>Supervisor annual-leave gap</strong>
-                <span>August and December W3–W4 are intentionally left blank on the timeline.</span>
-              </div>
-            )}
             <div className="drawer-section">
               <h3>What happens here</h3>
               <p>{task.detail}</p>
@@ -1343,12 +1337,6 @@ function TaskDrawer({
                 <ul>
                   {task.meta.map((item) => <li key={item}>{item}</li>)}
                 </ul>
-              </div>
-            )}
-            {task.provisional && (
-              <div className="provisional-note">
-                <strong>Provisional window</strong>
-                <span>This timing or partner still needs confirmation.</span>
               </div>
             )}
           </>

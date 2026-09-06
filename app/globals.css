@@ -1434,25 +1434,6 @@ footer p {
   border-radius: 2px;
 }
 
-.supervisor-leave-note {
-  margin-top: 15px;
-  padding: 12px 14px;
-  display: grid;
-  gap: 4px;
-  border-left: 3px solid #aaa39a;
-  background: #f4f1eb;
-}
-
-.supervisor-leave-note strong {
-  font-size: 11px;
-}
-
-.supervisor-leave-note span {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.45;
-}
-
 .drawer-section {
   margin-top: 34px;
 }
@@ -1484,24 +1465,6 @@ footer p {
 
 .drawer-section li + li {
   margin-top: 7px;
-}
-
-.provisional-note {
-  margin-top: 30px;
-  padding: 16px;
-  border: 1px dashed #b1a993;
-  background: #f7f3e8;
-  display: grid;
-  gap: 5px;
-}
-
-.provisional-note strong {
-  font-size: 11px;
-}
-
-.provisional-note span {
-  color: var(--muted);
-  font-size: 11px;
 }
 
 .edit-form {
