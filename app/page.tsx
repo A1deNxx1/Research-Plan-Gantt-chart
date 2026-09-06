@@ -222,10 +222,10 @@ const YEARS: YearPlan[] = [
             id: "wip-feedback",
             title: "Supervisor review & feedback",
             short: "Review & feedback",
-            start: "2026-12-15",
+            start: "2027-01-15",
             end: "2027-01-31",
             category: "feedback",
-            detail: "Share sections of the DIS WIP paper as they are drafted so supervisor review and feedback run alongside the full write-up, then continue through the end of January.",
+            detail: "Supervisor review and feedback begins in January W3, after the supervisors’ annual leave, and continues through the end of January.",
           },
           {
             id: "wip-finalise",
