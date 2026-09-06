@@ -130,7 +130,7 @@ const YEARS: YearPlan[] = [
         number: "01",
         eyebrow: "Foundational Study · Critical review",
         title: "Future work and social roles of urban robots",
-        venue: "DIS 2027 Full Paper · Critical Computing",
+        venue: "DIS 2027 Full Paper",
         tasks: [
           {
             id: "foundational-review-write",
@@ -158,7 +158,7 @@ const YEARS: YearPlan[] = [
             start: "2026-12-15",
             end: "2027-01-14",
             category: "revision",
-            detail: "Revise and finalise the DIS 2027 full paper from mid-December to mid-January, including the Critical Computing framing and submission package.",
+            detail: "Revise and finalise the DIS 2027 full paper from mid-December to mid-January, complete the submission package, and submit it to the DIS Critical Computing Subcommittee.",
           },
         ],
       },
@@ -1668,8 +1668,8 @@ export default function Home() {
         </div>
         <div className="project-facts">
           <div><strong>3</strong><span>academic years</span></div>
-          <div><strong>6</strong><span>studies</span></div>
-          <div><strong>8</strong><span>outputs</span></div>
+          <div><strong>6</strong><span>studies <small>(5 formal · 1 potential)</small></span></div>
+          <div><strong>10</strong><span>outputs <small>(6 full study · 1 poster · 2 demo · 1 exhibition)</small></span></div>
         </div>
       </section>
 

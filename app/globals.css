@@ -346,7 +346,7 @@ main {
 
 .research-question span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.18em;
 }
@@ -392,6 +392,14 @@ main {
   letter-spacing: 0.01em;
 }
 
+.project-facts small {
+  margin-left: 5px;
+  color: #858984;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .timeline-section {
   background: var(--white);
   padding: 38px 0 56px;
@@ -432,7 +440,7 @@ main {
 
 .year-picker > span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.18em;
 }
@@ -471,7 +479,7 @@ main {
   flex-wrap: wrap;
   gap: 14px 24px;
   color: #6b706c;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .chart-key > span {
@@ -486,7 +494,7 @@ main {
 }
 
 .week-rule {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.015em;
 }
@@ -509,8 +517,8 @@ main {
 }
 
 .key-diamond {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   transform: rotate(45deg);
 }
 
@@ -523,8 +531,8 @@ main {
 }
 
 .key-dash {
-  width: 18px;
-  height: 8px;
+  width: 23px;
+  height: 10px;
   border: 1px solid #66716e;
   border-radius: 5px;
   background-image: repeating-linear-gradient(
@@ -578,7 +586,7 @@ main {
 
 .year-index {
   color: var(--year-accent);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -587,7 +595,7 @@ main {
 .year-card-topline p {
   margin: 0;
   color: var(--year-ink);
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -606,14 +614,14 @@ main {
   align-items: center;
   gap: 7px;
   color: #626762;
-  font-size: 11px;
+  font-size: 14px;
   white-space: nowrap;
 }
 
 .stage-legend i,
 .task-label > i {
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   flex: 0 0 auto;
 }
@@ -641,7 +649,7 @@ main {
   padding: 9px 16px;
   color: var(--muted);
   background: #f7f5f0;
-  font-size: 9px;
+  font-size: 12px;
   text-align: right;
 }
 
@@ -675,7 +683,7 @@ main {
 .gantt-scroll-control > span {
   padding-left: 18px;
   color: var(--year-ink);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.1em;
 }
@@ -718,14 +726,14 @@ main {
 }
 
 .floating-month-track strong {
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .floating-month-track small {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -833,7 +841,7 @@ main {
 .axis-label span,
 .deadline-label span {
   color: #555b57;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.16em;
 }
@@ -841,7 +849,7 @@ main {
 .axis-label small,
 .deadline-label small {
   color: #8a8f8a;
-  font-size: 10px;
+  font-size: 13px;
 }
 
 .month-axis {
@@ -882,7 +890,7 @@ main {
   place-items: center;
   border-left: 1px solid #d6d2ca;
   color: #606660;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.04em;
 }
@@ -896,14 +904,14 @@ main {
 }
 
 .month-cell strong {
-  font-size: 11px;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.09em;
 }
 
 .month-cell small {
   color: #888d89;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .deadline-label {
@@ -959,9 +967,9 @@ main {
   position: absolute;
   top: 17px;
   left: 8px;
-  width: 150px;
+  width: 190px;
   color: #8b3e39;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   line-height: 1.2;
 }
@@ -990,14 +998,14 @@ main {
 .group-number {
   color: var(--year-accent);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 16px;
+  font-size: 21px;
   font-style: italic;
 }
 
 .group-heading p {
   margin: 0 0 6px;
   color: var(--year-accent);
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 900;
   line-height: 1.25;
   letter-spacing: 0.065em;
@@ -1008,7 +1016,7 @@ main {
   margin: 0;
   max-width: 330px;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 20px;
+  font-size: 26px;
   line-height: 1.18;
   font-weight: 600;
 }
@@ -1046,7 +1054,7 @@ main {
   min-height: 54px;
   padding: 11px 16px 11px 64px;
   display: grid;
-  grid-template-columns: 7px minmax(0, 1fr) auto auto;
+  grid-template-columns: 9px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 10px;
   border-top: 0;
@@ -1064,14 +1072,14 @@ main {
   border-radius: 999px;
   background: #f7f5f0;
   color: #4f5550;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 800;
   text-align: center;
   letter-spacing: 0.03em;
 }
 
 .task-label span {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1.3;
 }
@@ -1091,7 +1099,7 @@ main {
 
 .task-label em {
   color: #7a6b53;
-  font-size: 8px;
+  font-size: 10px;
   font-style: normal;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -1112,7 +1120,7 @@ main {
 
 .task-label.edit-ready em {
   color: #17676d;
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .task-timeline {
@@ -1875,7 +1883,7 @@ footer p {
   }
 
   .gantt-scroll-control > span {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .timeline-scroll-tools {
@@ -1909,7 +1917,14 @@ footer p {
   }
 
   .project-facts span {
-    font-size: 11px;
+    font-size: 12px;
+  }
+
+  .project-facts small {
+    display: block;
+    margin: 3px 0 0;
+    font-size: 9px;
+    white-space: normal;
   }
 
   .project-facts > div {
