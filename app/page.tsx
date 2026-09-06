@@ -55,7 +55,9 @@ type YearPlan = {
   deadlines: Deadline[];
 };
 
-type TaskEdit = Partial<Pick<Task, "title" | "start" | "end" | "detail" | "category">>;
+type TaskEdit = Partial<Pick<Task, "title" | "start" | "end" | "detail" | "category">> & {
+  deleted?: boolean;
+};
 type Edits = Record<string, TaskEdit>;
 type SaveTaskEdit = (taskId: string, edit: TaskEdit) => Promise<boolean>;
 
@@ -910,7 +912,21 @@ function monthSegments(year: YearPlan) {
 }
 
 function mergeTask(task: Task, edits: Edits): Task {
-  return { ...task, ...(edits[task.id] ?? {}) };
+  const edit = edits[task.id];
+  if (!edit) return task;
+
+  return {
+    ...task,
+    title: edit.title ?? task.title,
+    start: edit.start ?? task.start,
+    end: edit.end ?? task.end,
+    detail: edit.detail ?? task.detail,
+    category: edit.category ?? task.category,
+  };
+}
+
+function isTaskDeleted(taskId: string, edits: Edits) {
+  return edits[taskId]?.deleted === true;
 }
 
 function MarkIcon({ type }: { type: "edit" | "print" }) {
@@ -953,11 +969,13 @@ function YearGantt({
   edits,
   editing,
   onTask,
+  onDeleteTask,
 }: {
   year: YearPlan;
   edits: Edits;
   editing: boolean;
   onTask: (task: Task, group: OutputGroup, year: YearPlan) => void;
+  onDeleteTask: (task: Task) => void;
 }) {
   const segments = monthSegments(year);
   const weeks = segments.length * 4;
@@ -1146,7 +1164,7 @@ function YearGantt({
                 <span style={{ transform: `translate3d(${scrollLeft}px, 0, 0)` }}>{group.venue}</span>
               </div>
 
-              {group.tasks.map((originalTask) => {
+              {group.tasks.filter((task) => !isTaskDeleted(task.id, edits)).map((originalTask) => {
                 const task = mergeTask(originalTask, edits);
                 const supervisorFeedback = isSupervisorPaperFeedback(task);
                 const activeSegments = supervisorReviewSegments(task);
@@ -1154,16 +1172,25 @@ function YearGantt({
                 return (
                   <div className="task-pair" key={task.id}>
                     {editing ? (
-                      <button
+                      <div
                         className={`task-label sticky-cell edit-ready ${supervisorFeedback ? "supervisor-review-label" : ""}`}
-                        onClick={() => onTask(task, group, year)}
-                        aria-label={`Edit ${task.title}`}
                       >
                         <i style={{ background: PALETTES[year.id][task.category] }} />
-                        <span>{task.title}</span>
+                        <button
+                          className="task-label-title"
+                          type="button"
+                          onClick={() => onTask(task, group, year)}
+                          aria-label={`Edit ${task.title}`}
+                        >
+                          <span>{task.title}</span>
+                        </button>
                         <small className="duration-badge">{span}w</small>
-                        <em>{task.provisional ? "PROVISIONAL · EDIT" : "EDIT"}</em>
-                      </button>
+                        <div className="task-row-actions">
+                          {task.provisional && <em>PROVISIONAL</em>}
+                          <button type="button" className="task-edit-action" onClick={() => onTask(task, group, year)}>EDIT</button>
+                          <button type="button" className="task-delete-action" onClick={() => onDeleteTask(task)}>DELETE</button>
+                        </div>
+                      </div>
                     ) : (
                       <div className={`task-label sticky-cell ${supervisorFeedback ? "supervisor-review-label" : ""}`}>
                         <i style={{ background: PALETTES[year.id][task.category] }} />
@@ -1418,7 +1445,9 @@ function PlanEditor({
               {year.groups.map((group) => (
                 <optgroup label={`${group.eyebrow} — ${group.venue}`} key={group.id}>
                   {group.tasks.map((item) => (
-                    <option value={item.id} key={item.id}>{mergeTask(item, edits).title}</option>
+                    <option value={item.id} key={item.id}>
+                      {isTaskDeleted(item.id, edits) ? "[Deleted] " : ""}{mergeTask(item, edits).title}
+                    </option>
                   ))}
                 </optgroup>
               ))}
@@ -1486,7 +1515,7 @@ function PlanEditor({
               }}
               disabled={!edits[task.id]}
             >
-              Reset this phase
+              {isTaskDeleted(task.id, edits) ? "Restore this phase" : "Reset this phase"}
             </button>
             {saved && <span className="saved-message" role="status">Saved online — timeline updated</span>}
           </div>
@@ -1589,6 +1618,28 @@ export default function Home() {
       setEdits(previous);
       setSyncState("error");
       return false;
+    }
+  }
+
+  async function deleteTask(task: Task) {
+    if (!canEdit || !window.confirm(`Delete “${task.title}” from the timeline? You can restore it from the timeline editor or by resetting online edits.`)) return;
+    const previous = edits;
+    const next = { ...previous, [task.id]: { deleted: true } };
+    setEdits(next);
+    setSelected((current) => current?.task.id === task.id ? null : current);
+    setSyncState("saving");
+
+    try {
+      const response = await fetch("/api/plan", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId: task.id, edit: { deleted: true } }),
+      });
+      if (!response.ok) throw new Error("Unable to delete phase.");
+      setSyncState("ready");
+    } catch {
+      setEdits(previous);
+      setSyncState("error");
     }
   }
 
@@ -1714,6 +1765,7 @@ export default function Home() {
               edits={edits}
               editing={editing}
               onTask={(task, group, selectedYear) => setSelected({ task, group, year: selectedYear })}
+              onDeleteTask={(task) => void deleteTask(task)}
             />
           ))}
         </div>

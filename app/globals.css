@@ -1114,12 +1114,11 @@ main {
 
 .task-label.edit-ready {
   background: #edf7f5;
-  cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
 
 .task-label.edit-ready:hover,
-.task-label.edit-ready:focus-visible {
+.task-label.edit-ready:focus-within {
   z-index: 8;
   background: #dcefeb;
   color: #145b61;
@@ -1128,6 +1127,53 @@ main {
 .task-label.edit-ready em {
   color: #17676d;
   font-size: 10px;
+}
+
+.task-label-title {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.task-label-title span {
+  display: block;
+}
+
+.task-label-title:focus-visible,
+.task-row-actions button:focus-visible {
+  outline: 2px solid #17676d;
+  outline-offset: 3px;
+}
+
+.task-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.task-row-actions button {
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.task-edit-action {
+  color: #17676d;
+}
+
+.task-delete-action {
+  color: #a43f38;
+}
+
+.task-row-actions button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .task-timeline {

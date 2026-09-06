@@ -24,6 +24,7 @@ type TaskEdit = {
   end?: string;
   detail?: string;
   category?: string;
+  deleted?: boolean;
 };
 
 function getRuntimeEnv() {
@@ -59,6 +60,11 @@ function validDate(value: unknown): value is string {
 function validateEdit(value: unknown): TaskEdit | null {
   if (!value || typeof value !== "object") return null;
   const candidate = value as Record<string, unknown>;
+
+  // Deleting an activity is a reversible, soft delete. The source plan stays
+  // intact and the owner can restore it by resetting this phase or all edits.
+  if (candidate.deleted === true) return { deleted: true };
+
   const title = typeof candidate.title === "string" ? candidate.title.trim() : "";
   const detail = typeof candidate.detail === "string" ? candidate.detail.trim() : "";
   const start = candidate.start;
