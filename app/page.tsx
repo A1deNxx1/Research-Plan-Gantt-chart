@@ -818,8 +818,62 @@ function taskPosition(task: Task, year: YearPlan) {
   return { left: `${left}%`, width: `${width}%` };
 }
 
-function timelineWeekSpan(task: Task, year: YearPlan) {
+function rawTimelineWeekSpan(task: Pick<Task, "start" | "end">, year: YearPlan) {
   return Math.max(1, weekSlot(task.end, year.start) - weekSlot(task.start, year.start) + 1);
+}
+
+function shiftDate(value: string, days: number) {
+  const point = new Date(`${value}T00:00:00Z`);
+  point.setUTCDate(point.getUTCDate() + days);
+  return point.toISOString().slice(0, 10);
+}
+
+function supervisorReviewSegments(task: Task) {
+  if (task.category !== "feedback" || task.title !== CATEGORY_LABELS.feedback) {
+    return [{ start: task.start, end: task.end }];
+  }
+
+  let segments = [{ start: task.start, end: task.end }];
+  const firstYear = new Date(`${task.start}T00:00:00Z`).getUTCFullYear();
+  const lastYear = new Date(`${task.end}T00:00:00Z`).getUTCFullYear();
+
+  for (let year = firstYear; year <= lastYear; year += 1) {
+    for (const month of [8, 12]) {
+      const monthString = String(month).padStart(2, "0");
+      const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+      const leaveStart = `${year}-${monthString}-15`;
+      const leaveEnd = `${year}-${monthString}-${String(lastDay).padStart(2, "0")}`;
+
+      segments = segments.flatMap((segment) => {
+        if (asTime(segment.end) < asTime(leaveStart) || asTime(segment.start) > asTime(leaveEnd)) {
+          return [segment];
+        }
+
+        const activeSegments: { start: string; end: string }[] = [];
+        if (asTime(segment.start) < asTime(leaveStart)) {
+          activeSegments.push({ start: segment.start, end: shiftDate(leaveStart, -1) });
+        }
+        if (asTime(segment.end) > asTime(leaveEnd)) {
+          activeSegments.push({ start: shiftDate(leaveEnd, 1), end: segment.end });
+        }
+        return activeSegments;
+      });
+    }
+  }
+
+  return segments;
+}
+
+function hasSupervisorLeaveBreak(task: Task) {
+  const segments = supervisorReviewSegments(task);
+  return segments.length !== 1 || segments[0]?.start !== task.start || segments[0]?.end !== task.end;
+}
+
+function timelineWeekSpan(task: Task, year: YearPlan) {
+  return supervisorReviewSegments(task).reduce(
+    (total, segment) => total + rawTimelineWeekSpan(segment, year),
+    0,
+  );
 }
 
 function formatDate(value: string) {
@@ -1091,6 +1145,7 @@ function YearGantt({
 
               {group.tasks.map((originalTask) => {
                 const task = mergeTask(originalTask, edits);
+                const activeSegments = supervisorReviewSegments(task);
                 const span = timelineWeekSpan(task, year);
                 return (
                   <div className="task-pair" key={task.id}>
@@ -1116,16 +1171,25 @@ function YearGantt({
                     <div className="task-timeline">
                       <MonthGrid year={year} />
                       <DeadlineLines year={year} />
-                      <button
-                        className={`task-bar ${task.provisional ? "provisional" : ""} ${editing ? "edit-ready" : ""}`}
-                        style={{
-                          ...taskPosition(task, year),
-                          backgroundColor: PALETTES[year.id][task.category],
-                        }}
-                        onClick={() => onTask(task, group, year)}
-                        aria-label={`${task.title}, ${formatDate(task.start)} to ${formatDate(task.end)}. Open details.`}
-                        title={`${task.title} · ${formatDate(task.start)} — ${formatDate(task.end)}`}
-                      />
+                      {activeSegments.map((segment, segmentIndex) => {
+                        const segmentTask = { ...task, ...segment };
+                        const segmentContext = activeSegments.length > 1
+                          ? `, active segment ${segmentIndex + 1} of ${activeSegments.length}`
+                          : "";
+                        return (
+                          <button
+                            key={`${task.id}-${segment.start}`}
+                            className={`task-bar ${task.provisional ? "provisional" : ""} ${editing ? "edit-ready" : ""}`}
+                            style={{
+                              ...taskPosition(segmentTask, year),
+                              backgroundColor: PALETTES[year.id][task.category],
+                            }}
+                            onClick={() => onTask(task, group, year)}
+                            aria-label={`${task.title}${segmentContext}, ${formatDate(segment.start)} to ${formatDate(segment.end)}. Open details.`}
+                            title={`${task.title} · ${formatDate(segment.start)} — ${formatDate(segment.end)}${activeSegments.length > 1 ? " · supervisor annual-leave gap excluded" : ""}`}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -1159,7 +1223,9 @@ function TaskDrawer({
   const [category, setCategory] = useState<Category>(task.category);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
-  const weeks = timelineWeekSpan({ ...task, start, end }, year);
+  const editedTask = { ...task, title, start, end, category };
+  const weeks = timelineWeekSpan(editedTask, year);
+  const hasLeaveBreak = hasSupervisorLeaveBreak(editedTask);
 
   useEffect(() => {
     setTitle(task.title);
@@ -1236,7 +1302,7 @@ function TaskDrawer({
               </div>
               <div className="duration-orbit">
                 <span>{weeks}</span>
-                <small>{weeks === 1 ? "week" : "weeks"}</small>
+                <small>{hasLeaveBreak ? "active weeks" : weeks === 1 ? "week" : "weeks"}</small>
               </div>
               <div>
                 <span>END</span>
@@ -1254,6 +1320,12 @@ function TaskDrawer({
                 />
               ))}
             </div>
+            {hasLeaveBreak && (
+              <div className="supervisor-leave-note">
+                <strong>Supervisor annual-leave gap</strong>
+                <span>August and December W3–W4 are intentionally left blank on the timeline.</span>
+              </div>
+            )}
             <div className="drawer-section">
               <h3>What happens here</h3>
               <p>{task.detail}</p>
@@ -1381,7 +1453,7 @@ function PlanEditor({
             <span>{selectedEntry.group.eyebrow}</span>
             <strong>{selectedEntry.group.venue}</strong>
           </div>
-          <em>{timelineWeekSpan({ ...task, start, end }, year)} planning weeks</em>
+          <em>{timelineWeekSpan({ ...task, title, start, end, category }, year)} active planning weeks</em>
         </div>
 
         <form onSubmit={submit} className="edit-form plan-editor-form">
