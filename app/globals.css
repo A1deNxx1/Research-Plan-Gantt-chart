@@ -282,7 +282,7 @@ main {
 
 .intro {
   width: min(var(--page-max-width), calc(100% - var(--page-total-gutter)));
-  margin: 76px auto 92px;
+  margin: 46px auto 55px;
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.7fr);
   gap: 70px 90px;
@@ -369,7 +369,7 @@ main {
 .project-facts > div {
   padding: 24px 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 15px;
 }
 
@@ -386,17 +386,23 @@ main {
 }
 
 .project-facts span {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
   color: var(--muted);
   font-size: 16px;
   font-weight: 700;
+  line-height: 1.25;
   letter-spacing: 0.01em;
 }
 
 .project-facts small {
-  margin-left: 5px;
+  margin-left: 0;
   color: #858984;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
   white-space: nowrap;
 }
 
@@ -1803,7 +1809,7 @@ footer p {
 
   .intro {
     width: calc(100% - 40px);
-    margin: 54px auto 64px;
+    margin: 32px auto 38px;
     grid-template-columns: 1fr;
     gap: 42px;
   }
@@ -1921,9 +1927,8 @@ footer p {
   }
 
   .project-facts small {
-    display: block;
-    margin: 3px 0 0;
-    font-size: 9px;
+    margin: 0;
+    font-size: inherit;
     white-space: normal;
   }
 
