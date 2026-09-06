@@ -193,7 +193,7 @@ const YEARS: YearPlan[] = [
             id: "s1-workshops-12",
             title: "Workshop 1",
             short: "Workshop 1",
-            start: "2026-11-15",
+            start: "2026-12-01",
             end: "2026-12-14",
             category: "fieldwork",
             detail: "Run the first co-speculative workshop using BinBot, BenchBot and PlanterBot scenarios, concept cards, paper models, GenAI visualisation and role-play.",
@@ -247,13 +247,12 @@ const YEARS: YearPlan[] = [
         tasks: [
           {
             id: "s1-workshop-3",
-            title: "Workshop 3",
-            short: "Workshop 3",
+            title: "Workshops 2 & 3",
+            short: "Workshops 2 & 3",
             start: "2027-03-01",
-            end: "2027-03-14",
+            end: "2027-03-31",
             category: "fieldwork",
-            detail: "Run the third comparative workshop across March W1–W2 with the same core scenarios and a rotated presentation order.",
-            meta: ["Final Study 1 workshop", "Comparable structure across sessions"],
+            detail: "Run the second and third comparative workshops across March using the same core scenarios and a rotated presentation order.",
           },
           {
             id: "s1-synthesis-draft",
@@ -262,7 +261,7 @@ const YEARS: YearPlan[] = [
             start: "2027-03-15",
             end: "2027-03-31",
             category: "writing",
-            detail: "Analyse the new workshop data alongside the earlier workshop and DIS WIP evidence during March W3–W4, using reflexive thematic analysis.",
+            detail: "Combine and analyse the data from all three workshops during March W3–W4 using reflexive thematic analysis.",
             meta: ["Reflexive thematic analysis", "Audio, video, artefacts & notes"],
           },
           {
@@ -350,7 +349,7 @@ const YEARS: YearPlan[] = [
             start: "2027-05-01",
             end: "2027-05-21",
             category: "making",
-            detail: "Build the second lightweight prototype, documenting design decisions and the making process for the later design-research output.",
+            detail: "Build the second lightweight research prototype or urban probe, using Wizard-of-Oz control where appropriate.",
           },
           {
             id: "prototype-2-field",
@@ -368,7 +367,7 @@ const YEARS: YearPlan[] = [
             start: "2027-06-01",
             end: "2027-06-21",
             category: "making",
-            detail: "Build the third prototype, completing the comparative set derived from Study 1.",
+            detail: "Build the third lightweight research prototype or urban probe, using Wizard-of-Oz control where appropriate.",
           },
           {
             id: "prototype-3-field",
@@ -406,16 +405,6 @@ const YEARS: YearPlan[] = [
             end: "2027-08-31",
             category: "revision",
             detail: "Apply supervisor review and feedback and prepare the final CHI full-paper submission package during the final two August planning weeks.",
-          },
-          {
-            id: "s3-ethics",
-            title: "Study 3 ethics review",
-            short: "Study 3 ethics",
-            start: "2027-09-01",
-            end: "2027-09-30",
-            category: "ethics",
-            detail: "Reserve all four September planning weeks for the Study 3 ethics review before Year 2 begins.",
-            meta: ["4-week review window", "Covers all of September"],
           },
           {
             id: "september-leave-1",
@@ -488,8 +477,18 @@ const YEARS: YearPlan[] = [
         number: "04",
         eyebrow: "Study 3 · Comparative field deployment",
         title: "Robot roles across different citizen groups",
-        venue: "CHI 2028 full paper · alternative HRI 2028",
+        venue: "CHI 2028 full paper/demo paper · alternative HRI",
         tasks: [
+          {
+            id: "s3-ethics",
+            title: "Study 3 ethics review",
+            short: "Study 3 ethics",
+            start: "2027-10-01",
+            end: "2027-10-31",
+            category: "ethics",
+            detail: "Reserve all four October planning weeks for the Study 3 ethics review.",
+            meta: ["4-week review window", "Covers all of October"],
+          },
           {
             id: "s3-recruitment",
             title: "Recruit Study 3 participants",
@@ -520,7 +519,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "industry-placement",
-            title: "Candidate 3-month industry placement",
+            title: "3-month industry placement",
             short: "Industry placement",
             start: "2028-04-01",
             end: "2028-06-30",
@@ -551,8 +550,8 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "s3-demo-write",
-            title: "AI prototype demo write-up",
-            short: "Demo write-up",
+            title: "AI prototype demo paper write-up",
+            short: "Demo paper write-up",
             start: "2028-05-15",
             end: "2028-06-14",
             category: "writing",
@@ -566,7 +565,7 @@ const YEARS: YearPlan[] = [
             start: "2028-06-15",
             end: "2028-07-14",
             category: "writing",
-            detail: "Combine video interaction analysis, reflexive thematic analysis and cross-group comparison into the first empirical paper draft.",
+            detail: "Combine video interaction analysis, reflexive thematic analysis and cross-group comparison into the empirical paper draft.",
           },
           {
             id: "s3-feedback",
@@ -667,7 +666,7 @@ const YEARS: YearPlan[] = [
         number: "06",
         eyebrow: "Potential side study · Critical counterpoint",
         title: "A public art provocation on privacy & surveillance",
-        venue: "CHI 2030 Demo · alternative HRI 2030",
+        venue: "CHI 2030 Demo paper · alternative HRI 2030",
         tasks: [
           {
             id: "side-build",
@@ -676,7 +675,7 @@ const YEARS: YearPlan[] = [
             start: "2029-02-08",
             end: "2029-04-30",
             category: "making",
-            detail: "Create a critical public installation that makes the sensing, image-capture and data-collection risks of urban AI robots tangible to citizens.",
+            detail: "Create a critical public installation that makes the sensing, image-capture and data-collection risks of urban AI robots tangible to citizens. It will also serve as a creative response that critically reflects on the PhD project by foregrounding the potentially harmful and negative implications of AI robots.",
             meta: ["Privacy & surveillance", "Critical counterpoint to the PhD", "Timing remains provisional"],
             provisional: true,
           },
@@ -716,7 +715,7 @@ const YEARS: YearPlan[] = [
             start: "2029-02-08",
             end: "2029-07-31",
             category: "writing",
-            detail: "Write the final thesis across Studies 1–3, integrating the empirical, design/artifact and theoretical contributions.",
+            detail: "Write the final thesis across all studies, integrating the empirical, design/artifact and theoretical contributions.",
           },
           {
             id: "exhibition-plan",
@@ -1222,7 +1221,7 @@ function TaskDrawer({
   onClose: () => void;
   onSave: SaveTaskEdit;
 }) {
-  const { task, group, year } = selected;
+  const { task, year } = selected;
   const [title, setTitle] = useState(task.title);
   const [start, setStart] = useState(task.start);
   const [end, setEnd] = useState(task.end);
@@ -1258,12 +1257,6 @@ function TaskDrawer({
       <aside className="task-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
         <button className="drawer-close" onClick={onClose} aria-label="Close task details">×</button>
         <div className="drawer-accent" style={{ background: PALETTES[year.id][task.category] }} />
-        <div className="drawer-kicker">
-          <span>{year.label}</span>
-          <i />
-          <span>{CATEGORY_LABELS[task.category]}</span>
-        </div>
-
         {editing ? (
           <form onSubmit={submit} className="edit-form">
             <label>
@@ -1301,7 +1294,6 @@ function TaskDrawer({
         ) : (
           <>
             <h2 id="drawer-title">{task.title}</h2>
-            <p className="drawer-output">{group.eyebrow} · {group.venue}</p>
             <div className="date-card">
               <div>
                 <span>START</span>
@@ -1331,14 +1323,6 @@ function TaskDrawer({
               <h3>What happens here</h3>
               <p>{task.detail}</p>
             </div>
-            {task.meta && (
-              <div className="drawer-section">
-                <h3>Planning notes</h3>
-                <ul>
-                  {task.meta.map((item) => <li key={item}>{item}</li>)}
-                </ul>
-              </div>
-            )}
           </>
         )}
       </aside>
