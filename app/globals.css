@@ -148,6 +148,7 @@ main {
 }
 
 .text-button,
+.github-link,
 .export-button,
 .reset-button {
   border: 0;
@@ -162,6 +163,16 @@ main {
   justify-content: center;
   gap: 9px;
   transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.github-link {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.github-link:hover {
+  background: var(--paper-deep);
 }
 
 .text-button:hover {

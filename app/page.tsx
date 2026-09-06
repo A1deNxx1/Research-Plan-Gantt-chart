@@ -690,8 +690,8 @@ const YEARS: YearPlan[] = [
             id: "thesis-write",
             title: "Write final thesis",
             short: "Thesis writing",
-            start: "2029-04-01",
-            end: "2029-07-31",
+            start: "2029-03-01",
+            end: "2029-06-30",
             category: "writing",
             detail: "Write the final thesis across Studies 1–3, integrating the empirical, design/artifact and theoretical contributions.",
           },
@@ -699,8 +699,8 @@ const YEARS: YearPlan[] = [
             id: "exhibition-plan",
             title: "Find creative partner & plan exhibition",
             short: "Exhibition",
-            start: "2029-04-01",
-            end: "2029-07-31",
+            start: "2029-03-01",
+            end: "2029-06-30",
             category: "making",
             detail: "Identify a creative organisation and shape a solo exhibition of research findings and prototypes to extend social impact.",
             meta: ["Partner to confirm", "Research prototypes + public programme"],
@@ -1544,6 +1544,14 @@ export default function Home() {
               </button>
             </>
           )}
+          <a
+            className="github-link"
+            href="https://github.com/A1deNxx1/Research-Plan-Gantt-chart"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub ↗
+          </a>
           <button className="export-button" onClick={() => window.print()}>
             <MarkIcon type="print" /> Export PDF
           </button>
