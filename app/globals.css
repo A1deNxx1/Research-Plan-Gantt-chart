@@ -318,6 +318,13 @@ main {
   border-color: #0f5358;
 }
 
+.intro-plan-label,
+.intro-plan-label:hover {
+  border-bottom: 0;
+  padding-bottom: 0;
+  color: #17676d;
+}
+
 .intro h1 {
   margin: 0;
   max-width: 920px;

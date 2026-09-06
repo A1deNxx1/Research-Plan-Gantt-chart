@@ -1527,6 +1527,7 @@ function PlanEditor({
 }
 
 export default function Home() {
+  const isGitHubPages = typeof window !== "undefined" && window.location.hostname.endsWith("github.io");
   const [view, setView] = useState<"all" | YearPlan["id"]>("y1");
   const [selected, setSelected] = useState<Selected | null>(null);
   const [editing, setEditing] = useState(false);
@@ -1707,7 +1708,11 @@ export default function Home() {
 
       <section className="intro" aria-labelledby="page-title">
         <div className="intro-copy">
-          <a className="overline intro-plan-link" href="#timeline">Xixiang Nie PhD Research Plan</a>
+          {isGitHubPages ? (
+            <span className="overline intro-plan-link intro-plan-label">Xixiang Nie PhD Research Plan</span>
+          ) : (
+            <a className="overline intro-plan-link" href="#timeline">Xixiang Nie PhD Research Plan</a>
+          )}
           <h1 id="page-title">
             Social roles of object-based urban AI robots:
             <span>A designerly and citizen-centred inquiry</span>
