@@ -1668,8 +1668,8 @@ export default function Home() {
         </div>
         <div className="project-facts">
           <div><strong>3</strong><span>academic years</span></div>
-          <div><strong>6</strong><span>studies <small>(5 formal · 1 potential)</small></span></div>
-          <div><strong>10</strong><span>outputs <small>(6 full study · 1 poster · 2 demo · 1 exhibition)</small></span></div>
+          <div><strong>6</strong><span>studies <small>(5 formal, 1 potential)</small></span></div>
+          <div><strong>10</strong><span>outputs <small>(6 full study, 1 poster, 2 demo, 1 exhibition)</small></span></div>
         </div>
       </section>
 
