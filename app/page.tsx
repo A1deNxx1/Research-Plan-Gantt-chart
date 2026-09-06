@@ -1695,9 +1695,9 @@ export default function Home() {
           <p>How do human citizens imagine, interpret, and negotiate the social roles of object-based urban AI robots that inhabit public spaces, and how might they regard them as “robot citizens”?</p>
         </div>
         <div className="project-facts">
-          <div><strong>4</strong><span>formal studies</span></div>
-          <div><strong>8</strong><span>planned outputs</span></div>
           <div><strong>3</strong><span>academic years</span></div>
+          <div><strong>6</strong><span>studies</span></div>
+          <div><strong>8</strong><span>outputs</span></div>
         </div>
       </section>
 
