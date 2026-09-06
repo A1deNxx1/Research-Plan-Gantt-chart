@@ -28,6 +28,7 @@ type Task = {
 
 type OutputGroup = {
   id: string;
+  number: string;
   eyebrow: string;
   title: string;
   venue: string;
@@ -64,7 +65,7 @@ const CATEGORY_LABELS: Record<Category, string> = {
   making: "Design, making & development",
   fieldwork: "Experiment & data collection",
   writing: "Analysis & writing",
-  feedback: "Supervisor feedback",
+  feedback: "Supervisor review & feedback",
   revision: "Revision & finalisation",
   internship: "Industry collaboration",
   leave: "Annual leave",
@@ -118,15 +119,54 @@ const YEARS: YearPlan[] = [
     soft: "#f8ede6",
     ink: "#5f2f1f",
     deadlines: [
-      { date: "2027-02-12", label: "DIS WIP + DC target week", kind: "target" },
+      { date: "2027-01-14", label: "DIS critical review target week", kind: "target" },
+      { date: "2027-02-12", label: "DIS WIP target week", kind: "target" },
       { date: "2027-09-01", label: "Annual Progression 1", kind: "hard" },
       { date: "2027-09-08", label: "CHI full paper target week", kind: "target" },
     ],
     groups: [
       {
+        id: "foundational-review",
+        number: "01",
+        eyebrow: "Foundational Study · Critical review",
+        title: "Future work and social roles of urban robots",
+        venue: "DIS 2027 Full Paper · Critical Computing",
+        tasks: [
+          {
+            id: "foundational-review-write",
+            title: "Critical review & full-paper write-up",
+            short: "Critical review",
+            start: "2026-09-15",
+            end: "2026-11-30",
+            category: "writing",
+            detail: "Critically review how urban robots have been framed as work machines or high-efficiency workers. From a more-than-human perspective, ask what the ‘future work’ of urban robots could mean beyond functionality, including the social roles they might take on. The review positions the background for the subsequent studies.",
+            meta: ["More-than-human perspective", "Critical Computing Subcommittee", "Positions the later empirical and design studies"],
+          },
+          {
+            id: "foundational-review-feedback",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
+            start: "2026-12-01",
+            end: "2026-12-14",
+            category: "feedback",
+            detail: "Supervisors review the complete critical-review manuscript during the first two planning weeks of December.",
+          },
+          {
+            id: "foundational-review-finalise",
+            title: "Revision & finalisation",
+            short: "Finalisation",
+            start: "2027-01-01",
+            end: "2027-01-14",
+            category: "revision",
+            detail: "Revise and finalise the DIS 2027 full paper across the first two planning weeks of January, including the Critical Computing framing and submission package.",
+          },
+        ],
+      },
+      {
         id: "dis-wip",
+        number: "02",
         eyebrow: "Study 1 · Early output",
-        title: "DIS 2027 Work in Progress + Doctoral Consortium",
+        title: "DIS 2027 Work in Progress",
         venue: "DIS 2027",
         tasks: [
           {
@@ -151,12 +191,12 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "s1-workshops-12",
-            title: "Workshops 1 & 2",
-            short: "2 workshops",
+            title: "Workshop 1",
+            short: "Workshop 1",
             start: "2026-11-15",
             end: "2026-12-14",
             category: "fieldwork",
-            detail: "Two co-speculative workshops using BinBot, BenchBot and PlanterBot scenarios, concept cards, paper models, GenAI visualisation and role-play.",
+            detail: "Run the first co-speculative workshop using BinBot, BenchBot and PlanterBot scenarios, concept cards, paper models, GenAI visualisation and role-play.",
             meta: ["Audio + video", "Storyboards & role cards", "Bodystorming / enactment"],
           },
           {
@@ -166,8 +206,8 @@ const YEARS: YearPlan[] = [
             start: "2026-12-15",
             end: "2027-01-14",
             category: "writing",
-            detail: "Write the work-in-progress paper from the first two workshops. The fourth week of December is protected as Christmas leave.",
-            meta: ["Includes Workshops 1 & 2", "Christmas week excluded"],
+            detail: "Write the work-in-progress paper from Workshop 1. The fourth week of December is protected as Christmas leave.",
+            meta: ["Includes Workshop 1", "Christmas week excluded"],
           },
           {
             id: "christmas-2026",
@@ -180,21 +220,12 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "wip-feedback",
-            title: "Supervisor feedback",
-            short: "Feedback",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
             start: "2027-01-15",
             end: "2027-01-31",
             category: "feedback",
             detail: "Supervisor reading and response window for the WIP draft, shown separately so waiting time is visible in the plan.",
-          },
-          {
-            id: "dc-draft",
-            title: "Doctoral Consortium write-up",
-            short: "DC write-up",
-            start: "2027-01-15",
-            end: "2027-01-31",
-            category: "writing",
-            detail: "Prepare the DIS Doctoral Consortium submission in parallel with the WIP feedback period.",
           },
           {
             id: "wip-finalise",
@@ -203,7 +234,7 @@ const YEARS: YearPlan[] = [
             start: "2027-02-01",
             end: "2027-02-07",
             category: "revision",
-            detail: "Apply supervisor feedback, tighten claims and evidence, and prepare the WIP and Doctoral Consortium files for submission.",
+            detail: "Apply supervisor review and feedback, tighten claims and evidence, and prepare the DIS WIP paper for submission.",
           },
           {
             id: "china-leave-1",
@@ -218,6 +249,7 @@ const YEARS: YearPlan[] = [
       },
       {
         id: "hri-full-study",
+        number: "02",
         eyebrow: "Study 1 · Complete research",
         title: "Imagined design spaces of urban robot roles",
         venue: "HRI 2028 · alternative DIS 2028",
@@ -254,12 +286,12 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "hri-paper-iterate",
-            title: "Supervisor feedback",
-            short: "Feedback",
-            start: "2027-04-01",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
+            start: "2027-03-01",
             end: "2027-04-30",
             category: "feedback",
-            detail: "Receive structured supervisor feedback on the complete Study 1 manuscript while Prototype 1 is being built and deployed.",
+            detail: "Share sections with supervisors as they are drafted so review and feedback run continuously alongside Study 1 analysis and writing, then continue during Prototype 1 development.",
             meta: ["Parallel workstream", "Target: HRI 2028"],
           },
           {
@@ -269,13 +301,14 @@ const YEARS: YearPlan[] = [
             start: "2027-05-01",
             end: "2027-05-31",
             category: "revision",
-            detail: "Apply supervisor feedback, refine the complete Study 1 argument and finalise the HRI 2028 submission.",
+            detail: "Apply supervisor review and feedback, refine the complete Study 1 argument and finalise the HRI 2028 submission.",
             meta: ["Parallel workstream", "Target: HRI 2028"],
           },
         ],
       },
       {
         id: "study2-empirical",
+        number: "03",
         eyebrow: "Study 2 · Comparative public deployments",
         title: "Three object-based urban robot prototypes",
         venue: "CHI 2028",
@@ -357,12 +390,12 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "s2-chi-feedback",
-            title: "Supervisor feedback",
-            short: "Feedback",
-            start: "2027-08-01",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
+            start: "2027-07-01",
             end: "2027-08-14",
             category: "feedback",
-            detail: "Reserve the first two August planning weeks for supervisors to review the complete comparative Study 2 manuscript.",
+            detail: "Supervisors review successive sections from the start of comparative analysis and writing, continuing through the first two August planning weeks.",
           },
           {
             id: "s2-chi-finalise",
@@ -371,7 +404,7 @@ const YEARS: YearPlan[] = [
             start: "2027-08-15",
             end: "2027-08-31",
             category: "revision",
-            detail: "Apply supervisor feedback and prepare the final CHI full-paper submission package during the final two August planning weeks.",
+            detail: "Apply supervisor review and feedback and prepare the final CHI full-paper submission package during the final two August planning weeks.",
           },
           {
             id: "s3-ethics",
@@ -413,25 +446,8 @@ const YEARS: YearPlan[] = [
     ],
     groups: [
       {
-        id: "hri-demo",
-        eyebrow: "Study 1 findings → Study 2 prototype",
-        title: "Selected object-based robot demo",
-        venue: "HRI 2028 Demo",
-        tasks: [
-          {
-            id: "hri-demo-write",
-            title: "HRI demo write-up",
-            short: "Demo write-up",
-            start: "2027-10-01",
-            end: "2027-10-14",
-            category: "writing",
-            detail: "Select the most compelling of the three lightweight prototypes and prepare the HRI 2028 demo submission.",
-            meta: ["Prototype selection", "Demo narrative + evidence"],
-          },
-        ],
-      },
-      {
         id: "study2-design",
+        number: "03",
         eyebrow: "Study 2 · Design research",
         title: "Making insights, recommendations & guidelines",
         venue: "DIS / C&C 2028",
@@ -441,26 +457,26 @@ const YEARS: YearPlan[] = [
             title: "Organise making process & synthesise findings",
             short: "Design synthesis",
             start: "2027-10-01",
-            end: "2027-11-30",
+            end: "2027-11-14",
             category: "writing",
             detail: "Curate the three prototypes’ design and making evidence, connect it to Study 1 findings, and draft design recommendations or guidelines.",
             meta: ["Text paper or pictorial", "Alternative: C&C 2028"],
           },
           {
             id: "design-paper-feedback",
-            title: "Supervisor feedback",
-            short: "Feedback",
-            start: "2027-12-01",
-            end: "2027-12-14",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
+            start: "2027-10-01",
+            end: "2027-11-30",
             category: "feedback",
-            detail: "Two-week supervisor review window for the DIS/C&C design-research manuscript.",
+            detail: "Supervisors review the design-research paper continuously from the start of writing, responding to successive sections through the end of November.",
           },
           {
             id: "design-paper-revise",
             title: "Revision & finalisation",
             short: "Finalisation",
-            start: "2027-12-15",
-            end: "2028-01-07",
+            start: "2027-12-01",
+            end: "2027-12-14",
             category: "revision",
             detail: "Revise the paper or pictorial, finalise images and evidence, and prepare the submission package.",
           },
@@ -468,6 +484,7 @@ const YEARS: YearPlan[] = [
       },
       {
         id: "study3-empirical",
+        number: "04",
         eyebrow: "Study 3 · Comparative field deployment",
         title: "Robot roles across different citizen groups",
         venue: "CHI / HRI 2029",
@@ -476,8 +493,8 @@ const YEARS: YearPlan[] = [
             id: "s3-recruitment",
             title: "Recruit Study 3 participants",
             short: "Recruitment",
-            start: "2027-10-01",
-            end: "2028-02-29",
+            start: "2027-11-15",
+            end: "2028-05-14",
             category: "recruitment",
             detail: "Recruit citizens and workers for naturally occurring encounters, short interviews and a later mixed focus group.",
             meta: ["6–10 citizens", "6–10 workers", "3–5 per group for mixed focus group"],
@@ -486,8 +503,8 @@ const YEARS: YearPlan[] = [
             id: "s3-rethink",
             title: "Reframe Study 3 after feedback",
             short: "Reframe",
-            start: "2028-01-15",
-            end: "2028-01-21",
+            start: "2028-01-01",
+            end: "2028-01-14",
             category: "writing",
             detail: "A focused decision week to revisit the research design, deployment groups and the selected robot case.",
           },
@@ -532,6 +549,16 @@ const YEARS: YearPlan[] = [
             meta: ["Citizens + workers", "Video interaction analysis", "Mixed focus group"],
           },
           {
+            id: "s3-demo-write",
+            title: "AI prototype demo write-up",
+            short: "Demo write-up",
+            start: "2028-05-15",
+            end: "2028-06-14",
+            category: "writing",
+            detail: "Prepare the selected AI-enabled object-based robot as a demo contribution while the Study 3 field experiment and data collection are underway.",
+            meta: ["Runs alongside field study", "AI-enabled prototype", "Target: HRI demo"],
+          },
+          {
             id: "s3-analysis",
             title: "Analysis & first manuscript draft",
             short: "Analysis + draft",
@@ -542,13 +569,13 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "s3-feedback",
-            title: "Supervisor feedback",
-            short: "Feedback",
-            start: "2028-07-15",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
+            start: "2028-06-15",
             end: "2028-07-31",
             category: "feedback",
-            detail: "Receive consolidated feedback from the supervisory team and industry host on the complete Study 3 manuscript.",
-            meta: ["Industry host + supervisors", "Two planning weeks"],
+            detail: "Share Study 3 analysis and manuscript sections with the supervisory team and industry host as they are drafted, enabling continuous review through July.",
+            meta: ["Industry host + supervisors", "Rolling section-by-section review"],
           },
           {
             id: "s3-finalise",
@@ -590,6 +617,7 @@ const YEARS: YearPlan[] = [
     groups: [
       {
         id: "robot-citizens-journal",
+        number: "05",
         eyebrow: "Study 4 · Synthesis / framework",
         title: "Defining “robot citizens” across three studies",
         venue: "PACMHCI CSCW",
@@ -606,12 +634,12 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "framework-feedback",
-            title: "Supervisor feedback",
-            short: "Feedback",
-            start: "2029-01-01",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
+            start: "2028-10-01",
             end: "2029-01-14",
             category: "feedback",
-            detail: "Reserve the first two January planning weeks for supervisor review of the complete cross-study synthesis and framework.",
+            detail: "Share the cross-study synthesis and framework with supervisors section by section from the start of writing, continuing review through the first two January planning weeks.",
           },
           {
             id: "framework-finalise",
@@ -620,7 +648,7 @@ const YEARS: YearPlan[] = [
             start: "2029-01-15",
             end: "2029-01-31",
             category: "revision",
-            detail: "Apply supervisor feedback and prepare the PACMHCI CSCW submission. The exact track deadline remains to be confirmed.",
+            detail: "Apply supervisor review and feedback and prepare the PACMHCI CSCW submission. The exact track deadline remains to be confirmed.",
           },
           {
             id: "china-leave-3",
@@ -635,54 +663,48 @@ const YEARS: YearPlan[] = [
       },
       {
         id: "side-study",
+        number: "06",
         eyebrow: "Potential side study · Critical counterpoint",
         title: "A public art provocation on privacy & surveillance",
         venue: "CHI / HRI 2030 · short paper / art paper / demo",
         tasks: [
           {
-            id: "side-ethics",
-            title: "Scope, site & ethics approval check",
-            short: "Approval check",
-            start: "2029-02-08",
-            end: "2029-03-07",
-            category: "ethics",
-            detail: "Provisional four-week window to confirm whether the public artwork requires a new ethics amendment, site permission and data-protection review.",
-            meta: ["Provisional", "Public-space permissions", "4-week allowance"],
-            provisional: true,
-          },
-          {
             id: "side-build",
             title: "Develop & make the public artwork",
             short: "Art provocation",
             start: "2029-02-08",
-            end: "2029-04-07",
+            end: "2029-04-30",
             category: "making",
             detail: "Create a critical public installation that makes the sensing, image-capture and data-collection risks of urban AI robots tangible to citizens.",
-            meta: ["Privacy & surveillance", "Critical counterpoint to the PhD"],
+            meta: ["Privacy & surveillance", "Critical counterpoint to the PhD", "Timing remains provisional"],
+            provisional: true,
           },
           {
             id: "side-feedback",
-            title: "Supervisor feedback",
-            short: "Feedback",
-            start: "2029-04-08",
-            end: "2029-04-21",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
+            start: "2029-04-29",
+            end: "2029-05-12",
             category: "feedback",
-            detail: "Review the side-study framing, evidence and venue fit with supervisors after the eight-week development window.",
+            detail: "Provisional supervisor review of the side-study framing, evidence and venue fit as the public artwork development concludes.",
+            provisional: true,
           },
           {
             id: "side-finalise",
             title: "Revision & finalisation",
             short: "Finalisation",
-            start: "2029-04-22",
-            end: "2029-05-07",
+            start: "2029-05-13",
+            end: "2029-05-28",
             category: "revision",
             detail: "Apply feedback and prepare the short paper, art paper or demo submission package.",
+            provisional: true,
           },
         ],
       },
       {
         id: "thesis-impact",
-        eyebrow: "Doctoral completion · Synthesis & social impact",
+        number: "07",
+        eyebrow: "PHD PROJECT CLOSING & social impact",
         title: "Final thesis, public exhibition & viva preparation",
         venue: "PhD submission · 28 Sep 2029",
         tasks: [
@@ -690,8 +712,8 @@ const YEARS: YearPlan[] = [
             id: "thesis-write",
             title: "Write final thesis",
             short: "Thesis writing",
-            start: "2029-03-01",
-            end: "2029-06-30",
+            start: "2029-02-08",
+            end: "2029-07-31",
             category: "writing",
             detail: "Write the final thesis across Studies 1–3, integrating the empirical, design/artifact and theoretical contributions.",
           },
@@ -699,8 +721,8 @@ const YEARS: YearPlan[] = [
             id: "exhibition-plan",
             title: "Find creative partner & plan exhibition",
             short: "Exhibition",
-            start: "2029-03-01",
-            end: "2029-06-30",
+            start: "2029-02-08",
+            end: "2029-07-31",
             category: "making",
             detail: "Identify a creative organisation and shape a solo exhibition of research findings and prototypes to extend social impact.",
             meta: ["Partner to confirm", "Research prototypes + public programme"],
@@ -708,21 +730,22 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "thesis-feedback",
-            title: "Supervisor feedback",
-            short: "Feedback",
-            start: "2029-08-01",
-            end: "2029-08-31",
+            title: "Supervisor review & feedback",
+            short: "Review & feedback",
+            start: "2029-05-01",
+            end: "2029-07-31",
             category: "feedback",
-            detail: "Reserve August for structured supervisor feedback on the complete thesis draft and its contribution claims.",
+            detail: "Send each completed thesis chapter to supervisors while the next chapter is being written. This creates a deliberate stagger: supervisors review the previous draft while writing continues, enabling timely feedback before the full thesis is complete.",
+            meta: ["Rolling chapter-by-chapter review", "Runs alongside thesis writing", "May–July"],
           },
           {
             id: "thesis-finalise",
             title: "Revision & finalisation",
             short: "Finalisation",
-            start: "2029-09-01",
-            end: "2029-09-27",
+            start: "2029-08-01",
+            end: "2029-09-28",
             category: "revision",
-            detail: "Apply supervisor feedback, complete quality checks and prepare the final submission files before the 28 September deadline.",
+            detail: "Apply supervisor review and feedback, complete quality checks and prepare the final submission files before the 28 September deadline.",
           },
           {
             id: "viva-practice",
@@ -880,6 +903,9 @@ function YearGantt({
 }) {
   const segments = monthSegments(year);
   const weeks = segments.length * 4;
+  const visibleCategories = (Object.keys(CATEGORY_LABELS) as Category[]).filter((category) =>
+    year.groups.some((group) => group.tasks.some((task) => task.category === category)),
+  );
   const chartScrollRef = useRef<HTMLDivElement>(null);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollMax, setScrollMax] = useState(0);
@@ -934,7 +960,7 @@ function YearGantt({
       </div>
 
       <div className="stage-legend" aria-label={`${year.yearName} phase colour legend`}>
-        {(Object.keys(CATEGORY_LABELS) as Category[]).map((category) => (
+        {visibleCategories.map((category) => (
           <span key={category}>
             <i style={{ background: PALETTES[year.id][category] }} />
             {CATEGORY_LABELS[category]}
@@ -976,6 +1002,25 @@ function YearGantt({
           >
             →
           </button>
+        </div>
+        <div className="floating-month-guide" aria-hidden="true">
+          <div
+            className="floating-month-track"
+            style={{
+              width: "var(--timeline-width)",
+              transform: `translate3d(-${scrollLeft}px, 0, 0)`,
+            }}
+          >
+            {segments.map((month) => (
+              <span
+                key={`${month.year}-${month.label}`}
+                style={{ left: `${month.left}%`, width: `${month.width}%` }}
+              >
+                <strong>{month.label}</strong>
+                <small>{month.label === "Jan" || month.left === 0 ? month.year : ""}</small>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
       <div
@@ -1028,10 +1073,10 @@ function YearGantt({
             ))}
           </div>
 
-          {year.groups.map((group, groupIndex) => (
+          {year.groups.map((group) => (
             <div className="output-group" key={group.id}>
               <div className="group-heading sticky-cell">
-                <span className="group-number">{String(groupIndex + 1).padStart(2, "0")}</span>
+                <span className="group-number">{group.number}</span>
                 <div>
                   <p>{group.eyebrow}</p>
                   <h3>{group.title}</h3>
@@ -1075,7 +1120,7 @@ function YearGantt({
                         className={`task-bar ${task.provisional ? "provisional" : ""} ${editing ? "edit-ready" : ""}`}
                         style={{
                           ...taskPosition(task, year),
-                          background: PALETTES[year.id][task.category],
+                          backgroundColor: PALETTES[year.id][task.category],
                         }}
                         onClick={() => onTask(task, group, year)}
                         aria-label={`${task.title}, ${formatDate(task.start)} to ${formatDate(task.end)}. Open details.`}
