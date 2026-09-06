@@ -78,7 +78,7 @@ const PALETTES: Record<YearPlan["id"], Record<Category, string>> = {
     making: "#d39b45",
     fieldwork: "#7f9871",
     writing: "#477e78",
-    feedback: "#667c9e",
+    feedback: "#5867a8",
     revision: "#785b7d",
     internship: "#a86259",
     leave: "#aaa39a",
@@ -89,7 +89,7 @@ const PALETTES: Record<YearPlan["id"], Record<Category, string>> = {
     making: "#3d8da2",
     fieldwork: "#55a4a6",
     writing: "#3e75a2",
-    feedback: "#5f70aa",
+    feedback: "#5867a8",
     revision: "#555697",
     internship: "#2f6a73",
     leave: "#92a0a1",
@@ -100,7 +100,7 @@ const PALETTES: Record<YearPlan["id"], Record<Category, string>> = {
     making: "#9669a0",
     fieldwork: "#ad6c8b",
     writing: "#725b8a",
-    feedback: "#8770a0",
+    feedback: "#5867a8",
     revision: "#624b78",
     internship: "#775d83",
     leave: "#a499a5",
@@ -829,8 +829,12 @@ function shiftDate(value: string, days: number) {
   return point.toISOString().slice(0, 10);
 }
 
+function isSupervisorPaperFeedback(task: Pick<Task, "category" | "title">) {
+  return task.category === "feedback" && task.title === CATEGORY_LABELS.feedback;
+}
+
 function supervisorReviewSegments(task: Task) {
-  if (task.category !== "feedback" || task.title !== CATEGORY_LABELS.feedback) {
+  if (!isSupervisorPaperFeedback(task)) {
     return [{ start: task.start, end: task.end }];
   }
 
@@ -1016,7 +1020,7 @@ function YearGantt({
 
       <div className="stage-legend" aria-label={`${year.yearName} phase colour legend`}>
         {visibleCategories.map((category) => (
-          <span key={category}>
+          <span className={category === "feedback" ? "supervisor-feedback-legend" : undefined} key={category}>
             <i style={{ background: PALETTES[year.id][category] }} />
             {CATEGORY_LABELS[category]}
           </span>
@@ -1145,13 +1149,14 @@ function YearGantt({
 
               {group.tasks.map((originalTask) => {
                 const task = mergeTask(originalTask, edits);
+                const supervisorFeedback = isSupervisorPaperFeedback(task);
                 const activeSegments = supervisorReviewSegments(task);
                 const span = timelineWeekSpan(task, year);
                 return (
                   <div className="task-pair" key={task.id}>
                     {editing ? (
                       <button
-                        className="task-label sticky-cell edit-ready"
+                        className={`task-label sticky-cell edit-ready ${supervisorFeedback ? "supervisor-review-label" : ""}`}
                         onClick={() => onTask(task, group, year)}
                         aria-label={`Edit ${task.title}`}
                       >
@@ -1161,7 +1166,7 @@ function YearGantt({
                         <em>{task.provisional ? "PROVISIONAL · EDIT" : "EDIT"}</em>
                       </button>
                     ) : (
-                      <div className="task-label sticky-cell">
+                      <div className={`task-label sticky-cell ${supervisorFeedback ? "supervisor-review-label" : ""}`}>
                         <i style={{ background: PALETTES[year.id][task.category] }} />
                         <span>{task.title}</span>
                         <small className="duration-badge">{span}w</small>
@@ -1179,10 +1184,12 @@ function YearGantt({
                         return (
                           <button
                             key={`${task.id}-${segment.start}`}
-                            className={`task-bar ${task.provisional ? "provisional" : ""} ${editing ? "edit-ready" : ""}`}
+                            className={`task-bar ${supervisorFeedback ? "supervisor-review" : ""} ${task.provisional ? "provisional" : ""} ${editing ? "edit-ready" : ""}`}
                             style={{
                               ...taskPosition(segmentTask, year),
-                              backgroundColor: PALETTES[year.id][task.category],
+                              backgroundColor: supervisorFeedback
+                                ? "rgba(88, 103, 168, 0.40)"
+                                : PALETTES[year.id][task.category],
                             }}
                             onClick={() => onTask(task, group, year)}
                             aria-label={`${task.title}${segmentContext}, ${formatDate(segment.start)} to ${formatDate(segment.end)}. Open details.`}

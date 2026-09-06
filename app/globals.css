@@ -9,6 +9,8 @@
   --line-soft: #e8e5de;
   --white: #fffefb;
   --red: #c9433d;
+  --supervisor-review: #5867a8;
+  --supervisor-review-dark: #39457e;
   --page-max-width: 1500px;
   --page-total-gutter: 96px;
   --scroll-end-space: 96px;
@@ -603,6 +605,24 @@ main {
   flex: 0 0 auto;
 }
 
+.stage-legend .supervisor-feedback-legend {
+  padding: 5px 9px;
+  border: 2px solid color-mix(in srgb, var(--supervisor-review-dark) 72%, white);
+  border-radius: 7px;
+  background: rgba(88, 103, 168, 0.1);
+  color: var(--supervisor-review-dark);
+  font-weight: 800;
+  backdrop-filter: blur(6px) saturate(1.15);
+  -webkit-backdrop-filter: blur(6px) saturate(1.15);
+}
+
+.stage-legend .supervisor-feedback-legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px rgba(57, 69, 126, 0.28);
+}
+
 .scroll-note {
   display: none;
   padding: 9px 16px;
@@ -1043,6 +1063,19 @@ main {
   line-height: 1.3;
 }
 
+.task-label.supervisor-review-label {
+  background: linear-gradient(90deg, rgba(88, 103, 168, 0.13), rgba(88, 103, 168, 0.035));
+  box-shadow: inset 4px 0 0 var(--supervisor-review-dark), 12px 0 18px -18px rgba(0, 0, 0, 0.55);
+}
+
+.task-label.supervisor-review-label > i {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--supervisor-review-dark);
+  border-radius: 2px;
+  background: rgba(88, 103, 168, 0.4) !important;
+}
+
 .task-label em {
   color: #7a6b53;
   font-size: 8px;
@@ -1133,6 +1166,40 @@ main {
     rgba(255, 255, 255, 0.72) 8px 10px
   );
   box-shadow: 0 0 0 1px rgba(74, 73, 65, 0.28);
+}
+
+.task-bar.supervisor-review {
+  top: 8px;
+  height: 38px;
+  z-index: 3;
+  border: 3px solid rgba(57, 69, 126, 0.9);
+  border-radius: 7px;
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.42),
+    rgba(255, 255, 255, 0.08) 58%,
+    rgba(57, 69, 126, 0.09)
+  );
+  backdrop-filter: blur(8px) saturate(1.25);
+  -webkit-backdrop-filter: blur(8px) saturate(1.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 5px 13px rgba(57, 69, 126, 0.2);
+}
+
+.task-bar.supervisor-review.provisional {
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 8px,
+      rgba(255, 255, 255, 0.72) 8px 10px
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0.08) 58%,
+      rgba(57, 69, 126, 0.09)
+    );
 }
 
 .task-bar.edit-ready {
@@ -2039,6 +2106,15 @@ footer p {
   .task-bar {
     top: 5px;
     height: 17px;
+  }
+
+  .task-bar.supervisor-review {
+    top: 3px;
+    height: 21px;
+    border-width: 2px;
+    background-color: rgba(88, 103, 168, 0.55) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
 }
