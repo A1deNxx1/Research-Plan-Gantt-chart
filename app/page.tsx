@@ -65,7 +65,7 @@ const CATEGORY_LABELS: Record<Category, string> = {
   making: "Design, making & development",
   fieldwork: "Experiment & data collection",
   writing: "Analysis & writing",
-  feedback: "Supervisor review & paper feedback",
+  feedback: "Supervisor paper review",
   revision: "Revision & finalisation",
   internship: "Industry collaboration",
   leave: "Annual leave",
@@ -144,7 +144,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "foundational-review-feedback",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2026-11-01",
             end: "2026-12-14",
@@ -211,7 +211,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "wip-feedback",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2027-01-15",
             end: "2027-01-31",
@@ -286,7 +286,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "hri-paper-iterate",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2027-04-01",
             end: "2027-06-14",
@@ -390,7 +390,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "s2-chi-feedback",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2027-07-01",
             end: "2027-08-14",
@@ -454,7 +454,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "design-paper-feedback",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2027-10-01",
             end: "2027-11-30",
@@ -569,7 +569,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "s3-feedback",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2028-06-15",
             end: "2028-07-31",
@@ -634,7 +634,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "framework-feedback",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2028-10-01",
             end: "2029-01-14",
@@ -681,7 +681,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "side-feedback",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2029-04-29",
             end: "2029-05-12",
@@ -730,7 +730,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "thesis-feedback",
-            title: "Supervisor review & paper feedback",
+            title: "Supervisor paper review",
             short: "Review & feedback",
             start: "2029-05-01",
             end: "2029-07-31",
