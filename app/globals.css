@@ -980,20 +980,6 @@ main {
   font-weight: 600;
 }
 
-.venue-chip {
-  display: inline-flex;
-  margin-top: 9px;
-  padding: 4px 7px;
-  border: 1px solid color-mix(in srgb, var(--year-accent) 38%, white);
-  border-radius: 999px;
-  color: var(--year-ink);
-  background: var(--year-soft);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .group-heading-timeline {
   min-height: 132px;
   position: relative;
@@ -1001,7 +987,7 @@ main {
   background-color: #f8f7f3;
   background-image: linear-gradient(to right, rgba(35, 40, 37, 0.035) 1px, transparent 1px);
   background-size: calc(100% / var(--weeks)) 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .group-heading-timeline > span:last-child {
@@ -1013,6 +999,9 @@ main {
   font-size: 36px;
   font-style: italic;
   letter-spacing: -0.03em;
+  white-space: nowrap;
+  pointer-events: none;
+  will-change: transform;
 }
 
 .task-pair {
