@@ -519,12 +519,12 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "industry-placement",
-            title: "3-month industry placement",
-            short: "Industry placement",
+            title: "CDT-supported 3-month industry placement",
+            short: "CDT industry placement",
             start: "2028-04-01",
             end: "2028-06-30",
             category: "internship",
-            detail: "Provisional collaboration window with Microsoft Research Cambridge or Nokia Bell Labs Cambridge to co-develop and deploy the AI-enabled prototype; a visiting-PhD arrangement is an alternative.",
+            detail: "CDT-supported provisional collaboration window with Microsoft Research Cambridge or Nokia Bell Labs Cambridge to co-develop and deploy the AI-enabled prototype; a visiting-PhD arrangement is an alternative.",
             meta: ["Timing to confirm", "Partner to confirm", "Runs alongside build + deployment"],
             provisional: true,
           },
@@ -666,7 +666,7 @@ const YEARS: YearPlan[] = [
         number: "06",
         eyebrow: "Potential side study · Critical counterpoint",
         title: "A public art provocation on privacy & surveillance",
-        venue: "CHI 2030 Demo paper · alternative HRI 2030",
+        venue: "CHI 2030 demo paper · alternative HRI 2030",
         tasks: [
           {
             id: "side-build",
