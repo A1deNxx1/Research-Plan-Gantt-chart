@@ -1064,7 +1064,7 @@ main {
 }
 
 .task-label.supervisor-review-label {
-  background: linear-gradient(90deg, rgba(88, 103, 168, 0.13), rgba(88, 103, 168, 0.035));
+  background: linear-gradient(90deg, #e9ebf4, #f7f7fa);
   box-shadow: inset 4px 0 0 var(--supervisor-review-dark), 12px 0 18px -18px rgba(0, 0, 0, 0.55);
 }
 

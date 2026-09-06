@@ -167,7 +167,7 @@ const YEARS: YearPlan[] = [
         number: "02",
         eyebrow: "Study 1 · Early output",
         title: "DIS 2027 Work in Progress",
-        venue: "DIS 2027",
+        venue: "DIS 2027 PWiP Paper",
         tasks: [
           {
             id: "s1-ethics",
@@ -243,7 +243,7 @@ const YEARS: YearPlan[] = [
         number: "02",
         eyebrow: "Study 1 · Complete research",
         title: "Imagined design spaces of urban robot roles",
-        venue: "HRI 2028 · alternative DIS 2028",
+        venue: "CHI 2028 Full Paper",
         tasks: [
           {
             id: "s1-workshop-3",
@@ -312,7 +312,7 @@ const YEARS: YearPlan[] = [
         number: "03",
         eyebrow: "Study 2 · Comparative public deployments",
         title: "Three object-based urban robot prototypes",
-        venue: "CHI 2028",
+        venue: "HRI 2028 Full Paper · alternative DIS 2028",
         tasks: [
           {
             id: "s2-ethics",
@@ -451,7 +451,7 @@ const YEARS: YearPlan[] = [
         number: "03",
         eyebrow: "Study 2 · Design research",
         title: "Making insights, recommendations & guidelines",
-        venue: "DIS / C&C 2028",
+        venue: "DIS 2028 Full Paper · alternative C&C 2028",
         tasks: [
           {
             id: "design-process-synthesis",
@@ -621,7 +621,7 @@ const YEARS: YearPlan[] = [
         number: "05",
         eyebrow: "Study 4 · Synthesis / framework",
         title: "Defining “robot citizens” across three studies",
-        venue: "PACMHCI CSCW",
+        venue: "PACMHCI CSCW Journal Paper",
         tasks: [
           {
             id: "framework-write",
@@ -667,7 +667,7 @@ const YEARS: YearPlan[] = [
         number: "06",
         eyebrow: "Potential side study · Critical counterpoint",
         title: "A public art provocation on privacy & surveillance",
-        venue: "CHI / HRI 2030 · short paper / art paper / demo",
+        venue: "CHI 2030 Demo · alternative HRI 2030",
         tasks: [
           {
             id: "side-build",
