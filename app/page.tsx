@@ -523,7 +523,7 @@ const YEARS: YearPlan[] = [
           },
           {
             id: "s3-ai-build",
-            title: "Develop AI capabilities for a Study 2 robot",
+            title: "Develop AI capabilities for the robot",
             short: "AI-enabled robot development",
             start: "2028-02-15",
             end: "2028-05-14",
