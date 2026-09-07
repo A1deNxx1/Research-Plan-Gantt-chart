@@ -611,7 +611,7 @@ const YEARS: YearPlan[] = [
       {
         id: "robot-citizens-journal",
         number: "05",
-        eyebrow: "Study 4 · Synthesis / framework",
+        eyebrow: "Synthesis Study · Inform framework",
         title: "Defining “robot citizens” across three studies",
         venue: "PACMHCI CSCW Journal Paper",
         tasks: [
