@@ -865,7 +865,7 @@ const YEARS: YearPlan[] = [
           plannedTask("p2-dis-revise", "Revision & finalisation", "2027-12-01", "2028-01-14", "revision", "Revise and finalise the DIS 2028 design-process manuscript through January W2. The January 2028 deadline marker is estimated from the DIS 2027 call, not yet an official date."),
           plannedTask("p2-development-final", "Robotic agent development finalisation", "2028-01-01", "2028-01-21", "making", "Complete integration, reliability tests and final adjustments to the physical robotic agent by January W3."),
           plannedTask("p2-leave-2028", "Annual leave · China", "2028-01-22", "2028-02-29", "leave", "Annual leave in China from January W4 through February W4."),
-          plannedTask("p2-uist-draft", "Technical systems paper draft", "2028-01-08", "2028-02-14", "writing", "Draft a UIST 2028 technical systems paper on the software and/or hardware methods used to develop and integrate the robotic agent."),
+          plannedTask("p2-uist-draft", "Technical systems · UIST2028 full-paper draft (alternative is IUI 2029)", "2028-01-08", "2028-02-14", "writing", "Draft a UIST 2028 technical systems paper on the software and/or hardware methods used to develop and integrate the robotic agent."),
           plannedTask("p2-uist-review", "Supervisor paper review", "2028-02-08", "2028-03-14", "feedback", "Supervisors review the technical systems manuscript from February W2 through March W2, including rolling draft feedback."),
           plannedTask("p2-uist-revise", "Revision & finalisation · UIST paper", "2028-03-15", "2028-03-31", "revision", "Revise and finalise the UIST 2028 paper in March W3–W4. The 31 March submission marker is a planning estimate, not an announced deadline."),
         ],
