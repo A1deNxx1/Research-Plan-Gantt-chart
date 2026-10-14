@@ -1006,11 +1006,11 @@ main {
   gap: 10px;
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  background: #f8f7f3;
+  background: var(--phase-soft, #f8f7f3);
 }
 
 .group-number {
-  color: var(--year-accent);
+  color: var(--phase-accent, var(--year-accent));
   font-family: Georgia, "Times New Roman", serif;
   font-size: 21px;
   font-style: italic;
@@ -1018,7 +1018,7 @@ main {
 
 .group-heading p {
   margin: 0 0 6px;
-  color: var(--year-accent);
+  color: var(--phase-accent, var(--year-accent));
   font-size: 16px;
   font-weight: 900;
   line-height: 1.25;
@@ -1039,7 +1039,7 @@ main {
   min-height: 132px;
   position: relative;
   border-bottom: 1px solid var(--line);
-  background-color: #f8f7f3;
+  background-color: var(--phase-soft, #f8f7f3);
   background-image: linear-gradient(to right, rgba(35, 40, 37, 0.035) 1px, transparent 1px);
   background-size: calc(100% / var(--weeks)) 100%;
   overflow: visible;
@@ -1049,7 +1049,7 @@ main {
   position: absolute;
   left: 22px;
   bottom: 18px;
-  color: color-mix(in srgb, var(--year-accent) 45%, white);
+  color: color-mix(in srgb, var(--phase-accent, var(--year-accent)) 45%, white);
   font-family: Georgia, "Times New Roman", serif;
   font-size: 36px;
   font-style: italic;

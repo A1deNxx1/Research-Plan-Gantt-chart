@@ -4,7 +4,7 @@ import "./globals.css";
 
 const title = "Robot Citizens · Doctoral Research Roadmap";
 const description =
-  "An interactive 2026–2029 Gantt chart for a designerly, citizen-centred inquiry into object-based urban AI robots.";
+  "An interactive 2026–2029 Gantt chart for a designerly, citizen-centred inquiry into urban object-inspired robotic agents.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();

@@ -14,6 +14,8 @@ type Category =
   | "internship"
   | "leave";
 
+type PhaseId = "understanding" | "building" | "deploy" | "ethics";
+
 type Task = {
   id: string;
   title: string;
@@ -29,6 +31,7 @@ type Task = {
 type OutputGroup = {
   id: string;
   number: string;
+  phase?: PhaseId;
   eyebrow: string;
   title: string;
   venue: string;
@@ -73,43 +76,20 @@ const CATEGORY_LABELS: Record<Category, string> = {
   leave: "Annual leave",
 };
 
-const PALETTES: Record<YearPlan["id"], Record<Category, string>> = {
-  y1: {
-    ethics: "#b96f45",
-    recruitment: "#d08d5f",
-    making: "#d39b45",
-    fieldwork: "#7f9871",
-    writing: "#477e78",
-    feedback: "#5867a8",
-    revision: "#785b7d",
-    internship: "#a86259",
-    leave: "#aaa39a",
-  },
-  y2: {
-    ethics: "#388184",
-    recruitment: "#4b9691",
-    making: "#3d8da2",
-    fieldwork: "#55a4a6",
-    writing: "#3e75a2",
-    feedback: "#5867a8",
-    revision: "#555697",
-    internship: "#2f6a73",
-    leave: "#92a0a1",
-  },
-  y3: {
-    ethics: "#82658f",
-    recruitment: "#997196",
-    making: "#9669a0",
-    fieldwork: "#ad6c8b",
-    writing: "#725b8a",
-    feedback: "#5867a8",
-    revision: "#624b78",
-    internship: "#775d83",
-    leave: "#a499a5",
-  },
+const PHASES: Record<PhaseId, { number: number; title: string; color: string; soft: string }> = {
+  understanding: { number: 1, title: "UNDERSTANDING", color: "#b56b43", soft: "#f8eee8" },
+  building: { number: 2, title: "BUILDING AND DEVELOPMENT", color: "#287c84", soft: "#e9f3f4" },
+  deploy: { number: 3, title: "DEPLOY AND EVALUATE", color: "#697b49", soft: "#f0f3e7" },
+  ethics: { number: 4, title: "ETHICAL CONSIDERATIONS", color: "#875d88", soft: "#f5eef5" },
 };
 
-const YEARS: YearPlan[] = [
+function taskColor(phase: PhaseId | undefined, category: Category) {
+  if (category === "feedback") return "#5867a8";
+  if (category === "leave") return "#a8a49e";
+  return phase ? PHASES[phase].color : "#706c65";
+}
+
+const LEGACY_YEARS: YearPlan[] = [
   {
     id: "y1",
     label: "2026/27",
@@ -755,6 +735,153 @@ const YEARS: YearPlan[] = [
   },
 ];
 
+function plannedTask(
+  id: string,
+  title: string,
+  start: string,
+  end: string,
+  category: Category,
+  detail: string,
+  meta?: string[],
+): Task {
+  return { id, title, start, end, category, detail, meta };
+}
+
+const YEARS: YearPlan[] = [
+  {
+    ...LEGACY_YEARS[0],
+    accent: "#706c65",
+    soft: "#f5f3ef",
+    ink: "#272b29",
+    deadlines: [
+      { date: "2027-01-11", label: "DIS 2027 pictorial abstract & title", kind: "target" },
+      { date: "2027-01-18", label: "DIS 2027 pictorial submission", kind: "target" },
+      { date: "2027-09-01", label: "Annual Progression 1", kind: "hard" },
+      { date: "2027-09-10", label: "CHI 2028 paper target · estimated", kind: "target" },
+    ],
+    groups: [
+      {
+        id: "phase1-study1",
+        number: "01",
+        phase: "understanding",
+        eyebrow: "Phase 1 · Understanding · Study 1",
+        title: "Imagining social roles through object and AI capability cards",
+        venue: "DIS 2027 Pictorial",
+        tasks: [
+          plannedTask("p1-s1-ethics", "Ethics approval", "2026-10-15", "2026-11-14", "ethics", "Obtain approval for the expert session and participant co-design workshops before collecting research data. The review window runs from October W3 through November W2."),
+          plannedTask("p1-s1-recruit", "Participant recruitment", "2026-11-08", "2027-02-28", "recruitment", "Recruit adult participants for the co-design and follow-on puppet-prototyping studies. Study 1 recruits approximately 10–12 people with backgrounds in robotics, AI or design; Study 2 welcomes adults without prior robotics or AI knowledge.", ["Study 1: approximately 10–12 adults", "Recruitment continues into February for Study 2"]),
+          plannedTask("p1-s1-cards", "Design object & AI capability cards", "2026-10-15", "2026-10-31", "making", "Prepare cards that help participants combine familiar urban objects, possible inputs, AI capabilities and social goals. The cards are generative prompts, not finished robot specifications."),
+          plannedTask("p1-s1-experts", "Expert session", "2026-11-01", "2026-11-07", "fieldwork", "Discuss the cards and research setup with approximately four HCI, HRI, computer-science and AI experts; use their critique to refine the co-design activities."),
+          plannedTask("p1-s1-refine", "Refine research design", "2026-11-01", "2026-11-14", "writing", "Refine the card set, workshop prompts, documentation and facilitation plan after the expert session and before the participant workshops."),
+          plannedTask("p1-s1-workshops", "Participant co-design workshops", "2026-11-15", "2026-12-14", "fieldwork", "Run three co-design rounds in which participants select urban objects, inputs, AI capabilities and goals; sketch, make and enact object-inspired robotic agents, then reflect on their possible social roles. Document visual artefacts, discussion and peer feedback.", ["Three object concepts", "Annotated visual and artefact analysis", "Performance prompts for Study 2"]),
+          plannedTask("p1-s1-pictorial", "Pictorial design & draft writing", "2026-11-01", "2026-11-30", "writing", "Develop a visually led DIS 2027 pictorial presenting the card-based method and emerging imagined social roles. Analyse workshop artefacts and transcripts using annotated visual analysis and reflexive thematic analysis."),
+          plannedTask("p1-s1-review", "Supervisor paper review", "2026-12-01", "2026-12-14", "feedback", "Share the pictorial draft, images and analysis with supervisors for focused review during December W1–W2."),
+          plannedTask("p1-s1-revision", "Revision & finalisation", "2026-12-15", "2027-01-14", "revision", "Revise and finalise the DIS 2027 pictorial. Submit its title and abstract by 11 January and the complete pictorial by the official 18 January deadline."),
+        ],
+      },
+      {
+        id: "phase1-study2",
+        number: "02",
+        phase: "understanding",
+        eyebrow: "Phase 1 · Understanding · Study 2",
+        title: "Puppet prototyping of imagined robotic agents",
+        venue: "CHI 2028 Full Paper · Studies 1 & 2",
+        tasks: [
+          plannedTask("p1-s2-leave", "Annual leave · China", "2027-02-01", "2027-02-14", "leave", "Annual leave in China during February W1–W2."),
+          plannedTask("p1-s2-refine", "Check & refine research design", "2027-02-15", "2027-02-28", "writing", "Review the three selected concepts and performance prompt cards from Study 1; refine the embodied workshop protocol, facilitation and recording plan for puppet prototyping."),
+          plannedTask("p1-s2-puppet", "Puppet prototyping workshop", "2027-03-01", "2027-03-31", "fieldwork", "Participants make full-scale puppets from everyday materials, improvise encounters, rotate between operator, citizen and observer roles, and iteratively refine behaviours. Document performance video, robot personas, discussion, design cases and exit interviews.", ["Three groups of four participants", "Embodied exploration before physical robot construction"]),
+          plannedTask("p1-s2-analysis", "Analysis & writing", "2027-04-01", "2027-04-30", "writing", "Analyse performance videos, scenario-based design cases, focus groups and interviews. Develop preliminary findings on behaviours, relationships, capabilities and tensions to guide Phase 2 building."),
+          plannedTask("p1-chi-draft", "Studies 1 & 2 · CHI full-paper draft", "2027-05-01", "2027-06-14", "writing", "Combine Study 1 co-design and Study 2 puppet-prototyping evidence into a CHI 2028 full-paper draft on imagined design spaces, social roles, behaviours, strengths, boundaries and tensions of urban object-inspired robotic agents."),
+          plannedTask("p1-chi-review", "Supervisor paper review", "2027-06-15", "2027-06-30", "feedback", "Supervisors review the integrated Studies 1 and 2 CHI manuscript during June W3–W4."),
+          plannedTask("p1-chi-revise", "Revision & finalisation", "2027-07-01", "2027-07-31", "revision", "Revise and finalise the integrated CHI 2028 full paper during July. The September submission marker is an estimate based on the CHI 2027 schedule, not an announced CHI 2028 deadline."),
+        ],
+      },
+      {
+        id: "phase2-study3-y1",
+        number: "03",
+        phase: "building",
+        eyebrow: "Phase 2 · Building and Development · Study 3",
+        title: "Immersive evaluation and robotic-agent development",
+        venue: "DIS 2028 Full Paper · UIST 2028 Paper",
+        tasks: [
+          plannedTask("p2-ethics", "Study 3 ethics approval", "2027-01-01", "2027-02-28", "ethics", "Secure approval for immersive prototype evaluation with adult citizens before participant recruitment and research sessions."),
+          plannedTask("p2-recruit", "Recruit immersive-evaluation participants", "2027-03-01", "2027-04-30", "recruitment", "Recruit approximately 10–12 adult citizens to experience and evaluate the virtual robotic agent in an immersive outdoor setting."),
+          plannedTask("p2-virtual", "Virtual prototyping evaluation", "2027-05-01", "2027-05-31", "fieldwork", "Select an agent concept from Phase 1 and evaluate a virtual prototype in VR or XR within an urban context. Gather feedback on form, behaviour, interaction and the proposed social role before physical construction."),
+          plannedTask("p2-interaction-ai", "Final interaction design & AI agent development", "2027-06-01", "2027-08-31", "making", "Translate the immersive evaluation into final interaction design and develop the AI agent, including its sensing, interpretation and responses. Iterate virtual models and test technical feasibility."),
+          plannedTask("p2-leave-2027", "Annual leave · China", "2027-08-15", "2027-09-21", "leave", "Annual leave in China from August W3 through September W3; development work that overlaps this window should be planned with collaborators or resumed afterward."),
+          plannedTask("p2-physical-y1", "Physical prototype & structural engineering · design and test", "2027-09-01", "2027-09-30", "making", "Begin physical form, structural engineering and interaction testing in September. This activity continues through October W4 in the next academic-year view."),
+        ],
+      },
+    ],
+  },
+  {
+    ...LEGACY_YEARS[1],
+    accent: "#706c65",
+    soft: "#f5f3ef",
+    ink: "#272b29",
+    deadlines: [
+      { date: "2028-01-18", label: "DIS 2028 full-paper target · estimated", kind: "target" },
+      { date: "2028-03-31", label: "UIST 2028 paper target · estimated", kind: "target" },
+      { date: "2028-09-01", label: "Annual Progression 2", kind: "hard" },
+      { date: "2028-09-07", label: "CHI 2029 / HRI 2029 target window", kind: "target" },
+    ],
+    groups: [
+      {
+        id: "phase2-study3-y2",
+        number: "03",
+        phase: "building",
+        eyebrow: "Phase 2 · Building and Development · Study 3 (continued)",
+        title: "Physical prototype, final integration & technical papers",
+        venue: "DIS 2028 Full Paper · UIST 2028 Paper",
+        tasks: [
+          plannedTask("p2-physical-y2", "Physical prototype & structural engineering · design and test", "2027-10-01", "2027-10-31", "making", "Continue the September–October physical prototype and structural-engineering work, including design, fabrication and interaction testing."),
+          plannedTask("p2-dis-draft", "Robot design process & recommendations · DIS draft", "2027-10-01", "2027-10-31", "writing", "Draft a DIS 2028 full paper or pictorial on the iterative design process: Phase 1 findings, immersive evaluation, robot interaction design and resulting design recommendations."),
+          plannedTask("p2-dis-review", "Supervisor paper review", "2027-11-01", "2027-11-30", "feedback", "Supervisors review the DIS design-process manuscript throughout November."),
+          plannedTask("p2-final-integration", "Final physical development & AI agent integration", "2027-11-01", "2027-12-31", "making", "Build and test the final physical robot, integrating its structure, interaction mechanisms and AI agent."),
+          plannedTask("p2-dis-revise", "Revision & finalisation · DIS paper", "2027-12-01", "2027-12-31", "revision", "Revise and finalise the DIS 2028 design-process manuscript. The January 2028 deadline marker is estimated from the DIS 2027 call, not yet an official date."),
+          plannedTask("p2-development-final", "Development finalisation", "2028-01-01", "2028-01-21", "making", "Complete integration, reliability tests and final adjustments to the physical robotic agent by January W3."),
+          plannedTask("p2-leave-2028", "Annual leave · China", "2028-01-22", "2028-02-29", "leave", "Annual leave in China from January W4 through February W4."),
+          plannedTask("p2-uist-draft", "Technical systems paper draft", "2028-01-08", "2028-02-14", "writing", "Draft a UIST 2028 technical systems paper on the software and/or hardware methods used to develop and integrate the robotic agent."),
+          plannedTask("p2-uist-review", "Supervisor paper review", "2028-02-08", "2028-03-14", "feedback", "Supervisors review the technical systems manuscript from February W2 through March W2, including rolling draft feedback."),
+          plannedTask("p2-uist-revise", "Revision & finalisation · UIST paper", "2028-03-15", "2028-03-31", "revision", "Revise and finalise the UIST 2028 paper in March W3–W4. The 31 March submission marker is a planning estimate, not an announced deadline."),
+        ],
+      },
+      {
+        id: "phase3-study4",
+        number: "04",
+        phase: "deploy",
+        eyebrow: "Phase 3 · Deploy and Evaluate · Study 4",
+        title: "Urban deployment of the robotic agent",
+        venue: "IUI 2029 Paper · alternative CHI 2029",
+        tasks: [
+          plannedTask("p3-deployment-prep", "Prepare public deployment & evaluation", "2028-03-01", "2028-04-30", "ethics", "Prepare the urban site, permissions, consent and recording protocol for a signposted public deployment of the completed robotic agent."),
+          plannedTask("p3-field", "Public deployment & citizen encounters", "2028-05-01", "2028-05-31", "fieldwork", "Deploy the agent in an everyday urban space and examine how people notice, interpret and interact with its proposed social role. The PDF proposes a one-week signposted deployment, video observation, brief voluntary interviews and field notes.", ["Approximately 20–30 interactants", "Video and interview evidence"]),
+          plannedTask("p3-analysis", "Interaction analysis & empirical paper draft", "2028-06-01", "2028-08-14", "writing", "Combine video interaction analysis, interview themes and field observations to examine how the agent becomes part of urban space and how citizens interpret its social role.", ["Target: IUI 2029", "Alternative: CHI 2029"]),
+          plannedTask("p3-feedback", "Supervisor paper review", "2028-07-01", "2028-08-14", "feedback", "Share successive empirical-paper sections with supervisors while analysis and writing continue."),
+          plannedTask("p3-finalise", "Revision & finalisation", "2028-08-01", "2028-08-14", "revision", "Incorporate supervisor comments and prepare the empirical paper for its intended submission window."),
+        ],
+      },
+      ...LEGACY_YEARS[1].groups.slice(1).map((group) => ({
+        ...group,
+        number: "05",
+        phase: "ethics" as const,
+        eyebrow: "Phase 4 · Ethical Considerations · Study 5",
+        title: "Participatory governance of the robotic agent",
+      })),
+    ],
+  },
+  {
+    ...LEGACY_YEARS[2],
+    accent: "#706c65",
+    soft: "#f5f3ef",
+    ink: "#272b29",
+    deadlines: LEGACY_YEARS[2].deadlines.filter((deadline) => deadline.label !== "PACMHCI target submission"),
+    groups: LEGACY_YEARS[2].groups.slice(1).map((group) => group.id === "side-study"
+      ? { ...group, number: "05", phase: "ethics" as const, eyebrow: "Phase 4 · Ethical Considerations · Study 5 (potential extension)" }
+      : { ...group, number: "—", phase: undefined, eyebrow: "PhD project closing & social impact" }),
+  },
+];
+
 function asTime(value: string) {
   return Date.parse(`${value}T00:00:00Z`);
 }
@@ -970,9 +1097,7 @@ function YearGantt({
 }) {
   const segments = monthSegments(year);
   const weeks = segments.length * 4;
-  const visibleCategories = (Object.keys(CATEGORY_LABELS) as Category[]).filter((category) =>
-    year.groups.some((group) => group.tasks.some((task) => task.category === category)),
-  );
+  const visiblePhases = [...new Set(year.groups.flatMap((group) => group.phase ? [group.phase] : []))];
   const chartScrollRef = useRef<HTMLDivElement>(null);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollMax, setScrollMax] = useState(0);
@@ -1027,12 +1152,13 @@ function YearGantt({
       </div>
 
       <div className="stage-legend" aria-label={`${year.yearName} phase colour legend`}>
-        {visibleCategories.map((category) => (
-          <span className={category === "feedback" ? "supervisor-feedback-legend" : undefined} key={category}>
-            <i style={{ background: PALETTES[year.id][category] }} />
-            {CATEGORY_LABELS[category]}
+        {visiblePhases.map((phase) => (
+          <span key={phase}>
+            <i style={{ background: PHASES[phase].color }} />
+            Phase {PHASES[phase].number} · {PHASES[phase].title}
           </span>
         ))}
+        <span className="supervisor-feedback-legend"><i style={{ background: taskColor("understanding", "feedback") }} />Supervisor paper review</span>
       </div>
 
       <div className="scroll-note">Scroll horizontally to inspect weeks →</div>
@@ -1141,7 +1267,7 @@ function YearGantt({
           </div>
 
           {year.groups.map((group) => (
-            <div className="output-group" key={group.id}>
+            <div className="output-group" key={group.id} style={{ "--phase-accent": group.phase ? PHASES[group.phase].color : "#706c65", "--phase-soft": group.phase ? PHASES[group.phase].soft : "#f5f3ef" } as CSSProperties}>
               <div className="group-heading sticky-cell">
                 <span className="group-number">{group.number}</span>
                 <div>
@@ -1166,7 +1292,7 @@ function YearGantt({
                       <div
                         className={`task-label sticky-cell edit-ready ${supervisorFeedback ? "supervisor-review-label" : ""}`}
                       >
-                        <i style={{ background: PALETTES[year.id][task.category] }} />
+                        <i style={{ background: taskColor(group.phase, task.category) }} />
                         <button
                           className="task-label-title"
                           type="button"
@@ -1184,7 +1310,7 @@ function YearGantt({
                       </div>
                     ) : (
                       <div className={`task-label sticky-cell ${supervisorFeedback ? "supervisor-review-label" : ""}`}>
-                        <i style={{ background: PALETTES[year.id][task.category] }} />
+                        <i style={{ background: taskColor(group.phase, task.category) }} />
                         <span>{task.title}</span>
                         <small className="duration-badge">{span}w</small>
                         {task.provisional && <em>PROVISIONAL</em>}
@@ -1206,7 +1332,7 @@ function YearGantt({
                               ...taskPosition(segmentTask, year),
                               backgroundColor: supervisorFeedback
                                 ? "rgba(88, 103, 168, 0.40)"
-                                : PALETTES[year.id][task.category],
+                                : taskColor(group.phase, task.category),
                             }}
                             onClick={() => onTask(task, group, year)}
                             aria-label={`${task.title}${segmentContext}, ${formatDate(segment.start)} to ${formatDate(segment.end)}. Open details.`}
@@ -1274,7 +1400,7 @@ function TaskDrawer({
     <div className="drawer-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <aside className="task-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
         <button className="drawer-close" onClick={onClose} aria-label="Close task details">×</button>
-        <div className="drawer-accent" style={{ background: PALETTES[year.id][task.category] }} />
+        <div className="drawer-accent" style={{ background: taskColor(selected.group.phase, task.category) }} />
         {editing ? (
           <form onSubmit={submit} className="edit-form">
             <label>
@@ -1331,7 +1457,7 @@ function TaskDrawer({
                 <i
                   key={index}
                   style={{
-                    background: PALETTES[year.id][task.category],
+                    background: taskColor(selected.group.phase, task.category),
                     opacity: 0.3 + (index / Math.max(1, Math.min(weeks, 16) - 1)) * 0.7,
                   }}
                 />
@@ -1447,7 +1573,7 @@ function PlanEditor({
         </div>
 
         <div className="editor-context">
-          <i style={{ background: PALETTES[year.id][category] }} />
+          <i style={{ background: taskColor("understanding", category) }} />
           <div>
             <span>{selectedEntry.group.eyebrow}</span>
             <strong>{selectedEntry.group.venue}</strong>
@@ -1705,18 +1831,18 @@ export default function Home() {
             <a className="overline intro-plan-link" href="#timeline">Xixiang Nie PhD Research Plan</a>
           )}
           <h1 id="page-title">
-            Social roles of object-based urban AI robots:
+            Social roles of urban object-inspired robotic agents:
             <span>A designerly and citizen-centred inquiry</span>
           </h1>
         </div>
         <div className="research-question">
           <span>OVERALL RESEARCH QUESTION</span>
-          <p>How do human citizens imagine, interpret, and negotiate the social roles of object-based urban AI robots that inhabit public spaces, and how might they regard them as “robot citizens”?</p>
+          <p>How do human citizens imagine, interpret, and negotiate the social roles of urban object-inspired robotic agents that inhabit everyday spaces?</p>
         </div>
         <div className="project-facts">
           <div><strong>3</strong><span>academic years</span></div>
-          <div><strong>6</strong><span>studies <small>(5 formal, 1 potential)</small></span></div>
-          <div><strong>10</strong><span>outputs <small>(6 full study, 1 poster, 2 demo, 1 exhibition)</small></span></div>
+          <div><strong>5</strong><span>studies</span></div>
+          <div><strong>4</strong><span>research phases</span></div>
         </div>
       </section>
 

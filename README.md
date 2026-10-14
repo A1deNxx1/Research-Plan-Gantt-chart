@@ -1,6 +1,6 @@
 # Xixiang Nie PhD Research Plan
 
-An interactive, week-by-week Gantt chart for the 2026–2029 doctoral research plan on the social roles of object-based urban AI robots.
+An interactive, week-by-week Gantt chart for the 2026–2029 doctoral research plan on the social roles of urban object-inspired robotic agents.
 
 ## Live website
 
