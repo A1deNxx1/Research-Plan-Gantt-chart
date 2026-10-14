@@ -95,670 +95,17 @@ const LATER_GROUP_COLORS: Record<Category, string> = {
   leave: "#92a0a1",
 };
 
-const YEAR_3_LEGACY_COLORS: Record<Category, string> = {
-  ethics: "#82658f",
-  recruitment: "#997196",
-  making: "#9669a0",
-  fieldwork: "#ad6c8b",
-  writing: "#725b8a",
-  feedback: "#5867a8",
-  revision: "#624b78",
-  internship: "#775d83",
-  leave: "#a499a5",
-};
-
-function taskColor(phase: PhaseId | undefined, category: Category, yearId?: YearPlan["id"]) {
+function taskColor(phase: PhaseId | undefined, category: Category) {
   if (category === "feedback") return "#5867a8";
   if (category === "leave") return "#a8a49e";
-  return phase ? PHASES[phase].color : (yearId === "y3" ? YEAR_3_LEGACY_COLORS : LATER_GROUP_COLORS)[category];
+  return phase ? PHASES[phase].color : LATER_GROUP_COLORS[category];
 }
 
-const LEGACY_YEARS: YearPlan[] = [
-  {
-    id: "y1",
-    label: "2026/27",
-    yearName: "Year 1",
-    dates: "Sep 2026 — Sep 2027",
-    start: "2026-09-01",
-    end: "2027-10-01",
-    accent: "#a75532",
-    soft: "#f8ede6",
-    ink: "#5f2f1f",
-    deadlines: [
-      { date: "2027-01-14", label: "DIS critical review target week", kind: "target" },
-      { date: "2027-02-12", label: "DIS WIP target week", kind: "target" },
-      { date: "2027-09-01", label: "Annual Progression 1", kind: "hard" },
-      { date: "2027-09-08", label: "CHI full paper target week", kind: "target" },
-    ],
-    groups: [
-      {
-        id: "foundational-review",
-        number: "01",
-        eyebrow: "Foundational Study · Critical review",
-        title: "Future work and social roles of urban robots",
-        venue: "DIS 2027 Full Paper",
-        tasks: [
-          {
-            id: "foundational-review-write",
-            title: "Critical review & full-paper write-up",
-            short: "Critical review",
-            start: "2026-09-15",
-            end: "2026-11-30",
-            category: "writing",
-            detail: "Critically review how urban robots have been framed as work machines or high-efficiency workers. From a more-than-human perspective, ask what the ‘future work’ of urban robots could mean beyond functionality, including the social roles they might take on. The review positions the background for the subsequent studies.",
-            meta: ["More-than-human perspective", "Critical Computing Subcommittee", "Positions the later empirical and design studies"],
-          },
-          {
-            id: "foundational-review-feedback",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2026-11-01",
-            end: "2026-12-14",
-            category: "feedback",
-            detail: "Share the developing critical-review manuscript with supervisors from November, allowing review and feedback to run alongside the final month of writing and continue through mid-December.",
-          },
-          {
-            id: "foundational-review-finalise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2026-12-15",
-            end: "2027-01-14",
-            category: "revision",
-            detail: "Revise and finalise the DIS 2027 full paper from mid-December to mid-January, complete the submission package, and submit it to the DIS Critical Computing Subcommittee.",
-          },
-        ],
-      },
-      {
-        id: "dis-wip",
-        number: "02",
-        eyebrow: "Study 1 · Early output",
-        title: "DIS 2027 Work in Progress",
-        venue: "DIS 2027 PWiP Paper",
-        tasks: [
-          {
-            id: "s1-ethics",
-            title: "Study 1 ethics review",
-            short: "Ethics",
-            start: "2026-09-22",
-            end: "2026-10-21",
-            category: "ethics",
-            detail: "Submit in September W4 and reserve a full four-week review window through October W3 before fieldwork.",
-            meta: ["4-week review window", "Precondition for workshops"],
-          },
-          {
-            id: "s1-citizenship-survey-workshop",
-            title: "Short survey / workshop",
-            short: "Citizenship survey / workshop",
-            start: "2026-10-22",
-            end: "2026-11-07",
-            category: "fieldwork",
-            detail: "Explore what constitutes urban citizenship. Begin with a short survey and workshop discussion to identify the practices, relationships, responsibilities and entitlements that human citizens associate with belonging to a city.",
-          },
-          {
-            id: "s1-recruit",
-            title: "Participant recruitment",
-            short: "Recruitment",
-            start: "2026-10-15",
-            end: "2027-02-28",
-            category: "recruitment",
-            detail: "Recruit 24 Newcastle participants aged 15+, aiming for three groups of eight with varied ages, genders and occupations.",
-            meta: ["24 participants", "3 workshops × 8 people", "No prior AI knowledge required"],
-          },
-          {
-            id: "s1-workshops-12",
-            title: "Workshop 1",
-            short: "Workshop 1",
-            start: "2026-12-01",
-            end: "2026-12-14",
-            category: "fieldwork",
-            detail: "Run the first co-speculative workshop using BinBot, BenchBot and PlanterBot scenarios, concept cards, paper models, GenAI visualisation and role-play.",
-            meta: ["Audio + video", "Storyboards & role cards", "Bodystorming / enactment"],
-          },
-          {
-            id: "dis-wip-draft",
-            title: "DIS WIP paper write-up",
-            short: "WIP write-up",
-            start: "2026-12-15",
-            end: "2027-01-14",
-            category: "writing",
-            detail: "Write the work-in-progress paper from Workshop 1. The fourth week of December is protected as Christmas leave.",
-            meta: ["Includes Workshop 1", "Christmas week excluded"],
-          },
-          {
-            id: "wip-feedback",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2027-01-15",
-            end: "2027-01-31",
-            category: "feedback",
-            detail: "Supervisor review and feedback begins in January W3, after the supervisors’ annual leave, and continues through the end of January.",
-          },
-          {
-            id: "wip-finalise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2027-02-01",
-            end: "2027-02-07",
-            category: "revision",
-            detail: "Apply supervisor review and feedback, tighten claims and evidence, and prepare the DIS WIP paper for submission.",
-          },
-          {
-            id: "china-leave-1",
-            title: "Annual leave · China",
-            short: "Leave",
-            start: "2027-02-15",
-            end: "2027-02-28",
-            category: "leave",
-            detail: "Two weeks of annual leave in China. Study 2 ethics review continues in parallel, but no active fieldwork is planned.",
-          },
-        ],
-      },
-      {
-        id: "hri-full-study",
-        number: "02",
-        eyebrow: "Study 1 · Complete research",
-        title: "Imagined design spaces of urban robot roles",
-        venue: "CHI 2028 Full Paper",
-        tasks: [
-          {
-            id: "s1-workshop-3",
-            title: "Workshops 2 & 3",
-            short: "Workshops 2 & 3",
-            start: "2027-03-01",
-            end: "2027-03-31",
-            category: "fieldwork",
-            detail: "Run the second and third comparative workshops across March using the same core scenarios and a rotated presentation order.",
-          },
-          {
-            id: "s1-synthesis-draft",
-            title: "Analyse all workshops",
-            short: "Workshop analysis",
-            start: "2027-03-15",
-            end: "2027-03-31",
-            category: "writing",
-            detail: "Combine and analyse the data from all three workshops during March W3–W4 using reflexive thematic analysis.",
-            meta: ["Reflexive thematic analysis", "Audio, video, artefacts & notes"],
-          },
-          {
-            id: "s1-to-prototype-ideas",
-            title: "Translate findings into 2 prototype concepts",
-            short: "2 concepts",
-            start: "2027-03-15",
-            end: "2027-03-31",
-            category: "making",
-            detail: "Use the emerging Study 1 findings during March W3–W4 to choose two promising social-role concepts and define a build and deployment approach for each.",
-            meta: ["Decision gate", "Feeds Study 2"],
-          },
-          {
-            id: "s1-full-study-draft",
-            title: "Full-study draft",
-            short: "Full-study draft",
-            start: "2027-04-01",
-            end: "2027-05-31",
-            category: "writing",
-            detail: "Develop the complete Study 1 findings and manuscript across April and May while the Study 2 prototypes are being built and deployed.",
-            meta: ["Runs alongside Study 2 prototype development", "Target: HRI 2028"],
-          },
-          {
-            id: "hri-paper-iterate",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2027-04-01",
-            end: "2027-06-14",
-            category: "feedback",
-            detail: "Share the full-study manuscript with supervisors throughout April and May, continuing paper review and feedback through mid-June while Study 2 prototypes are developed.",
-            meta: ["Parallel workstream", "Target: HRI 2028"],
-          },
-          {
-            id: "hri-paper-finalise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2027-06-15",
-            end: "2027-07-14",
-            category: "revision",
-            detail: "Apply supervisor review and paper feedback from mid-June to mid-July, refine the complete Study 1 argument and finalise the HRI 2028 submission.",
-            meta: ["Parallel workstream", "Target: HRI 2028"],
-          },
-        ],
-      },
-      {
-        id: "study2-empirical",
-        number: "03",
-        eyebrow: "Study 2 · Comparative public deployments",
-        title: "Two object-based urban robot prototypes",
-        venue: "HRI 2028 Full Paper · alternative DIS 2028",
-        tasks: [
-          {
-            id: "s2-ethics",
-            title: "Study 2 ethics review",
-            short: "Ethics",
-            start: "2027-02-15",
-            end: "2027-03-14",
-            category: "ethics",
-            detail: "Submit before leave and reserve four weeks for review. Public deployment must not begin until approval is in place.",
-            meta: ["4-week review window", "Public-space deployment"],
-          },
-          {
-            id: "prototype-1-build",
-            title: "Prototype 1 · design & build",
-            short: "Build 1",
-            start: "2027-04-01",
-            end: "2027-05-07",
-            category: "making",
-            detail: "Build the first lightweight research prototype or urban probe, using Wizard-of-Oz control where appropriate.",
-          },
-          {
-            id: "prototype-1-field",
-            title: "Prototype 1 · public deployment",
-            short: "Deploy 1",
-            start: "2027-05-08",
-            end: "2027-05-14",
-            category: "fieldwork",
-            detail: "One-week signposted public deployment with observation, two-camera video, short voluntary interviews and researcher field notes.",
-            meta: ["Approx. 20–30 interactants", "5–10 min interviews", "2 hours each afternoon"],
-          },
-          {
-            id: "prototype-2-build",
-            title: "Prototype 2 · design & build",
-            short: "Build 2",
-            start: "2027-05-15",
-            end: "2027-06-21",
-            category: "making",
-            detail: "Build the second lightweight research prototype or urban probe, using Wizard-of-Oz control where appropriate.",
-          },
-          {
-            id: "prototype-2-field",
-            title: "Prototype 2 · public deployment",
-            short: "Deploy 2",
-            start: "2027-06-22",
-            end: "2027-06-30",
-            category: "fieldwork",
-            detail: "Deploy the second prototype and collect comparable behavioural, interview and observational data.",
-          },
-          {
-            id: "s2-analysis-draft",
-            title: "Comparative analysis & first draft",
-            short: "Analysis + draft",
-            start: "2027-07-01",
-            end: "2027-07-31",
-            category: "writing",
-            detail: "Combine bottom-up video interaction analysis, field notes and interview thematic analysis across both prototypes.",
-            meta: ["Cross-prototype comparison", "Behaviour + interview evidence"],
-          },
-          {
-            id: "s2-chi-feedback",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2027-07-01",
-            end: "2027-08-14",
-            category: "feedback",
-            detail: "Supervisors review successive sections from the start of comparative analysis and writing, continuing through the first two August planning weeks.",
-          },
-          {
-            id: "s2-chi-finalise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2027-08-15",
-            end: "2027-08-31",
-            category: "revision",
-            detail: "Apply supervisor review and feedback and prepare the final CHI full-paper submission package during the final two August planning weeks.",
-          },
-          {
-            id: "september-leave-1",
-            title: "Annual leave",
-            short: "Leave",
-            start: "2027-09-08",
-            end: "2027-09-30",
-            category: "leave",
-            detail: "Three weeks of annual leave after the target CHI submission week. Ethics review continues in parallel.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "y2",
-    label: "2027/28",
-    yearName: "Year 2",
-    dates: "Oct 2027 — Sep 2028",
-    start: "2027-10-01",
-    end: "2028-10-01",
-    accent: "#21777c",
-    soft: "#e8f4f3",
-    ink: "#164d51",
-    deadlines: [
-      { date: "2028-01-12", label: "DIS paper target week", kind: "target" },
-      { date: "2028-09-01", label: "Annual Progression 2", kind: "hard" },
-      { date: "2028-09-07", label: "CHI 2029 / HRI 2029 target window", kind: "target" },
-    ],
-    groups: [
-      {
-        id: "study2-design",
-        number: "03",
-        eyebrow: "Study 2 · Design research",
-        title: "Making insights, recommendations & guidelines",
-        venue: "DIS 2028 Full Paper · alternative C&C 2028",
-        tasks: [
-          {
-            id: "design-process-synthesis",
-            title: "Organise making process & synthesise findings",
-            short: "Design synthesis",
-            start: "2027-10-01",
-            end: "2027-11-14",
-            category: "writing",
-            detail: "Curate the two prototypes’ design and making evidence, connect it to Study 1 findings, and draft design recommendations or guidelines.",
-            meta: ["Text paper or pictorial", "Alternative: C&C 2028"],
-          },
-          {
-            id: "design-paper-feedback",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2027-10-01",
-            end: "2027-11-30",
-            category: "feedback",
-            detail: "Supervisors review the design-research paper continuously from the start of writing, responding to successive sections through the end of November.",
-          },
-          {
-            id: "design-paper-revise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2027-12-01",
-            end: "2028-01-07",
-            category: "revision",
-            detail: "Revise the paper or pictorial across December and January W1, finalise images and evidence, and prepare the submission package.",
-          },
-        ],
-      },
-      {
-        id: "study3-empirical",
-        number: "04",
-        eyebrow: "Study 3 · Participatory governance through provocation",
-        title: "Negotiating the governance of a robot citizen",
-        venue: "CHI 2029 Full Paper · alternative HRI 2029 · HRI 2029 Demo",
-        tasks: [
-          {
-            id: "s3-ethics",
-            title: "Study 3 ethics review",
-            short: "Study 3 ethics",
-            start: "2027-10-01",
-            end: "2027-10-31",
-            category: "ethics",
-            detail: "Reserve all four October planning weeks for ethics review of the public performative provocation, observation and video capture, followed by the participatory workshop and roundtable.",
-            meta: ["4-week review window", "Public provocation + participatory discussion"],
-          },
-          {
-            id: "s3-recruitment",
-            title: "Recruit citizens, workers & governance stakeholders",
-            short: "Recruitment",
-            start: "2027-11-15",
-            end: "2028-05-14",
-            category: "recruitment",
-            detail: "Recruit citizens, workers and community or local-authority stakeholders to watch the provocation and then take part in the workshop and roundtable discussion.",
-            meta: ["Citizens", "Workers", "Community / local-authority stakeholders"],
-          },
-          {
-            id: "s3-rethink",
-            title: "Refine governance scenarios & provocation",
-            short: "Refine provocation",
-            start: "2028-01-01",
-            end: "2028-01-14",
-            category: "writing",
-            detail: "Refine the two-phase study and select a scenario in which the interests of the robot, human citizens and the collective do not align—for example replacement, role expansion, downtime, modification, citizen retention or conflict with organisational policy.",
-          },
-          {
-            id: "china-leave-2",
-            title: "Annual leave · China",
-            short: "Leave",
-            start: "2028-01-22",
-            end: "2028-02-14",
-            category: "leave",
-            detail: "Protected annual leave covering the fourth week of January and the first two weeks of February.",
-          },
-          {
-            id: "industry-placement",
-            title: "CDT-supported 3-month industry placement",
-            short: "CDT industry placement",
-            start: "2028-04-01",
-            end: "2028-06-30",
-            category: "internship",
-            detail: "CDT-supported provisional collaboration window with Microsoft Research Cambridge or Nokia Bell Labs Cambridge to co-develop and deploy the AI-enabled prototype; a visiting-PhD arrangement is an alternative.",
-            meta: ["Timing to confirm", "Partner to confirm", "Runs alongside build + deployment"],
-            provisional: true,
-          },
-          {
-            id: "s3-ai-build",
-            title: "Develop AI capabilities for the robot",
-            short: "AI-enabled robot development",
-            start: "2028-02-15",
-            end: "2028-05-14",
-            category: "making",
-            detail: "Select one robot from Study 2 and develop it with more complete AI capabilities so it can support the performative provocation and the subsequent participatory-governance discussion.",
-            meta: ["Selected Study 2 robot", "More complete AI capabilities", "Target: HRI 2029 Demo"],
-          },
-          {
-            id: "s3-experiment",
-            title: "Provocation, roundtable & data collection",
-            short: "Provocation + roundtable",
-            start: "2028-05-15",
-            end: "2028-06-14",
-            category: "fieldwork",
-            detail: "Phase 1 publicly deploys the AI-enabled robot as a performative provocation in which the interests of the robot, human citizens and the collective do not align. In Phase 2, citizens, workers and community or local-authority stakeholders watch the encounter, then use a workshop and roundtable to negotiate who can decide what the robot does, its responsibilities towards people and people’s obligations towards it.",
-            meta: ["Phase 1: performative provocation", "Phase 2: workshop + roundtable", "Observation, video and discussion data"],
-          },
-          {
-            id: "s3-demo-write",
-            title: "HRI 2029 demo paper write-up",
-            short: "HRI demo paper",
-            start: "2028-08-15",
-            end: "2028-09-07",
-            category: "writing",
-            detail: "Write the HRI 2029 demo paper with a focused account of how the selected Study 2 robot was developed into the more complete AI-enabled prototype used for the provocation.",
-            meta: ["AI development contribution", "AI-enabled prototype", "Target: HRI 2029 Demo"],
-          },
-          {
-            id: "s3-analysis",
-            title: "Governance analysis & empirical paper draft",
-            short: "Governance analysis + draft",
-            start: "2028-06-15",
-            end: "2028-07-14",
-            category: "writing",
-            detail: "Analyse the provocation, workshop and roundtable data to examine how participants negotiate decision-making authority, the robot’s responsibilities towards people, people’s obligations towards the robot and the boundaries of regarding it as a robot citizen. Develop these findings into the empirical paper draft.",
-          },
-          {
-            id: "s3-feedback",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2028-06-15",
-            end: "2028-07-31",
-            category: "feedback",
-            detail: "Share the participatory-governance analysis and empirical manuscript sections with the supervisory team and industry host as they are drafted, enabling continuous review through July.",
-            meta: ["Industry host + supervisors", "Rolling section-by-section review"],
-          },
-          {
-            id: "s3-finalise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2028-08-01",
-            end: "2028-08-14",
-            category: "revision",
-            detail: "Apply the consolidated feedback and finalise the empirical paper on participatory governance and the boundaries of robot citizenship during the first two August planning weeks.",
-            meta: ["Target: CHI 2029", "Alternative: HRI 2029", "Two planning weeks"],
-          },
-          {
-            id: "september-leave-2",
-            title: "Annual leave",
-            short: "Leave",
-            start: "2028-09-08",
-            end: "2028-09-30",
-            category: "leave",
-            detail: "Three protected weeks of annual leave after Annual Progression 2 and the provisional submission window.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "y3",
-    label: "2028/29",
-    yearName: "Year 3",
-    dates: "Oct 2028 — Sep 2029",
-    start: "2028-10-01",
-    end: "2029-10-01",
-    accent: "#73507e",
-    soft: "#f2ecf5",
-    ink: "#4b3453",
-    deadlines: [
-      { date: "2029-01-31", label: "PACMHCI target submission", kind: "target" },
-      { date: "2029-09-28", label: "PhD thesis submission", kind: "hard" },
-    ],
-    groups: [
-      {
-        id: "robot-citizens-journal",
-        number: "05",
-        eyebrow: "Synthesis Study · Inform framework",
-        title: "Defining “robot citizens” across three studies",
-        venue: "PACMHCI CSCW Journal Paper",
-        tasks: [
-          {
-            id: "framework-write",
-            title: "Cross-study synthesis & journal draft",
-            short: "Journal draft",
-            start: "2028-10-01",
-            end: "2028-12-31",
-            category: "writing",
-            detail: "Synthesise all three studies into an empirically grounded account of how urban robotic objects can become more than functional tools and enter shared urban life.",
-            meta: ["Empirical + theoretical synthesis", "Robot citizens framework"],
-          },
-          {
-            id: "framework-feedback",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2028-10-01",
-            end: "2029-01-14",
-            category: "feedback",
-            detail: "Share the cross-study synthesis and framework with supervisors section by section from the start of writing, continuing review through the first two January planning weeks.",
-          },
-          {
-            id: "framework-finalise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2029-01-15",
-            end: "2029-01-31",
-            category: "revision",
-            detail: "Apply supervisor review and feedback and prepare the PACMHCI CSCW submission. The exact track deadline remains to be confirmed.",
-          },
-          {
-            id: "china-leave-3",
-            title: "Annual leave · China",
-            short: "Leave",
-            start: "2029-01-15",
-            end: "2029-02-07",
-            category: "leave",
-            detail: "Protected annual leave from mid-January through the first week of February.",
-          },
-        ],
-      },
-      {
-        id: "side-study",
-        number: "06",
-        eyebrow: "Potential side study · Critical counterpoint",
-        title: "A public art provocation on privacy & surveillance",
-        venue: "CHI 2030 demo paper · alternative HRI 2030",
-        tasks: [
-          {
-            id: "side-build",
-            title: "Develop & make the public artwork",
-            short: "Art provocation",
-            start: "2029-02-08",
-            end: "2029-04-30",
-            category: "making",
-            detail: "Create a critical public installation that makes the sensing, image-capture and data-collection risks of urban AI robots tangible to citizens. It will also serve as a creative response that critically reflects on the PhD project by foregrounding the potentially harmful and negative implications of AI robots.",
-            meta: ["Privacy & surveillance", "Critical counterpoint to the PhD", "Timing remains provisional"],
-            provisional: true,
-          },
-          {
-            id: "side-feedback",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2029-04-29",
-            end: "2029-05-12",
-            category: "feedback",
-            detail: "Provisional supervisor review of the side-study framing, evidence and venue fit as the public artwork development concludes.",
-            provisional: true,
-          },
-          {
-            id: "side-finalise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2029-05-13",
-            end: "2029-05-28",
-            category: "revision",
-            detail: "Apply feedback and prepare the short paper, art paper or demo submission package.",
-            provisional: true,
-          },
-        ],
-      },
-      {
-        id: "thesis-impact",
-        number: "07",
-        eyebrow: "PHD PROJECT CLOSING & social impact",
-        title: "Final thesis, public exhibition & viva preparation",
-        venue: "PhD submission · 28 Sep 2029",
-        tasks: [
-          {
-            id: "thesis-write",
-            title: "Write final thesis",
-            short: "Thesis writing",
-            start: "2029-02-08",
-            end: "2029-07-31",
-            category: "writing",
-            detail: "Write the final thesis across all studies, integrating the empirical, design/artifact and theoretical contributions.",
-          },
-          {
-            id: "exhibition-plan",
-            title: "Find creative partner & plan exhibition",
-            short: "Exhibition",
-            start: "2029-02-08",
-            end: "2029-07-31",
-            category: "making",
-            detail: "Identify a creative organisation and shape a solo exhibition of research findings and prototypes to extend social impact.",
-            meta: ["Partner to confirm", "Research prototypes + public programme"],
-            provisional: true,
-          },
-          {
-            id: "thesis-feedback",
-            title: "Supervisor paper review",
-            short: "Review & feedback",
-            start: "2029-05-01",
-            end: "2029-07-31",
-            category: "feedback",
-            detail: "Send each completed thesis chapter to supervisors while the next chapter is being written. This creates a deliberate stagger: supervisors review the previous draft while writing continues, enabling timely feedback before the full thesis is complete.",
-            meta: ["Rolling chapter-by-chapter review", "Runs alongside thesis writing", "May–July"],
-          },
-          {
-            id: "thesis-finalise",
-            title: "Revision & finalisation",
-            short: "Finalisation",
-            start: "2029-08-01",
-            end: "2029-09-28",
-            category: "revision",
-            detail: "Apply supervisor review and feedback, complete quality checks and prepare the final submission files before the 28 September deadline.",
-          },
-          {
-            id: "viva-practice",
-            title: "Viva rehearsal",
-            short: "Viva practice",
-            start: "2029-08-01",
-            end: "2029-09-27",
-            category: "feedback",
-            detail: "Run repeated viva rehearsals alongside final thesis revisions, focusing on contribution, methodological choices and limitations.",
-          },
-        ],
-      },
-    ],
-  },
+const BASE_YEARS: YearPlan[] = [
+  { id: "y1", label: "2026/27", yearName: "Year 1", dates: "Sep 2026 — Sep 2027", start: "2026-09-01", end: "2027-10-01", accent: "#706c65", soft: "#f5f3ef", ink: "#272b29", deadlines: [], groups: [] },
+  { id: "y2", label: "2027/28", yearName: "Year 2", dates: "Oct 2027 — Sep 2028", start: "2027-10-01", end: "2028-10-01", accent: "#706c65", soft: "#f5f3ef", ink: "#272b29", deadlines: [], groups: [] },
+  { id: "y3", label: "2028/29", yearName: "Year 3", dates: "Oct 2028 — Sep 2029", start: "2028-10-01", end: "2029-10-01", accent: "#706c65", soft: "#f5f3ef", ink: "#272b29", deadlines: [], groups: [] },
 ];
-
 function plannedTask(
   id: string,
   title: string,
@@ -773,7 +120,7 @@ function plannedTask(
 
 const YEARS: YearPlan[] = [
   {
-    ...LEGACY_YEARS[0],
+    ...BASE_YEARS[0],
     accent: "#706c65",
     soft: "#f5f3ef",
     ink: "#272b29",
@@ -792,7 +139,7 @@ const YEARS: YearPlan[] = [
         title: "Imagine the design space of Object-inspired Robotic Agents through a co-design workshop",
         venue: "DIS 2027 Pictorial",
         tasks: [
-          plannedTask("p1-s1-ethics", "Ethics approval", "2026-10-15", "2026-11-14", "ethics", "Obtain approval for the expert session and participant co-design workshops before collecting research data. The review window runs from October W3 through November W2."),
+          plannedTask("p1-s1-ethics", "Study 1&2 Ethics approval", "2026-10-15", "2026-11-14", "ethics", "Obtain approval for the Study 1 expert session and co-design workshops and the linked Study 2 puppet-prototyping work before collecting research data. The review window runs from October W3 through November W2."),
           plannedTask("p1-s1-recruit", "Participant recruitment · Studies 1 & 2", "2026-11-08", "2027-02-28", "recruitment", "Recruit adult participants for the co-design and follow-on puppet-prototyping studies. Study 1 recruits approximately 10–12 people with backgrounds in robotics, AI or design; Study 2 welcomes adults without prior robotics or AI knowledge.", ["Study 1: approximately 10–12 adults", "Recruitment continues into February for Study 2"]),
           plannedTask("p1-s1-cards", "Design object & AI capability cards", "2026-10-15", "2026-10-31", "making", "Prepare cards that help participants combine familiar urban objects, possible inputs, AI capabilities and social goals. The cards are generative prompts, not finished robot specifications."),
           plannedTask("p1-s1-experts", "Expert session", "2026-11-01", "2026-11-07", "fieldwork", "Discuss the cards and research setup with approximately four HCI, HRI, computer-science and AI experts; use their critique to refine the co-design activities."),
@@ -814,10 +161,10 @@ const YEARS: YearPlan[] = [
           plannedTask("p1-s2-leave", "Annual leave · China", "2027-02-01", "2027-02-14", "leave", "Annual leave in China during February W1–W2."),
           plannedTask("p1-s2-refine", "Check & refine research design", "2027-02-15", "2027-02-28", "writing", "Review the three selected concepts and performance prompt cards from Study 1; refine the embodied workshop protocol, facilitation and recording plan for puppet prototyping."),
           plannedTask("p1-s2-puppet", "Puppet prototyping workshop", "2027-03-01", "2027-03-31", "fieldwork", "Participants make full-scale puppets from everyday materials, improvise encounters, rotate between operator, citizen and observer roles, and iteratively refine behaviours. Document performance video, robot personas, discussion, design cases and exit interviews.", ["Three groups of four participants", "Embodied exploration before physical robot construction"]),
-          plannedTask("p1-s2-analysis", "Analysis & writing", "2027-04-01", "2027-04-30", "writing", "Analyse performance videos, scenario-based design cases, focus groups and interviews. Develop preliminary findings on behaviours, relationships, capabilities and tensions to guide Phase 2 building."),
-          plannedTask("p1-chi-draft", "Studies 1 & 2 · CHI 2028 full-paper draft", "2027-05-01", "2027-06-14", "writing", "Combine Study 1 co-design and Study 2 puppet-prototyping evidence into a CHI 2028 full-paper draft on imagined design spaces, social roles, behaviours, strengths, boundaries and tensions of urban object-inspired robotic agents."),
-          plannedTask("p1-chi-review", "Supervisor paper review", "2027-06-15", "2027-06-30", "feedback", "Supervisors review the integrated Studies 1 and 2 CHI manuscript during June W3–W4."),
-          plannedTask("p1-chi-revise", "Revision & finalisation", "2027-07-01", "2027-07-31", "revision", "Revise and finalise the integrated CHI 2028 full paper during July. The September submission marker is an estimate based on the CHI 2027 schedule, not an announced CHI 2028 deadline."),
+          plannedTask("p1-s2-analysis", "Data analysis · CHI 2028 full-paper draft", "2027-04-01", "2027-04-30", "writing", "Analyse performance videos, scenario-based design cases, focus groups and interviews while beginning the CHI 2028 full-paper draft. Develop findings on behaviours, relationships, capabilities and tensions to guide Phase 2 building."),
+          plannedTask("p1-chi-draft", "Studies 1 & 2 · CHI 2028 full-paper draft", "2027-04-01", "2027-05-14", "writing", "Combine Study 1 co-design and Study 2 puppet-prototyping evidence into a CHI 2028 full-paper draft on imagined design spaces, social roles, behaviours, strengths, boundaries and tensions of urban object-inspired robotic agents."),
+          plannedTask("p1-chi-review", "Supervisor paper review", "2027-05-15", "2027-05-31", "feedback", "Supervisors review the integrated Studies 1 and 2 CHI manuscript during May W3–W4."),
+          plannedTask("p1-chi-revise", "Revision & finalisation", "2027-06-01", "2027-06-30", "revision", "Revise and finalise the integrated CHI 2028 full paper during June. The September submission marker is an estimate based on the CHI 2027 schedule, not an announced CHI 2028 deadline."),
         ],
       },
       {
@@ -829,16 +176,17 @@ const YEARS: YearPlan[] = [
         venue: "DIS 2028 Full Paper · UIST 2028 Paper",
         tasks: [
           plannedTask("p2-ethics", "Study 3 ethics approval", "2027-01-01", "2027-02-28", "ethics", "Secure approval for immersive prototype evaluation with adult citizens before participant recruitment and research sessions."),
-          plannedTask("p2-recruit", "Recruit immersive-evaluation participants", "2027-03-01", "2027-04-30", "recruitment", "Recruit approximately 10–12 adult citizens to experience and evaluate the virtual robotic agent in an immersive outdoor setting."),
+          plannedTask("p2-recruit", "Participant recruitment · Study 3", "2027-03-01", "2027-04-30", "recruitment", "Recruit approximately 10–12 adult citizens to experience and evaluate the virtual robotic agent in an immersive outdoor setting."),
           plannedTask("p2-virtual", "Virtual prototyping evaluation", "2027-05-01", "2027-05-31", "fieldwork", "Select an agent concept from Phase 1 and evaluate a virtual prototype in VR or XR within an urban context. Gather feedback on form, behaviour, interaction and the proposed social role before physical construction."),
           plannedTask("p2-interaction-ai", "Final interaction design & AI agent development", "2027-06-01", "2027-08-31", "making", "Translate the immersive evaluation into final interaction design and develop the AI agent, including its sensing, interpretation and responses. Iterate virtual models and test technical feasibility."),
+          { ...plannedTask("p2-robotics-visit", "Plan a PhD visit to a robotics group", "2027-07-01", "2027-08-31", "making", "Plan and, subject to a host invitation, undertake a research visit with a robotics group to exchange expertise on embodied interaction, robotic systems and AI-agent development."), provisional: true },
           plannedTask("p2-physical-y1", "Physical prototype & structural engineering · design and test", "2027-09-01", "2027-09-30", "making", "Begin physical form, structural engineering and interaction testing in September. This activity continues through October W4 in the next academic-year view."),
         ],
       },
     ],
   },
   {
-    ...LEGACY_YEARS[1],
+    ...BASE_YEARS[1],
     accent: "#706c65",
     soft: "#f5f3ef",
     ink: "#272b29",
@@ -846,7 +194,7 @@ const YEARS: YearPlan[] = [
       { date: "2028-01-18", label: "DIS 2028 full-paper target · estimated", kind: "target" },
       { date: "2028-03-31", label: "UIST 2028 paper target · estimated", kind: "target" },
       { date: "2028-09-01", label: "Annual Progression 2", kind: "hard" },
-      { date: "2028-09-07", label: "CHI 2029 / HRI 2029 target window", kind: "target" },
+      { date: "2028-09-07", label: "CHI 2029 full-paper target · estimated", kind: "target" },
     ],
     groups: [
       {
@@ -859,27 +207,102 @@ const YEARS: YearPlan[] = [
         tasks: [
           plannedTask("p2-physical-y2", "Physical prototype & structural engineering · design and test", "2027-10-01", "2027-10-31", "making", "Continue the September–October physical prototype and structural-engineering work, including design, fabrication and interaction testing."),
           plannedTask("p2-leave-2027", "Annual leave · China", "2027-10-01", "2027-10-21", "leave", "Annual leave in China during October W1–W3."),
-          plannedTask("p2-dis-draft", "Robot design process & recommendations · DIS2028 full-paper draft", "2027-10-15", "2027-11-14", "writing", "Draft a DIS 2028 full paper on the iterative design process from October W3 through November W2: Phase 1 findings, immersive evaluation, robot interaction design and resulting design recommendations."),
+          plannedTask("p2-dis-draft", "Robot design process & recommendations · DIS 2028 full-paper draft", "2027-10-15", "2027-11-14", "writing", "Draft a DIS 2028 full paper on the iterative design process from October W3 through November W2: Phase 1 findings, immersive evaluation, robot interaction design and resulting design recommendations."),
           plannedTask("p2-dis-review", "Supervisor paper review", "2027-11-15", "2027-12-14", "feedback", "Supervisors review the DIS design-process manuscript from November W3 through December W2."),
           plannedTask("p2-final-integration", "Final physical development & AI agent integration", "2027-11-01", "2027-12-31", "making", "Build and test the final physical robot, integrating its structure, interaction mechanisms and AI agent."),
           plannedTask("p2-dis-revise", "Revision & finalisation", "2027-12-01", "2028-01-14", "revision", "Revise and finalise the DIS 2028 design-process manuscript through January W2. The January 2028 deadline marker is estimated from the DIS 2027 call, not yet an official date."),
           plannedTask("p2-development-final", "Robotic agent development finalisation", "2028-01-01", "2028-01-21", "making", "Complete integration, reliability tests and final adjustments to the physical robotic agent by January W3."),
           plannedTask("p2-leave-2028", "Annual leave · China", "2028-01-22", "2028-02-29", "leave", "Annual leave in China from January W4 through February W4."),
-          plannedTask("p2-uist-draft", "Technical systems · UIST2028 full-paper draft (alternative is IUI 2029)", "2028-01-08", "2028-02-14", "writing", "Draft a UIST 2028 technical systems paper on the software and/or hardware methods used to develop and integrate the robotic agent."),
+          plannedTask("p2-uist-draft", "Technical systems · UIST 2028 full-paper draft (alternative is IUI 2029)", "2028-01-08", "2028-02-14", "writing", "Draft a UIST 2028 technical systems paper on the software and/or hardware methods used to develop and integrate the robotic agent."),
           plannedTask("p2-uist-review", "Supervisor paper review", "2028-02-08", "2028-03-14", "feedback", "Supervisors review the technical systems manuscript from February W2 through March W2, including rolling draft feedback."),
-          plannedTask("p2-uist-revise", "Revision & finalisation · UIST paper", "2028-03-15", "2028-03-31", "revision", "Revise and finalise the UIST 2028 paper in March W3–W4. The 31 March submission marker is a planning estimate, not an announced deadline."),
+          plannedTask("p2-uist-revise", "Revision & finalisation", "2028-03-15", "2028-03-31", "revision", "Revise and finalise the UIST 2028 paper in March W3–W4. The 31 March submission marker is a planning estimate, not an announced deadline."),
         ],
       },
-      ...LEGACY_YEARS[1].groups.slice(1),
+      {
+        id: "phase3-study4",
+        number: "04",
+        phase: "deploy",
+        eyebrow: "Phase 3 · Deploy and Evaluate · Study 4",
+        title: "Urban deployment and evaluation",
+        venue: "CHI 2029 Full Paper",
+        tasks: [
+          plannedTask("p3-s4-ethics", "Study 4 ethics approval", "2027-11-01", "2027-11-30", "ethics", "Secure ethics approval in November 2027 for the public urban deployment and evaluation planned for April 2028."),
+          plannedTask("p3-s4-deploy", "Urban deployment", "2028-04-01", "2028-04-30", "fieldwork", "Deploy the robotic agent in an everyday urban setting during April and document interactions, public responses and evaluation data."),
+          plannedTask("p3-s4-analysis", "Data analysis · CHI 2029 full-paper draft", "2028-05-01", "2028-05-31", "writing", "Analyse the urban deployment data and draft a CHI 2029 full paper on the agent's social role, public interpretation and observed interactions."),
+          plannedTask("p3-s4-review", "Supervisor paper review", "2028-06-01", "2028-06-30", "feedback", "Share the Study 4 manuscript with supervisors throughout June for rolling review and feedback."),
+          plannedTask("p3-s4-revise", "Revision & finalisation", "2028-06-15", "2028-07-14", "revision", "Revise and finalise the Study 4 CHI 2029 full paper from June W3 through July W2. The September 2028 submission marker is an estimate, not an announced CHI 2029 deadline."),
+        ],
+      },
+      {
+        id: "cdt-industry-internship",
+        number: "",
+        eyebrow: "Additional research activity",
+        title: "CDT-supported 3-month industry internship",
+        venue: "Industry collaboration · Jun–Aug 2028",
+        tasks: [
+          { ...plannedTask("cdt-industry-internship", "CDT-supported 3-month industry internship", "2028-06-01", "2028-08-31", "internship", "Undertake a CDT-supported three-month industry internship, subject to placement confirmation, to exchange expertise and develop an industry-facing research contribution."), provisional: true },
+        ],
+      },
+      {
+        id: "study5-preparation",
+        number: "05",
+        phase: "ethics",
+        eyebrow: "Phase 4 · Ethical Considerations · Study 5 (preparation)",
+        title: "Public theatre and ethical reflection",
+        venue: "AAAI/ACM AIES 2029 Full Paper · alternative CHI 2029",
+        tasks: [
+          plannedTask("p4-s5-ethics", "Study 5 ethics approval", "2028-05-01", "2028-05-31", "ethics", "Submit and complete the ethics review for Study 5 in May, before recruiting public participants and developing the theatre-based work."),
+          plannedTask("p4-s5-recruit", "Participant recruitment and seek professional actors and theatre venues for collaboration · Study 5", "2028-06-01", "2028-09-30", "recruitment", "Recruit participants and seek professional actors, theatre collaborators and possible venues for the Study 5 public theatre and voice workshops."),
+          plannedTask("p4-s5-leave-2028", "Annual leave · China", "2028-09-08", "2028-09-30", "leave", "Annual leave in China from September W2 through W4."),
+        ],
+      },
     ],
   },
   {
-    ...LEGACY_YEARS[2],
+    ...BASE_YEARS[2],
     accent: "#706c65",
     soft: "#f5f3ef",
     ink: "#272b29",
-    deadlines: LEGACY_YEARS[2].deadlines.filter((deadline) => deadline.label !== "PACMHCI target submission"),
-    groups: LEGACY_YEARS[2].groups.slice(1),
+    deadlines: [
+      { date: "2029-05-20", label: "AIES 2029 full-paper target · estimated", kind: "target" },
+      { date: "2029-09-29", label: "PhD thesis submission · 29 Sep 2029", kind: "hard" },
+    ],
+    groups: [
+      {
+        id: "phase4-study5",
+        number: "05",
+        phase: "ethics",
+        eyebrow: "Phase 4 · Ethical Considerations · Study 5",
+        title: "Public theatre and ethical reflection",
+        venue: "AAAI/ACM AIES 2029 Full Paper · alternative CHI 2029",
+        tasks: [
+          plannedTask("p4-s5-scenarios", "Developing and revising scenarios", "2028-10-01", "2028-10-31", "making", "Develop and revise public-theatre scenarios that make the ethical tensions and social roles of urban object-inspired robotic agents open to discussion."),
+          plannedTask("p4-s5-workshop", "Theatre development and public voice workshop", "2028-11-01", "2028-11-30", "fieldwork", "Work with theatre collaborators and members of the public to develop the performance, test scenes and bring citizen voices into the ethical inquiry."),
+          plannedTask("p4-s5-theatre-christmas", "Final public theatre · Christmas performance", "2028-12-01", "2028-12-14", "fieldwork", "Stage the final public theatre in the first two December planning weeks, inviting audiences to reflect on urban robotic agents and their social and ethical implications."),
+          plannedTask("p4-s5-theatre-new-year", "Final public theatre · New Year performance", "2029-01-01", "2029-01-14", "fieldwork", "Repeat the final public theatre in the first two January planning weeks, gathering further public responses after the Christmas and New Year period."),
+          plannedTask("p4-s5-leave-2029", "Annual leave · China", "2029-01-15", "2029-02-07", "leave", "Three continuous planning weeks of annual leave in China: January W3–W4 and February W1."),
+          plannedTask("p4-s5-analysis", "Data analysis · AAAI/ACM AIES 2029 full-paper draft (alternative is CHI 2029)", "2029-02-15", "2029-03-14", "writing", "Analyse the theatre workshops, performances and public responses, then draft an AIES 2029 full paper on the ethical considerations of urban object-inspired robotic agents. CHI 2029 is an alternative venue."),
+          plannedTask("p4-s5-review", "Supervisor paper review", "2029-03-15", "2029-04-14", "feedback", "Share the Study 5 AIES manuscript with supervisors for review from March W3 through April W2."),
+          plannedTask("p4-s5-revise", "Revision & finalisation", "2029-04-15", "2029-05-14", "revision", "Revise and finalise the Study 5 paper from April W3 through May W2. The AIES 2029 target near 20 May is estimated from the official AIES 2025 and 2026 calls, not an announced 2029 deadline."),
+        ],
+      },
+      {
+        id: "phd-project-closing",
+        number: "",
+        eyebrow: "PhD project closing & social impact",
+        title: "Final thesis, exhibition & viva preparation",
+        venue: "PhD thesis submission · 29 Sep 2029",
+        tasks: [
+          plannedTask("thesis-write", "Write and organise final thesis", "2029-02-15", "2029-07-31", "writing", "Write and organise the final thesis across all studies, integrating the empirical, design, technical and theoretical contributions."),
+          { ...plannedTask("exhibition-plan", "Find creative partner & plan exhibition", "2029-02-15", "2029-07-31", "making", "Identify a creative partner and plan a public exhibition of the research findings and robotic prototypes to extend the project's social impact."), provisional: true },
+          plannedTask("thesis-feedback", "Supervisor thesis review", "2029-04-01", "2029-07-31", "feedback", "Send completed thesis chapters to supervisors on a rolling basis from April through July, so they can review the previous chapter while the next is being written."),
+          plannedTask("internship-chi-draft", "Internship · CHI 2030 full-paper draft", "2029-06-01", "2029-06-30", "writing", "Draft a full paper drawing on the earlier CDT-supported industry internship and its contribution to the doctoral research, targeting CHI 2030."),
+          plannedTask("internship-chi-revise", "Internship paper · Revision & finalisation", "2029-07-01", "2029-07-31", "revision", "Revise and finalise the full paper developed from the industry internship during July."),
+          plannedTask("thesis-finalise", "Revision & finalisation", "2029-08-01", "2029-09-30", "revision", "Apply supervisor feedback, complete the thesis quality checks and prepare the submission files for 29 September 2029."),
+          plannedTask("viva-practice", "Viva rehearsal", "2029-08-01", "2029-09-30", "fieldwork", "Rehearse the viva throughout August and September, focusing on contributions, methodological choices, evidence and limitations."),
+        ],
+      },
+    ],
   },
 ];
 
@@ -950,7 +373,7 @@ function shiftDate(value: string, days: number) {
 }
 
 function isSupervisorPaperFeedback(task: Pick<Task, "category" | "title">) {
-  return task.category === "feedback" && task.title === CATEGORY_LABELS.feedback;
+  return task.category === "feedback" && task.title.startsWith("Supervisor");
 }
 
 function supervisorReviewSegments(task: Task) {
@@ -1115,11 +538,12 @@ function YearGantt({
   useEffect(() => {
     const chart = chartScrollRef.current;
     if (!chart) return;
+    const scrollElement = chart;
 
     function updateScrollRange() {
-      const max = Math.max(0, chart.scrollWidth - chart.clientWidth);
+      const max = Math.max(0, scrollElement.scrollWidth - scrollElement.clientWidth);
       setScrollMax(max);
-      setScrollLeft(Math.min(chart.scrollLeft, max));
+      setScrollLeft(Math.min(scrollElement.scrollLeft, max));
     }
 
     updateScrollRange();
@@ -1164,7 +588,7 @@ function YearGantt({
         ))}
         {laterCategories.map((category) => (
           <span key={category}>
-            <i style={{ background: taskColor(undefined, category, year.id) }} />
+            <i style={{ background: taskColor(undefined, category) }} />
             {CATEGORY_LABELS[category]}
           </span>
         ))}
@@ -1277,9 +701,9 @@ function YearGantt({
           </div>
 
           {year.groups.map((group) => (
-            <div className="output-group" key={group.id} style={{ "--phase-accent": group.phase ? PHASES[group.phase].color : LEGACY_YEARS.find((plan) => plan.id === year.id)?.accent, "--phase-soft": group.phase ? PHASES[group.phase].soft : LEGACY_YEARS.find((plan) => plan.id === year.id)?.soft } as CSSProperties}>
-              <div className="group-heading sticky-cell">
-                <span className="group-number">{group.number}</span>
+            <div className="output-group" key={group.id} style={{ "--phase-accent": group.phase ? PHASES[group.phase].color : "#586862", "--phase-soft": group.phase ? PHASES[group.phase].soft : "#f1f3ef" } as CSSProperties}>
+              <div className={`group-heading sticky-cell ${group.number ? "" : "standalone-heading"}`}>
+                {group.number && <span className="group-number">{group.number}</span>}
                 <div>
                   <p>{group.eyebrow}</p>
                   <h3>{group.title}</h3>
@@ -1302,7 +726,7 @@ function YearGantt({
                       <div
                         className={`task-label sticky-cell edit-ready ${supervisorFeedback ? "supervisor-review-label" : ""}`}
                       >
-                        <i style={{ background: taskColor(group.phase, task.category, year.id) }} />
+                        <i style={{ background: taskColor(group.phase, task.category) }} />
                         <button
                           className="task-label-title"
                           type="button"
@@ -1320,7 +744,7 @@ function YearGantt({
                       </div>
                     ) : (
                       <div className={`task-label sticky-cell ${supervisorFeedback ? "supervisor-review-label" : ""}`}>
-                        <i style={{ background: taskColor(group.phase, task.category, year.id) }} />
+                        <i style={{ background: taskColor(group.phase, task.category) }} />
                         <span>{task.title}</span>
                         <small className="duration-badge">{span}w</small>
                         {task.provisional && <em>PROVISIONAL</em>}
@@ -1342,7 +766,7 @@ function YearGantt({
                               ...taskPosition(segmentTask, year),
                               backgroundColor: supervisorFeedback
                                 ? "rgba(88, 103, 168, 0.40)"
-                                : taskColor(group.phase, task.category, year.id),
+                                : taskColor(group.phase, task.category),
                             }}
                             onClick={() => onTask(task, group, year)}
                             aria-label={`${task.title}${segmentContext}, ${formatDate(segment.start)} to ${formatDate(segment.end)}. Open details.`}
@@ -1410,7 +834,7 @@ function TaskDrawer({
     <div className="drawer-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <aside className="task-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
         <button className="drawer-close" onClick={onClose} aria-label="Close task details">×</button>
-        <div className="drawer-accent" style={{ background: taskColor(selected.group.phase, task.category, year.id) }} />
+        <div className="drawer-accent" style={{ background: taskColor(selected.group.phase, task.category) }} />
         {editing ? (
           <form onSubmit={submit} className="edit-form">
             <label>
@@ -1467,7 +891,7 @@ function TaskDrawer({
                 <i
                   key={index}
                   style={{
-                    background: taskColor(selected.group.phase, task.category, year.id),
+                    background: taskColor(selected.group.phase, task.category),
                     opacity: 0.3 + (index / Math.max(1, Math.min(weeks, 16) - 1)) * 0.7,
                   }}
                 />
@@ -1583,7 +1007,7 @@ function PlanEditor({
         </div>
 
         <div className="editor-context">
-          <i style={{ background: taskColor(undefined, category, year.id) }} />
+          <i style={{ background: taskColor(undefined, category) }} />
           <div>
             <span>{selectedEntry.group.eyebrow}</span>
             <strong>{selectedEntry.group.venue}</strong>
