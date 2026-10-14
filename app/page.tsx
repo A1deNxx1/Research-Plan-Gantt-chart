@@ -26,6 +26,7 @@ type Task = {
   detail: string;
   meta?: string[];
   provisional?: boolean;
+  breaks?: { start: string; end: string }[];
 };
 
 type OutputGroup = {
@@ -278,8 +279,10 @@ const YEARS: YearPlan[] = [
         tasks: [
           plannedTask("p4-s5-scenarios", "Developing and revising scenarios", "2028-10-01", "2028-10-31", "making", "Develop and revise public-theatre scenarios that make the ethical tensions and social roles of urban object-inspired robotic agents open to discussion."),
           plannedTask("p4-s5-workshop", "Theatre development and public voice workshop", "2028-11-01", "2028-11-30", "fieldwork", "Work with theatre collaborators and members of the public to develop the performance, test scenes and bring citizen voices into the ethical inquiry."),
-          plannedTask("p4-s5-theatre-christmas", "Final public theatre · Christmas performance", "2028-12-01", "2028-12-14", "fieldwork", "Stage the final public theatre in the first two December planning weeks, inviting audiences to reflect on urban robotic agents and their social and ethical implications."),
-          plannedTask("p4-s5-theatre-new-year", "Final public theatre · New Year performance", "2029-01-01", "2029-01-14", "fieldwork", "Repeat the final public theatre in the first two January planning weeks, gathering further public responses after the Christmas and New Year period."),
+          {
+            ...plannedTask("p4-s5-theatre", "Final public theatre", "2028-12-01", "2029-01-14", "fieldwork", "Stage the final public theatre during December W1–W2 and January W1–W2, with a Christmas holiday break in between. Invite audiences to reflect on urban robotic agents and their social and ethical implications, and gather their responses."),
+            breaks: [{ start: "2028-12-15", end: "2028-12-31" }],
+          },
           plannedTask("p4-s5-leave-2029", "Annual leave · China", "2029-01-15", "2029-02-07", "leave", "Three continuous planning weeks of annual leave in China: January W3–W4 and February W1."),
           plannedTask("p4-s5-analysis", "Data analysis · AAAI/ACM AIES 2029 full-paper draft (alternative is CHI 2029)", "2029-02-15", "2029-03-14", "writing", "Analyse the theatre workshops, performances and public responses, then draft an AIES 2029 full paper on the ethical considerations of urban object-inspired robotic agents. CHI 2029 is an alternative venue."),
           plannedTask("p4-s5-review", "Supervisor paper review", "2029-03-15", "2029-04-14", "feedback", "Share the Study 5 AIES manuscript with supervisors for review from March W3 through April W2."),
@@ -376,49 +379,51 @@ function isSupervisorPaperFeedback(task: Pick<Task, "category" | "title">) {
   return task.category === "feedback" && task.title.startsWith("Supervisor");
 }
 
-function supervisorReviewSegments(task: Task) {
-  if (!isSupervisorPaperFeedback(task)) {
-    return [{ start: task.start, end: task.end }];
+function taskSegments(task: Task) {
+  let segments = [{ start: task.start, end: task.end }];
+  const breaks = [...(task.breaks ?? [])];
+
+  if (isSupervisorPaperFeedback(task)) {
+    const firstYear = new Date(`${task.start}T00:00:00Z`).getUTCFullYear();
+    const lastYear = new Date(`${task.end}T00:00:00Z`).getUTCFullYear();
+    for (let year = firstYear; year <= lastYear; year += 1) {
+      for (const month of [8, 12]) {
+        const monthString = String(month).padStart(2, "0");
+        const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+        breaks.push({
+          start: `${year}-${monthString}-15`,
+          end: `${year}-${monthString}-${String(lastDay).padStart(2, "0")}`,
+        });
+      }
+    }
   }
 
-  let segments = [{ start: task.start, end: task.end }];
-  const firstYear = new Date(`${task.start}T00:00:00Z`).getUTCFullYear();
-  const lastYear = new Date(`${task.end}T00:00:00Z`).getUTCFullYear();
-
-  for (let year = firstYear; year <= lastYear; year += 1) {
-    for (const month of [8, 12]) {
-      const monthString = String(month).padStart(2, "0");
-      const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
-      const leaveStart = `${year}-${monthString}-15`;
-      const leaveEnd = `${year}-${monthString}-${String(lastDay).padStart(2, "0")}`;
-
-      segments = segments.flatMap((segment) => {
-        if (asTime(segment.end) < asTime(leaveStart) || asTime(segment.start) > asTime(leaveEnd)) {
-          return [segment];
-        }
-
-        const activeSegments: { start: string; end: string }[] = [];
-        if (asTime(segment.start) < asTime(leaveStart)) {
-          activeSegments.push({ start: segment.start, end: shiftDate(leaveStart, -1) });
-        }
-        if (asTime(segment.end) > asTime(leaveEnd)) {
-          activeSegments.push({ start: shiftDate(leaveEnd, 1), end: segment.end });
-        }
-        return activeSegments;
-      });
-    }
+  for (const pause of breaks) {
+    segments = segments.flatMap((segment) => {
+      if (asTime(segment.end) < asTime(pause.start) || asTime(segment.start) > asTime(pause.end)) {
+        return [segment];
+      }
+      const activeSegments: { start: string; end: string }[] = [];
+      if (asTime(segment.start) < asTime(pause.start)) {
+        activeSegments.push({ start: segment.start, end: shiftDate(pause.start, -1) });
+      }
+      if (asTime(segment.end) > asTime(pause.end)) {
+        activeSegments.push({ start: shiftDate(pause.end, 1), end: segment.end });
+      }
+      return activeSegments;
+    });
   }
 
   return segments;
 }
 
-function hasSupervisorLeaveBreak(task: Task) {
-  const segments = supervisorReviewSegments(task);
+function hasTaskBreak(task: Task) {
+  const segments = taskSegments(task);
   return segments.length !== 1 || segments[0]?.start !== task.start || segments[0]?.end !== task.end;
 }
 
 function timelineWeekSpan(task: Task, year: YearPlan) {
-  return supervisorReviewSegments(task).reduce(
+  return taskSegments(task).reduce(
     (total, segment) => total + rawTimelineWeekSpan(segment, year),
     0,
   );
@@ -718,7 +723,7 @@ function YearGantt({
               {group.tasks.filter((task) => !isTaskDeleted(task.id, edits)).map((originalTask) => {
                 const task = mergeTask(originalTask, edits);
                 const supervisorFeedback = isSupervisorPaperFeedback(task);
-                const activeSegments = supervisorReviewSegments(task);
+                const activeSegments = taskSegments(task);
                 const span = timelineWeekSpan(task, year);
                 return (
                   <div className="task-pair" key={task.id}>
@@ -809,7 +814,7 @@ function TaskDrawer({
   const [saveError, setSaveError] = useState(false);
   const editedTask = { ...task, title, start, end, category };
   const weeks = timelineWeekSpan(editedTask, year);
-  const hasLeaveBreak = hasSupervisorLeaveBreak(editedTask);
+  const hasBreak = hasTaskBreak(editedTask);
 
   useEffect(() => {
     setTitle(task.title);
@@ -879,7 +884,7 @@ function TaskDrawer({
               </div>
               <div className="duration-orbit">
                 <span>{weeks}</span>
-                <small>{hasLeaveBreak ? "active weeks" : weeks === 1 ? "week" : "weeks"}</small>
+                <small>{hasBreak ? "active weeks" : weeks === 1 ? "week" : "weeks"}</small>
               </div>
               <div>
                 <span>END</span>
