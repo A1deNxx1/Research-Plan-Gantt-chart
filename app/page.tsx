@@ -179,7 +179,7 @@ const YEARS: YearPlan[] = [
           plannedTask("p2-recruit", "Participant recruitment · Study 3", "2027-03-01", "2027-04-30", "recruitment", "Recruit approximately 10–12 adult citizens to experience and evaluate the virtual robotic agent in an immersive outdoor setting."),
           plannedTask("p2-virtual", "Virtual prototyping evaluation", "2027-05-01", "2027-05-31", "fieldwork", "Select an agent concept from Phase 1 and evaluate a virtual prototype in VR or XR within an urban context. Gather feedback on form, behaviour, interaction and the proposed social role before physical construction."),
           plannedTask("p2-interaction-ai", "Final interaction design & AI agent development", "2027-06-01", "2027-08-31", "making", "Translate the immersive evaluation into final interaction design and develop the AI agent, including its sensing, interpretation and responses. Iterate virtual models and test technical feasibility."),
-          { ...plannedTask("p2-robotics-visit", "Plan a PhD visit to a robotics group", "2027-07-01", "2027-08-31", "making", "Plan and, subject to a host invitation, undertake a research visit with a robotics group to exchange expertise on embodied interaction, robotic systems and AI-agent development."), provisional: true },
+          { ...plannedTask("p2-robotics-visit", "Plan a PhD visit to a robotics group", "2027-07-01", "2027-08-31", "making", "Visit a robotics research group to pursue technical collaboration and joint development."), provisional: true },
           plannedTask("p2-physical-y1", "Physical prototype & structural engineering · design and test", "2027-09-01", "2027-09-30", "making", "Begin physical form, structural engineering and interaction testing in September. This activity continues through October W4 in the next academic-year view."),
         ],
       },
@@ -240,7 +240,7 @@ const YEARS: YearPlan[] = [
         title: "CDT-supported 3-month industry internship",
         venue: "Industry collaboration · Jun–Aug 2028",
         tasks: [
-          { ...plannedTask("cdt-industry-internship", "CDT-supported 3-month industry internship", "2028-06-01", "2028-08-31", "internship", "Undertake a CDT-supported three-month industry internship, subject to placement confirmation, to exchange expertise and develop an industry-facing research contribution."), provisional: true },
+          { ...plannedTask("cdt-industry-internship", "CDT-supported 3-month industry internship", "2028-06-01", "2028-08-31", "internship", "Undertake a CDT-supported three-month industry internship, with potential hosts including Google, Microsoft Cambridge and Nokia Lab."), provisional: true },
         ],
       },
       {
