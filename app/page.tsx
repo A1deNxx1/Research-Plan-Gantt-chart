@@ -789,11 +789,11 @@ const YEARS: YearPlan[] = [
         number: "01",
         phase: "understanding",
         eyebrow: "Phase 1 · Understanding · Study 1",
-        title: "Imagining social roles through object and AI capability cards",
+        title: "Imagine the design space of Object-inspired Robotic Agents through a co-design workshop",
         venue: "DIS 2027 Pictorial",
         tasks: [
           plannedTask("p1-s1-ethics", "Ethics approval", "2026-10-15", "2026-11-14", "ethics", "Obtain approval for the expert session and participant co-design workshops before collecting research data. The review window runs from October W3 through November W2."),
-          plannedTask("p1-s1-recruit", "Participant recruitment", "2026-11-08", "2027-02-28", "recruitment", "Recruit adult participants for the co-design and follow-on puppet-prototyping studies. Study 1 recruits approximately 10–12 people with backgrounds in robotics, AI or design; Study 2 welcomes adults without prior robotics or AI knowledge.", ["Study 1: approximately 10–12 adults", "Recruitment continues into February for Study 2"]),
+          plannedTask("p1-s1-recruit", "Participant recruitment · Studies 1 & 2", "2026-11-08", "2027-02-28", "recruitment", "Recruit adult participants for the co-design and follow-on puppet-prototyping studies. Study 1 recruits approximately 10–12 people with backgrounds in robotics, AI or design; Study 2 welcomes adults without prior robotics or AI knowledge.", ["Study 1: approximately 10–12 adults", "Recruitment continues into February for Study 2"]),
           plannedTask("p1-s1-cards", "Design object & AI capability cards", "2026-10-15", "2026-10-31", "making", "Prepare cards that help participants combine familiar urban objects, possible inputs, AI capabilities and social goals. The cards are generative prompts, not finished robot specifications."),
           plannedTask("p1-s1-experts", "Expert session", "2026-11-01", "2026-11-07", "fieldwork", "Discuss the cards and research setup with approximately four HCI, HRI, computer-science and AI experts; use their critique to refine the co-design activities."),
           plannedTask("p1-s1-refine", "Refine research design", "2026-11-01", "2026-11-14", "writing", "Refine the card set, workshop prompts, documentation and facilitation plan after the expert session and before the participant workshops."),
