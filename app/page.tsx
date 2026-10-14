@@ -83,10 +83,34 @@ const PHASES: Record<PhaseId, { number: number; title: string; color: string; so
   ethics: { number: 4, title: "ETHICAL CONSIDERATIONS", color: "#875d88", soft: "#f5eef5" },
 };
 
-function taskColor(phase: PhaseId | undefined, category: Category) {
+const LATER_GROUP_COLORS: Record<Category, string> = {
+  ethics: "#388184",
+  recruitment: "#4b9691",
+  making: "#3d8da2",
+  fieldwork: "#55a4a6",
+  writing: "#3e75a2",
+  feedback: "#5867a8",
+  revision: "#555697",
+  internship: "#2f6a73",
+  leave: "#92a0a1",
+};
+
+const YEAR_3_LEGACY_COLORS: Record<Category, string> = {
+  ethics: "#82658f",
+  recruitment: "#997196",
+  making: "#9669a0",
+  fieldwork: "#ad6c8b",
+  writing: "#725b8a",
+  feedback: "#5867a8",
+  revision: "#624b78",
+  internship: "#775d83",
+  leave: "#a499a5",
+};
+
+function taskColor(phase: PhaseId | undefined, category: Category, yearId?: YearPlan["id"]) {
   if (category === "feedback") return "#5867a8";
   if (category === "leave") return "#a8a49e";
-  return phase ? PHASES[phase].color : "#706c65";
+  return phase ? PHASES[phase].color : (yearId === "y3" ? YEAR_3_LEGACY_COLORS : LATER_GROUP_COLORS)[category];
 }
 
 const LEGACY_YEARS: YearPlan[] = [
@@ -846,28 +870,7 @@ const YEARS: YearPlan[] = [
           plannedTask("p2-uist-revise", "Revision & finalisation · UIST paper", "2028-03-15", "2028-03-31", "revision", "Revise and finalise the UIST 2028 paper in March W3–W4. The 31 March submission marker is a planning estimate, not an announced deadline."),
         ],
       },
-      {
-        id: "phase3-study4",
-        number: "04",
-        phase: "deploy",
-        eyebrow: "Phase 3 · Deploy and Evaluate · Study 4",
-        title: "Urban deployment of the robotic agent",
-        venue: "IUI 2029 Paper · alternative CHI 2029",
-        tasks: [
-          plannedTask("p3-deployment-prep", "Prepare public deployment & evaluation", "2028-03-01", "2028-04-30", "ethics", "Prepare the urban site, permissions, consent and recording protocol for a signposted public deployment of the completed robotic agent."),
-          plannedTask("p3-field", "Public deployment & citizen encounters", "2028-05-01", "2028-05-31", "fieldwork", "Deploy the agent in an everyday urban space and examine how people notice, interpret and interact with its proposed social role. The PDF proposes a one-week signposted deployment, video observation, brief voluntary interviews and field notes.", ["Approximately 20–30 interactants", "Video and interview evidence"]),
-          plannedTask("p3-analysis", "Interaction analysis & empirical paper draft", "2028-06-01", "2028-08-14", "writing", "Combine video interaction analysis, interview themes and field observations to examine how the agent becomes part of urban space and how citizens interpret its social role.", ["Target: IUI 2029", "Alternative: CHI 2029"]),
-          plannedTask("p3-feedback", "Supervisor paper review", "2028-07-01", "2028-08-14", "feedback", "Share successive empirical-paper sections with supervisors while analysis and writing continue."),
-          plannedTask("p3-finalise", "Revision & finalisation", "2028-08-01", "2028-08-14", "revision", "Incorporate supervisor comments and prepare the empirical paper for its intended submission window."),
-        ],
-      },
-      ...LEGACY_YEARS[1].groups.slice(1).map((group) => ({
-        ...group,
-        number: "05",
-        phase: "ethics" as const,
-        eyebrow: "Phase 4 · Ethical Considerations · Study 5",
-        title: "Participatory governance of the robotic agent",
-      })),
+      ...LEGACY_YEARS[1].groups.slice(1),
     ],
   },
   {
@@ -876,9 +879,7 @@ const YEARS: YearPlan[] = [
     soft: "#f5f3ef",
     ink: "#272b29",
     deadlines: LEGACY_YEARS[2].deadlines.filter((deadline) => deadline.label !== "PACMHCI target submission"),
-    groups: LEGACY_YEARS[2].groups.slice(1).map((group) => group.id === "side-study"
-      ? { ...group, number: "05", phase: "ethics" as const, eyebrow: "Phase 4 · Ethical Considerations · Study 5 (potential extension)" }
-      : { ...group, number: "—", phase: undefined, eyebrow: "PhD project closing & social impact" }),
+    groups: LEGACY_YEARS[2].groups.slice(1),
   },
 ];
 
@@ -1098,6 +1099,9 @@ function YearGantt({
   const segments = monthSegments(year);
   const weeks = segments.length * 4;
   const visiblePhases = [...new Set(year.groups.flatMap((group) => group.phase ? [group.phase] : []))];
+  const laterCategories = (Object.keys(CATEGORY_LABELS) as Category[]).filter((category) =>
+    category !== "feedback" && year.groups.some((group) => !group.phase && group.tasks.some((task) => task.category === category)),
+  );
   const chartScrollRef = useRef<HTMLDivElement>(null);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollMax, setScrollMax] = useState(0);
@@ -1156,6 +1160,12 @@ function YearGantt({
           <span key={phase}>
             <i style={{ background: PHASES[phase].color }} />
             Phase {PHASES[phase].number} · {PHASES[phase].title}
+          </span>
+        ))}
+        {laterCategories.map((category) => (
+          <span key={category}>
+            <i style={{ background: taskColor(undefined, category, year.id) }} />
+            {CATEGORY_LABELS[category]}
           </span>
         ))}
         <span className="supervisor-feedback-legend"><i style={{ background: taskColor("understanding", "feedback") }} />Supervisor paper review</span>
@@ -1267,7 +1277,7 @@ function YearGantt({
           </div>
 
           {year.groups.map((group) => (
-            <div className="output-group" key={group.id} style={{ "--phase-accent": group.phase ? PHASES[group.phase].color : "#706c65", "--phase-soft": group.phase ? PHASES[group.phase].soft : "#f5f3ef" } as CSSProperties}>
+            <div className="output-group" key={group.id} style={{ "--phase-accent": group.phase ? PHASES[group.phase].color : LEGACY_YEARS.find((plan) => plan.id === year.id)?.accent, "--phase-soft": group.phase ? PHASES[group.phase].soft : LEGACY_YEARS.find((plan) => plan.id === year.id)?.soft } as CSSProperties}>
               <div className="group-heading sticky-cell">
                 <span className="group-number">{group.number}</span>
                 <div>
@@ -1292,7 +1302,7 @@ function YearGantt({
                       <div
                         className={`task-label sticky-cell edit-ready ${supervisorFeedback ? "supervisor-review-label" : ""}`}
                       >
-                        <i style={{ background: taskColor(group.phase, task.category) }} />
+                        <i style={{ background: taskColor(group.phase, task.category, year.id) }} />
                         <button
                           className="task-label-title"
                           type="button"
@@ -1310,7 +1320,7 @@ function YearGantt({
                       </div>
                     ) : (
                       <div className={`task-label sticky-cell ${supervisorFeedback ? "supervisor-review-label" : ""}`}>
-                        <i style={{ background: taskColor(group.phase, task.category) }} />
+                        <i style={{ background: taskColor(group.phase, task.category, year.id) }} />
                         <span>{task.title}</span>
                         <small className="duration-badge">{span}w</small>
                         {task.provisional && <em>PROVISIONAL</em>}
@@ -1332,7 +1342,7 @@ function YearGantt({
                               ...taskPosition(segmentTask, year),
                               backgroundColor: supervisorFeedback
                                 ? "rgba(88, 103, 168, 0.40)"
-                                : taskColor(group.phase, task.category),
+                                : taskColor(group.phase, task.category, year.id),
                             }}
                             onClick={() => onTask(task, group, year)}
                             aria-label={`${task.title}${segmentContext}, ${formatDate(segment.start)} to ${formatDate(segment.end)}. Open details.`}
@@ -1400,7 +1410,7 @@ function TaskDrawer({
     <div className="drawer-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <aside className="task-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
         <button className="drawer-close" onClick={onClose} aria-label="Close task details">×</button>
-        <div className="drawer-accent" style={{ background: taskColor(selected.group.phase, task.category) }} />
+        <div className="drawer-accent" style={{ background: taskColor(selected.group.phase, task.category, year.id) }} />
         {editing ? (
           <form onSubmit={submit} className="edit-form">
             <label>
@@ -1457,7 +1467,7 @@ function TaskDrawer({
                 <i
                   key={index}
                   style={{
-                    background: taskColor(selected.group.phase, task.category),
+                    background: taskColor(selected.group.phase, task.category, year.id),
                     opacity: 0.3 + (index / Math.max(1, Math.min(weeks, 16) - 1)) * 0.7,
                   }}
                 />
@@ -1573,7 +1583,7 @@ function PlanEditor({
         </div>
 
         <div className="editor-context">
-          <i style={{ background: taskColor("understanding", category) }} />
+          <i style={{ background: taskColor(undefined, category, year.id) }} />
           <div>
             <span>{selectedEntry.group.eyebrow}</span>
             <strong>{selectedEntry.group.venue}</strong>
