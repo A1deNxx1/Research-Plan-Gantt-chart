@@ -96,7 +96,13 @@ const LATER_GROUP_COLORS: Record<Category, string> = {
   leave: "#92a0a1",
 };
 
-function taskColor(phase: PhaseId | undefined, category: Category) {
+const SPECIAL_ACTIVITIES: Record<string, { color: string; label: string }> = {
+  "p2-robotics-visit": { color: "#1f5fd6", label: "AI robotics group visit" },
+  "cdt-industry-internship": { color: "#d49a00", label: "Industry internship" },
+};
+
+function taskColor(phase: PhaseId | undefined, category: Category, taskId?: string) {
+  if (taskId && SPECIAL_ACTIVITIES[taskId]) return SPECIAL_ACTIVITIES[taskId].color;
   if (category === "feedback") return "#5867a8";
   if (category === "leave") return "#a8a49e";
   return phase ? PHASES[phase].color : LATER_GROUP_COLORS[category];
@@ -180,7 +186,7 @@ const YEARS: YearPlan[] = [
           plannedTask("p2-recruit", "Participant recruitment · Study 3", "2027-03-01", "2027-04-30", "recruitment", "Recruit approximately 10–12 adult citizens to experience and evaluate the virtual robotic agent in an immersive outdoor setting."),
           plannedTask("p2-virtual", "Virtual prototyping evaluation", "2027-05-01", "2027-05-31", "fieldwork", "Select an agent concept from Phase 1 and evaluate a virtual prototype in VR or XR within an urban context. Gather feedback on form, behaviour, interaction and the proposed social role before physical construction."),
           plannedTask("p2-interaction-ai", "Final interaction design & AI agent development", "2027-06-01", "2027-08-31", "making", "Translate the immersive evaluation into final interaction design and develop the AI agent, including its sensing, interpretation and responses. Iterate virtual models and test technical feasibility."),
-          { ...plannedTask("p2-robotics-visit", "Plan a PhD visit to a robotics group", "2027-07-01", "2027-08-31", "making", "Visit a robotics research group to pursue technical collaboration and joint development."), provisional: true },
+          { ...plannedTask("p2-robotics-visit", "Plan a PhD visit to a AI robotics group", "2027-07-01", "2027-08-31", "making", "Visit an AI robotics research group to pursue technical collaboration and joint development."), provisional: true },
           plannedTask("p2-physical-y1", "Physical prototype & structural engineering · design and test", "2027-09-01", "2027-09-30", "making", "Begin physical form, structural engineering and interaction testing in September. This activity continues through October W4 in the next academic-year view."),
         ],
       },
@@ -528,7 +534,10 @@ function YearGantt({
   const weeks = segments.length * 4;
   const visiblePhases = [...new Set(year.groups.flatMap((group) => group.phase ? [group.phase] : []))];
   const laterCategories = (Object.keys(CATEGORY_LABELS) as Category[]).filter((category) =>
-    category !== "feedback" && year.groups.some((group) => !group.phase && group.tasks.some((task) => task.category === category)),
+    category !== "feedback" && year.groups.some((group) => !group.phase && group.tasks.some((task) => task.category === category && !SPECIAL_ACTIVITIES[task.id])),
+  );
+  const specialActivities = Object.entries(SPECIAL_ACTIVITIES).filter(([id]) =>
+    year.groups.some((group) => group.tasks.some((task) => task.id === id && !isTaskDeleted(id, edits))),
   );
   const chartScrollRef = useRef<HTMLDivElement>(null);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -595,6 +604,12 @@ function YearGantt({
           <span key={category}>
             <i style={{ background: taskColor(undefined, category) }} />
             {CATEGORY_LABELS[category]}
+          </span>
+        ))}
+        {specialActivities.map(([id, activity]) => (
+          <span key={id}>
+            <i style={{ background: activity.color }} />
+            {activity.label}
           </span>
         ))}
         <span className="supervisor-feedback-legend"><i style={{ background: taskColor("understanding", "feedback") }} />Supervisor paper review</span>
@@ -731,7 +746,7 @@ function YearGantt({
                       <div
                         className={`task-label sticky-cell edit-ready ${supervisorFeedback ? "supervisor-review-label" : ""}`}
                       >
-                        <i style={{ background: taskColor(group.phase, task.category) }} />
+                        <i style={{ background: taskColor(group.phase, task.category, task.id) }} />
                         <button
                           className="task-label-title"
                           type="button"
@@ -749,7 +764,7 @@ function YearGantt({
                       </div>
                     ) : (
                       <div className={`task-label sticky-cell ${supervisorFeedback ? "supervisor-review-label" : ""}`}>
-                        <i style={{ background: taskColor(group.phase, task.category) }} />
+                        <i style={{ background: taskColor(group.phase, task.category, task.id) }} />
                         <span>{task.title}</span>
                         <small className="duration-badge">{span}w</small>
                         {task.provisional && <em>PROVISIONAL</em>}
@@ -771,7 +786,7 @@ function YearGantt({
                               ...taskPosition(segmentTask, year),
                               backgroundColor: supervisorFeedback
                                 ? "rgba(88, 103, 168, 0.40)"
-                                : taskColor(group.phase, task.category),
+                                : taskColor(group.phase, task.category, task.id),
                             }}
                             onClick={() => onTask(task, group, year)}
                             aria-label={`${task.title}${segmentContext}, ${formatDate(segment.start)} to ${formatDate(segment.end)}. Open details.`}
@@ -839,7 +854,7 @@ function TaskDrawer({
     <div className="drawer-shell" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <aside className="task-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
         <button className="drawer-close" onClick={onClose} aria-label="Close task details">×</button>
-        <div className="drawer-accent" style={{ background: taskColor(selected.group.phase, task.category) }} />
+        <div className="drawer-accent" style={{ background: taskColor(selected.group.phase, task.category, task.id) }} />
         {editing ? (
           <form onSubmit={submit} className="edit-form">
             <label>
@@ -896,7 +911,7 @@ function TaskDrawer({
                 <i
                   key={index}
                   style={{
-                    background: taskColor(selected.group.phase, task.category),
+                    background: taskColor(selected.group.phase, task.category, task.id),
                     opacity: 0.3 + (index / Math.max(1, Math.min(weeks, 16) - 1)) * 0.7,
                   }}
                 />
@@ -1012,7 +1027,7 @@ function PlanEditor({
         </div>
 
         <div className="editor-context">
-          <i style={{ background: taskColor(undefined, category) }} />
+          <i style={{ background: taskColor(selectedEntry.group.phase, category, task.id) }} />
           <div>
             <span>{selectedEntry.group.eyebrow}</span>
             <strong>{selectedEntry.group.venue}</strong>
