@@ -1841,8 +1841,10 @@ export default function Home() {
             <a className="overline intro-plan-link" href="#timeline">Xixiang Nie PhD Research Plan</a>
           )}
           <h1 id="page-title">
-            Social roles of urban object-inspired robotic agents:
-            <span>A designerly and citizen-centred inquiry</span>
+            <span className="hero-title-line">Social roles of </span>
+            <span className="hero-title-line">urban object-inspired </span>
+            <span className="hero-title-line">robotic agents:</span>
+            <span className="hero-subtitle">A designerly and citizen-centred inquiry</span>
           </h1>
         </div>
         <div className="research-question">
