@@ -1883,7 +1883,7 @@ export default function Home() {
           <span><i className="key-diamond hard" /> Fixed deadline</span>
           <span><i className="key-diamond target" /> Target window · date TBC</span>
           <span><i className="key-dash" /> Provisional activity</span>
-          <strong className="week-rule">Every month: W1 1–7 · W2 8–14 · W3 15–21 · W4 22–month end</strong>
+          <strong className="week-rule">Every month: W1 days 1–7 · W2 days 8–14 · W3 days 15–21 · W4 days 22–end of month</strong>
           {canEdit && editing && (
             <button className="editor-open-button" onClick={() => setEditorOpen(true)}>
               Open timeline editor
