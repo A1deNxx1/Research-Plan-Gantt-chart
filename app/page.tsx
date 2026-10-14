@@ -226,7 +226,7 @@ const YEARS: YearPlan[] = [
         title: "Urban deployment and evaluation",
         venue: "CHI 2029 Full Paper",
         tasks: [
-          plannedTask("p3-s4-ethics", "Study 4 ethics approval", "2027-11-01", "2027-11-30", "ethics", "Secure ethics approval in November 2027 for the public urban deployment and evaluation planned for April 2028."),
+          plannedTask("p3-s4-ethics", "Study 4 ethics approval", "2028-01-01", "2028-01-31", "ethics", "Secure ethics approval during January W1–W4 in 2028 for the public urban deployment and evaluation planned for April 2028."),
           plannedTask("p3-s4-deploy", "Urban deployment", "2028-04-01", "2028-04-30", "fieldwork", "Deploy the robotic agent in an everyday urban setting during April and document interactions, public responses and evaluation data."),
           plannedTask("p3-s4-analysis", "Data analysis · CHI 2029 full-paper draft", "2028-05-01", "2028-05-31", "writing", "Analyse the urban deployment data and draft a CHI 2029 full paper on the agent's social role, public interpretation and observed interactions."),
           plannedTask("p3-s4-review", "Supervisor paper review", "2028-06-01", "2028-06-30", "feedback", "Share the Study 4 manuscript with supervisors throughout June for rolling review and feedback."),
