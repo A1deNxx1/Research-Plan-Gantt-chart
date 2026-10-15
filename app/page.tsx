@@ -96,13 +96,13 @@ const LATER_GROUP_COLORS: Record<Category, string> = {
   leave: "#92a0a1",
 };
 
-const SPECIAL_ACTIVITIES: Record<string, { color: string; label: string }> = {
-  "p2-robotics-visit": { color: "#1f5fd6", label: "AI robotics group visit" },
-  "cdt-industry-internship": { color: "#d49a00", label: "Industry internship" },
+const SPECIAL_ACTIVITY_COLORS: Record<string, string> = {
+  "p2-robotics-visit": "#1f5fd6",
+  "cdt-industry-internship": "#d49a00",
 };
 
 function taskColor(phase: PhaseId | undefined, category: Category, taskId?: string) {
-  if (taskId && SPECIAL_ACTIVITIES[taskId]) return SPECIAL_ACTIVITIES[taskId].color;
+  if (taskId && SPECIAL_ACTIVITY_COLORS[taskId]) return SPECIAL_ACTIVITY_COLORS[taskId];
   if (category === "feedback") return "#5867a8";
   if (category === "leave") return "#a8a49e";
   return phase ? PHASES[phase].color : LATER_GROUP_COLORS[category];
@@ -532,13 +532,6 @@ function YearGantt({
 }) {
   const segments = monthSegments(year);
   const weeks = segments.length * 4;
-  const visiblePhases = [...new Set(year.groups.flatMap((group) => group.phase ? [group.phase] : []))];
-  const laterCategories = (Object.keys(CATEGORY_LABELS) as Category[]).filter((category) =>
-    category !== "feedback" && year.groups.some((group) => !group.phase && group.tasks.some((task) => task.category === category && !SPECIAL_ACTIVITIES[task.id])),
-  );
-  const specialActivities = Object.entries(SPECIAL_ACTIVITIES).filter(([id]) =>
-    year.groups.some((group) => group.tasks.some((task) => task.id === id && !isTaskDeleted(id, edits))),
-  );
   const chartScrollRef = useRef<HTMLDivElement>(null);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollMax, setScrollMax] = useState(0);
@@ -591,28 +584,6 @@ function YearGantt({
           <h2 id={`${year.id}-heading`}>{year.label}</h2>
         </div>
         <p>{year.dates}</p>
-      </div>
-
-      <div className="stage-legend" aria-label={`${year.yearName} phase colour legend`}>
-        {visiblePhases.map((phase) => (
-          <span key={phase}>
-            <i style={{ background: PHASES[phase].color }} />
-            Phase {PHASES[phase].number} · {PHASES[phase].title}
-          </span>
-        ))}
-        {laterCategories.map((category) => (
-          <span key={category}>
-            <i style={{ background: taskColor(undefined, category) }} />
-            {CATEGORY_LABELS[category]}
-          </span>
-        ))}
-        {specialActivities.map(([id, activity]) => (
-          <span key={id}>
-            <i style={{ background: activity.color }} />
-            {activity.label}
-          </span>
-        ))}
-        <span className="supervisor-feedback-legend"><i style={{ background: taskColor("understanding", "feedback") }} />Supervisor paper review</span>
       </div>
 
       <div className="scroll-note">Scroll horizontally to inspect weeks →</div>
@@ -1305,7 +1276,7 @@ export default function Home() {
       <section className="timeline-section" id="timeline" aria-labelledby="timeline-title">
         <div className="timeline-toolbar">
           <div>
-            <h2 id="timeline-title">Research journey, week by week</h2>
+            <h2 id="timeline-title">Research journey, weekly plan</h2>
           </div>
           <div className="toolbar-controls">
             <label className="year-picker">

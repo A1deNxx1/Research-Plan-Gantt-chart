@@ -618,49 +618,11 @@ main {
   font-weight: 700;
 }
 
-.stage-legend {
-  min-height: 64px;
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px 22px;
-  border-bottom: 1px solid var(--line-soft);
-}
-
-.stage-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: #626762;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.stage-legend i,
 .task-label > i {
   width: 9px;
   height: 9px;
   border-radius: 50%;
   flex: 0 0 auto;
-}
-
-.stage-legend .supervisor-feedback-legend {
-  padding: 5px 9px;
-  border: 2px solid color-mix(in srgb, var(--supervisor-review-dark) 72%, white);
-  border-radius: 7px;
-  background: rgba(88, 103, 168, 0.1);
-  color: var(--supervisor-review-dark);
-  font-weight: 800;
-  backdrop-filter: blur(6px) saturate(1.15);
-  -webkit-backdrop-filter: blur(6px) saturate(1.15);
-}
-
-.stage-legend .supervisor-feedback-legend i {
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  box-shadow: 0 0 0 2px rgba(57, 69, 126, 0.28);
 }
 
 .scroll-note {
@@ -1930,11 +1892,6 @@ footer p {
     display: block;
   }
 
-  .stage-legend {
-    max-height: 110px;
-    overflow: hidden;
-  }
-
   .journey-summary {
     width: calc(100% - 40px);
     grid-template-columns: 1fr;
@@ -2096,7 +2053,6 @@ footer p {
   .project-facts,
   .toolbar-controls,
   .chart-key,
-  .stage-legend,
   .scroll-note,
   .gantt-scroll-control,
   .journey-summary,
