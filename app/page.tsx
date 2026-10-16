@@ -234,7 +234,7 @@ const YEARS: YearPlan[] = [
         venue: "CHI 2029 Full Paper",
         tasks: [
           plannedTask("p3-s4-ethics", "Study 4 ethics approval", "2028-01-01", "2028-01-31", "ethics", "Secure ethics approval during January W1–W4 in 2028 for the public urban deployment and evaluation planned for April 2028."),
-          plannedTask("p3-s4-deploy", "Urban deployment", "2028-04-01", "2028-04-30", "fieldwork", "Deploy the robotic agent in an everyday urban setting during April and document interactions, public responses and evaluation data."),
+          plannedTask("p3-s4-deploy", "Urban deployment", "2028-03-01", "2028-04-30", "fieldwork", "Deploy the robotic agent in everyday urban settings across March and April 2028, documenting interactions, public responses and evaluation data. If feasible, this could include a comparative study in China and the UK to explore how different urban and cultural contexts shape citizens' interpretations of its social role."),
           plannedTask("p3-s4-analysis", "Data analysis · CHI 2029 full-paper draft", "2028-05-01", "2028-05-31", "writing", "Analyse the urban deployment data and draft a CHI 2029 full paper on the agent's social role, public interpretation and observed interactions."),
           plannedTask("p3-s4-review", "Supervisor paper review", "2028-06-01", "2028-06-30", "feedback", "Share the Study 4 manuscript with supervisors throughout June for rolling review and feedback."),
           plannedTask("p3-s4-revise", "Revision & finalisation", "2028-06-15", "2028-07-14", "revision", "Revise and finalise the Study 4 CHI 2029 full paper from June W3 through July W2. The September 2028 submission marker is an estimate, not an announced CHI 2029 deadline."),
